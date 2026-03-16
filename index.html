@@ -37,6 +37,14 @@
         .origin-quote { font-size: 1.3rem; font-style: italic; color: #e0e0e0; line-height: 1.8; margin-bottom: 1.5rem; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
+        /* Gallery Section */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .gallery-item { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.3); background: #1a1a2e; height: 200px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; background: rgba(0,0,0,0.7); color: #ffb84d; font-size: 0.9rem; transform: translateY(100%); transition: transform 0.3s ease; text-align: center; }
+        .gallery-item:hover .gallery-caption { transform: translateY(0); }
+
         /* Grid & Cards */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; margin-top: 2rem; }
         .card { background: rgba(26, 26, 46, 0.6); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 15px; padding: 2rem; backdrop-filter: blur(8px); position: relative; overflow: hidden; display: flex; flex-direction: column; }
@@ -69,6 +77,7 @@
         <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
+            <li><a href="#gallery">Gallery</a></li>
             <li><a href="#characters">Characters</a></li>
             <li><a href="#episodes">Episodes</a></li>
             <li><a href="#music">Music</a></li>
@@ -92,6 +101,44 @@
             <p>From a simple recording to a six-book transmedia universe, Tales of Solaria is brought to life through cinematic direction and original scores.</p>
         </div>
         <p style="text-align: center; max-width: 800px; margin: 0 auto;">Tales of Solaria is a developed IP where cinematic director Adrian Carter combines deep worldbuilding with technical production. Leveraging Sora for visuals and Suno for audio, we create a world of spiritual pressure, environmental distortion, and raw emotion.</p>
+    </section>
+
+    <section id="gallery">
+        <h2>Visuals of Solaria</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1VB1a2DrR6cXpq6p-a0Iz5QU8YouFpGCr" alt="Alara and Evin">
+                <div class="gallery-caption">Alara and Evin</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1-OuCNIyQqKgY4XtxJ8YI9ChmuMmrrupI" alt="Alara">
+                <div class="gallery-caption">Alara</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1p3hyFPM0BIU_9Zn8ANa6UHazF7L5vvFB" alt="Followers of the void">
+                <div class="gallery-caption">Followers of the Void</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1vCGHhkfhKWz0HNdR98PcGpoQScPy5z0d" alt="Jack and Rose">
+                <div class="gallery-caption">Jack and Rose</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1NzsEQiB8OW1us1je6w0k76Q3dScBD9-2" alt="Jack, Rose, Unity">
+                <div class="gallery-caption">Jack, Rose, & Unity</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/12sSxVd27xf53JU-g1wx910MYsXFOfq9v" alt="Jack">
+                <div class="gallery-caption">Jack</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1j97NIYzv8yy_CT4-mackKViapNYxnnuo" alt="Koor-i-noor Book 5">
+                <div class="gallery-caption">Koor-i-noor - Floating Kingdom</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/d/1qURJL2FSqaGrvywmb0EAmGVJ99LX00KW" alt="Rose Act 3.5">
+                <div class="gallery-caption">Rose - Act 3.5</div>
+            </div>
+        </div>
     </section>
 
     <section id="characters">

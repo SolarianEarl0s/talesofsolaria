@@ -70,7 +70,7 @@
         footer { background: #0f0f1e; padding: 3rem; text-align: center; color: #888; border-top: 1px solid rgba(255,255,255,0.05); }
 
         @media (max-width: 768px) { .hero h1 { font-size: 3rem; } nav ul { gap: 1rem; } }
-    </style>
+    /* Contact Form Style */ .contact-form { max-width: 600px; margin: 2rem auto 0; text-align: left; } .form-group { margin-bottom: 1.5rem; } .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #ffb84d; } .form-group input, .form-group textarea { width: 100%; padding: 1rem; background: rgba(26,26,46,0.8); border: 2px solid #ff6b35; border-radius: 8px; color: #e0e0e0; font-family: inherit; font-size: 1rem; } .form-group textarea { height: 150px; resize: vertical; } .submit-btn { background: #ff6b35; color: #fff; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease; } .submit-btn:hover { background: #ff8c61; transform: translateY(-3px); } </style>
 </head>
 <body id="home">
     <nav>
@@ -209,7 +209,7 @@
             <a href="https://www.reddit.com/r/DomoAI/comments/1rmcn9l/reworking_act_4_one_scene_at_a_time/" class="social-btn"><i class="fab fa-reddit"></i> Reddit</a>
             <a href="https://ko-fi.com/solarianearl" class="social-btn"><i class="fas fa-coffee"></i> Support on Ko-fi</a>
             <a href="https://github.com/SolarianEarl0s/talesofsolaria/wiki" class="social-btn"><i class="fas fa-book"></i> Lore Wiki</a>
-            <a href="mailto:adrian0carter@yahoo.com" class="social-btn"><i class="fas fa-envelope"></i> Contact Me</a>
+            </div><div class="contact-form"><form action="https://formspree.io/f/mpwkdzeo" method="POST"><div class="form-group"><label for="email">Your Email</label><input type="email" id="email" name="email" placeholder="email@example.com" required></div><div class="form-group"><label for="message">Your Message</label><textarea id="message" name="message" placeholder="Leave a message for Adrian..." required></textarea></div><button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Send Message</button></form>
         </div>
     </section>
 

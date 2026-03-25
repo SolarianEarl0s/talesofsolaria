@@ -42,13 +42,20 @@
         .spotlight-desc { font-size: 1.2rem; margin-bottom: 2rem; color: #ccc; }
         .new-tag { background: #ff6b35; color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-bottom: 1rem; display: inline-block; text-transform: uppercase; animation: pulse-glow 2s infinite; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 107, 53, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); } }
-        /* Gallery Section */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .gallery-item { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.2); background: #1a1a2e; height: 350px; cursor: pointer; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        .gallery-item:hover img { transform: scale(1.08); filter: brightness(1.2); }
-        .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: #ffb84d; font-size: 1rem; transform: translateY(100%); transition: transform 0.4s ease; text-align: center; font-family: 'Cinzel', serif; }
-        .gallery-item:hover .gallery-caption { transform: translateY(0); }
+        /* Gallery Slideshow */
+        .slideshow-wrapper { position: relative; width: 100%; max-width: 1100px; margin: 0 auto 3rem; border-radius: 16px; overflow: hidden; border: 2px solid #ff6b35; box-shadow: 0 0 40px rgba(255,107,53,0.3); aspect-ratio: 16/9; background: #0a0a12; }
+        .slide { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        .slide.active { display: block; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: #ffb84d; font-family: 'Cinzel', serif; font-size: 1rem; text-align: center; }
+        .slide-controls { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; align-items: center; }
+        .slide-btn { background: linear-gradient(135deg,#ff6b35,#f7931e); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255,107,53,0.4); transition: transform 0.2s; }
+        .slide-btn:hover { transform: scale(1.1); }
+        .slide-dots { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 400px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,107,53,0.3); border: 1px solid #ff6b35; cursor: pointer; transition: all 0.3s; }
+        .dot.active { background: #ff6b35; transform: scale(1.3); }
+        @keyframes slideIn { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: scale(1); } }
+        .slide.active img { animation: slideIn 0.6s ease; }
         /* Grid & Cards */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; }
         .card { background: rgba(26, 26, 46, 0.4); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(10px); display: flex; flex-direction: column; height: 100%; }
@@ -115,28 +122,88 @@
 
     <section id="gallery">
         <h2>Visuals of Solaria</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="assets/images/Warrior-of-the-Radiant-Skies.jpg" alt="Warrior of the Radiant Skies">
-                <div class="gallery-caption">Radiant Warrior</div>
-            </div>
-            <div class="gallery-item">
-                <img src="assets/images/ChatGPT-Image-Oct-17-2025-11_31_49-PM.jpg" alt="The Ancient Rift">
-                <div class="gallery-caption">The Ancient Rift</div>
-            </div>
-            <div class="gallery-item">
-                <img src="assets/images/We-Were-Sisters-Once.jpg" alt="We Were Sisters Once">
-                <div class="gallery-caption">Rose & Unity's Past</div>
-            </div>
-            <div class="gallery-item">
-                <img src="assets/images/The-Final-Stand.jpg" alt="The Final Stand">
-                <div class="gallery-caption">Warrior's Duty</div>
-            </div>
-            <div class="gallery-item">
-                <img src="assets/images/Twin-Sunsets.jpg" alt="Twin Sunsets">
-                <div class="gallery-caption">Twin Sunsets</div>
-            </div>
-        </div>
+        <div class="slideshow-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="slide active">
+                        <img src="assets/images/Warrior-of-the-Radiant-Skies.jpg" alt="Warrior of the Radiant Skies">
+                        <div class="slide-caption">Radiant Warrior</div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <img src="assets/images/ChatGPT-Image-Oct-17-2025-11_31_49-PM.jpg" alt="The Ancient Rift">
+                        <div class="slide-caption">The Ancient Rift</div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/12T35xY7f04PewhOLf6TOhSzpJxJc5y86" alt="Act 3 - Sepa">
+                        <div class="slide-caption">Act 3 — Sepa Holds the Line</div>
+                    </div>
+                    <!-- Slide 4 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1l_gKa9ljW0TtP1LQdqgrxNkx8gGXBrVI" alt="Act 5 Young Prince">
+                        <div class="slide-caption">Act 5 — The Young Prince</div>
+                    </div>
+                    <!-- Slide 5 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1VB1a2DrR6cXpq6p-a0Iz5QU8YouFpGCr" alt="Alara and Evin">
+                        <div class="slide-caption">Alara & Evin</div>
+                    </div>
+                    <!-- Slide 6 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1-OuCNIyQqKgY4XtxJ8YI9ChmuMmrrupI" alt="Alara">
+                        <div class="slide-caption">Alara</div>
+                    </div>
+                    <!-- Slide 7 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1_u4Dj-xi7q_ZLdd6bWmdiQFOcC8NC3-s" alt="Arvel's Defeat - Evin's Victory">
+                        <div class="slide-caption">Arvel's Defeat — Evin's Victory</div>
+                    </div>
+                    <!-- Slide 8 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1p3hyFPM0BIU_9Zn8ANa6UHazF7L5vvFB" alt="Followers of the Void">
+                        <div class="slide-caption">Followers of the Void</div>
+                    </div>
+                    <!-- Slide 9 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1jRfgR0hBspFfgW-V5IqHkMYFs4Fml6CK" alt="Grand Elder and Alara">
+                        <div class="slide-caption">Grand Elder & Alara</div>
+                    </div>
+                    <!-- Slide 10 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1vCGHhkfhKWz0HNdR98PcGpoQScPy5z0d" alt="Jack and Rose">
+                        <div class="slide-caption">Jack & Rose</div>
+                    </div>
+                    <!-- Slide 11 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1NzsEQiB8OW1us1je6w0k76Q3dScBD9-2" alt="Jack, Rose, Unity">
+                        <div class="slide-caption">Jack, Rose & Unity</div>
+                    </div>
+                    <!-- Slide 12 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/12sSxVd27xf53JU-g1wx910MYsXFOfq9v" alt="Jack">
+                        <div class="slide-caption">Jack</div>
+                    </div>
+                    <!-- Slide 13 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1j97NIYzv8yy_CT4-mackKViapNYxnnuo" alt="Koor-i-noor Book 5">
+                        <div class="slide-caption">Koor-i-noor — Book 5</div>
+                    </div>
+                    <!-- Slide 14 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1qURJL2FSqaGrvywmb0EAmGVJ99LX00KW" alt="Rose Act 3.5">
+                        <div class="slide-caption">Rose — Act 3.5</div>
+                    </div>
+                    <!-- Slide 15 -->
+                    <div class="slide">
+                        <img src="https://lh3.googleusercontent.com/d/1ufDCEGjYJswNsq77q1RNUNjnSIKIpDmL" alt="Unity and Jack's Sister">
+                        <div class="slide-caption">Unity & Jack's Sister</div>
+                    </div>
+                </div>
+                <div class="slide-controls">
+                    <button class="slide-btn" id="prevBtn" onclick="changeSlide(-1)">&#8592;</button>
+                    <div class="slide-dots" id="dotContainer"></div>
+                    <button class="slide-btn" id="nextBtn" onclick="changeSlide(1)">&#8594;</button>
+                </div>
 
     <section id="episodes">
         <h2>Cinematic Episodes</h2>
@@ -194,6 +261,37 @@
         <p>© 2026 Tales of Solaria. Produced by Adrian Carter.</p>
         <p>Created with Sora for visuals & Suno for audio.</p>
     </footer>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dotContainer = document.getElementById('dotContainer');
 
+        // Build dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            dotContainer.appendChild(dot);
+        });
+
+        function updateSlides() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+        }
+
+        function changeSlide(dir) {
+            currentSlide = (currentSlide + dir + slides.length) % slides.length;
+            updateSlides();
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            updateSlides();
+        }
+
+        // Auto-advance every 5 seconds
+        setInterval(() => changeSlide(1), 5000);
+    </script>
 </body>
 </html>

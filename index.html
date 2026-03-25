@@ -11,254 +11,249 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s ease; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Raleway', sans-serif; background: #0f0f1e; color: #e0e0e0; line-height: 1.6; overflow-x: hidden; }
+        body { font-family: 'Raleway', sans-serif; background: #0a0a12; color: #e0e0e0; line-height: 1.6; overflow-x: hidden; }
 
         /* Navigation */
-        nav { position: sticky; top: 0; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(10px); padding: 1rem 0; z-index: 1000; border-bottom: 2px solid #ff6b35; }
+        nav { position: sticky; top: 0; background: rgba(10, 10, 18, 0.95); backdrop-filter: blur(10px); padding: 1rem 0; z-index: 1000; border-bottom: 2px solid #ff6b35; }
         nav ul { display: flex; justify-content: center; flex-wrap: wrap; list-style: none; gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        nav a { color: #e0e0e0; text-decoration: none; font-weight: 600; font-size: 1.1rem; }
+        nav a { color: #e0e0e0; text-decoration: none; font-weight: 600; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
         nav a:hover { color: #ff6b35; transform: translateY(-2px); }
 
         /* Hero Section */
         .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; background: url('assets/images/Warrior-of-the-Radiant-Skies.jpg') no-repeat center center fixed; background-size: cover; }
-        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 1; }
         .hero-content { z-index: 2; max-width: 900px; padding: 2rem; }
-        .hero h1 { font-family: 'Cinzel', serif; font-size: 4.5rem; font-weight: 700; color: #ffb84d; text-shadow: 0 0 20px rgba(255, 184, 77, 0.5); margin-bottom: 1rem; }
-        .hero p { font-size: 1.5rem; color: #e0e0e0; margin-bottom: 2rem; font-weight: 300; letter-spacing: 1px; }
+        .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(3rem, 8vw, 5rem); font-weight: 700; color: #ffb84d; text-shadow: 0 0 30px rgba(255, 184, 77, 0.4); margin-bottom: 1rem; line-height: 1.1; }
+        .hero p { font-size: clamp(1.1rem, 3vw, 1.6rem); color: #fff; margin-bottom: 2.5rem; font-weight: 300; letter-spacing: 2px; }
 
         /* Sections */
-        section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
-        section h2 { font-family: 'Cinzel', serif; font-size: 2.8rem; color: #ffb84d; margin-bottom: 3.5rem; text-align: center; position: relative; }
-        section h2::after { content: ''; display: block; width: 60px; height: 3px; background: #ff6b35; margin: 1rem auto; }
+        section { padding: 8rem 2rem; max-width: 1300px; margin: 0 auto; }
+        section h2 { font-family: 'Cinzel', serif; font-size: 3rem; color: #ffb84d; margin-bottom: 4rem; text-align: center; position: relative; letter-spacing: 2px; }
+        section h2::after { content: ''; display: block; width: 80px; height: 3px; background: #ff6b35; margin: 1.5rem auto; box-shadow: 0 0 10px #ff6b35; }
 
         /* Origin Story */
-        .origin-highlight { background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(255, 195, 0, 0.1)); border: 2px solid #ff6b00; border-radius: 16px; padding: 2.5rem; margin: 3rem auto; max-width: 800px; text-align: center; position: relative; box-shadow: 0 8px 32px rgba(255, 107, 0, 0.3); }
-        .origin-icon { font-size: 4rem; margin-bottom: 1rem; animation: pulse 2s ease-in-out infinite; }
-        .origin-quote { font-size: 1.3rem; font-style: italic; color: #e0e0e0; line-height: 1.8; margin-bottom: 1.5rem; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .origin-highlight { background: linear-gradient(135deg, rgba(255, 107, 0, 0.05), rgba(255, 195, 0, 0.05)); border: 1px solid rgba(255, 107, 0, 0.3); border-radius: 24px; padding: 4rem 2rem; margin: 4rem auto; max-width: 900px; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+        .origin-icon { font-size: 5rem; margin-bottom: 2rem; display: inline-block; animation: float 4s ease-in-out infinite; }
+        .origin-quote { font-size: 1.5rem; font-style: italic; color: #fff; line-height: 1.8; margin-bottom: 2rem; font-family: 'Raleway', sans-serif; font-weight: 300; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* Act 4 Finale Spotlight - FEATURED */
+        .spotlight-section { background: #000; padding: 10rem 2rem; position: relative; margin: 6rem 0; border-top: 2px solid #ff6b35; border-bottom: 2px solid #ff6b35; }
+        .spotlight-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .spotlight-video { position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(255, 107, 53, 0.4); border: 2px solid #ff6b35; aspect-ratio: 16/9; }
+        .spotlight-video iframe { width: 100%; height: 100%; border: none; }
+        .spotlight-content h2 { text-align: left; font-size: 3.5rem; margin-bottom: 1.5rem; }
+        .spotlight-content h2::after { margin: 1rem 0; }
+        .spotlight-desc { font-size: 1.2rem; margin-bottom: 2rem; color: #ccc; }
+        .new-tag { background: #ff6b35; color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-bottom: 1rem; display: inline-block; text-transform: uppercase; animation: pulse-glow 2s infinite; }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 107, 53, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); } }
+
+        /* Stats Section */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin: 4rem 0; text-align: center; }
+        .stat-card { padding: 2rem; border-radius: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+        .stat-number { font-family: 'Cinzel', serif; font-size: 3rem; color: #ffb84d; display: block; }
+        .stat-label { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Gallery Section */
-        .gallery-grid
-        { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-                #gallery h2 { grid-column: 1 / -1; }
-        .gallery-item { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.3); background: #1a1a2e; height: 280px; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .gallery-item:hover img { transform: scale(1.1); }
-        .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; background: rgba(0,0,0,0.7); color: #ffb84d; font-size: 0.9rem; transform: translateY(100%); transition: transform 0.3s ease; text-align: center; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .gallery-item { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255, 107, 53, 0.2); background: #1a1a2e; height: 350px; cursor: pointer; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .gallery-item:hover img { transform: scale(1.08); filter: brightness(1.2); }
+        .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: #ffb84d; font-size: 1rem; transform: translateY(100%); transition: transform 0.4s ease; text-align: center; font-family: 'Cinzel', serif; }
         .gallery-item:hover .gallery-caption { transform: translateY(0); }
 
         /* Grid & Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; margin-top: 2rem; }
-        .card { background: rgba(26, 26, 46, 0.6); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 15px; padding: 2rem; backdrop-filter: blur(8px); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-10px); border-color: #ff6b35; box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2); }
-        .card h3 { font-family: 'Cinzel', serif; color: #ffb84d; margin-bottom: 1.2rem; font-size: 1.5rem; }
-        .card p { font-size: 1rem; color: #ccc; margin-bottom: 1.5rem; flex-grow: 1; }
-        .badge { position: absolute; top: 1rem; right: 1rem; background: #ff6b35; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; }
+        .card { background: rgba(26, 26, 46, 0.4); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(10px); display: flex; flex-direction: column; height: 100%; }
+        .card:hover { transform: translateY(-12px); border-color: #ff6b35; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .card h3 { font-family: 'Cinzel', serif; color: #ffb84d; margin-bottom: 1.5rem; font-size: 1.8rem; }
+        .card p { font-size: 1.1rem; color: #aaa; margin-bottom: 2rem; flex-grow: 1; }
+        .badge { position: absolute; top: 1.5rem; right: 1.5rem; background: #ff6b35; color: #fff; padding: 6px 16px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
 
         /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0.8rem 1.8rem; background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3); }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(247, 147, 30, 0.4); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 1rem 2.5rem; background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4); }
 
-        /* Character Section */
-        .character-card { text-align: center; }
-        .character-name { font-family: 'Cinzel', serif; color: #ffb84d; font-size: 1.3rem; margin-bottom: 0.5rem; }
-        .character-role { font-size: 0.9rem; color: #888; font-style: italic; }
+        /* Social Hub */
+        .social-footer { background: #05050a; padding: 8rem 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
+        .social-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 2rem; margin-top: 3rem; }
+        .social-btn { display: inline-flex; align-items: center; gap: 15px; padding: 15px 35px; border: 2px solid rgba(255, 107, 53, 0.5); border-radius: 50px; color: #fff; text-decoration: none; font-weight: 600; background: transparent; transition: all 0.4s ease; }
+        .social-btn:hover { background: #ff6b35; border-color: #ff6b35; transform: scale(1.05) translateY(-5px); box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3); }
 
-        /* Footer */
-        .social-footer { background: #1a1a2e; padding: 4rem 2rem; text-align: center; border-top: 2px solid #ff6b35; }
-        .social-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; }
-        .social-btn { display: inline-flex; align-items: center; gap: 12px; padding: 12px 28px; border: 2px solid #ff6b35; border-radius: 50px; color: #e0e0e0; text-decoration: none; font-weight: 600; background: transparent; }
-        .social-btn:hover { background: #ff6b35; color: #fff; transform: translateY(-3px); }
-        footer { background: #0f0f1e; padding: 3rem; text-align: center; color: #888; border-top: 1px solid rgba(255,255,255,0.05); }
-
-        @media (max-width: 768px) { .hero h1 { font-size: 3rem; } nav ul { gap: 1rem; } }
-    /* Contact Form Style */ .contact-form { max-width: 600px; margin: 2rem auto 0; text-align: left; } .form-group { margin-bottom: 1.5rem; } .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #ffb84d; } .form-group input, .form-group textarea { width: 100%; padding: 1rem; background: rgba(26,26,46,0.8); border: 2px solid #ff6b35; border-radius: 8px; color: #e0e0e0; font-family: inherit; font-size: 1rem; } .form-group textarea { height: 150px; resize: vertical; } .submit-btn { background: #ff6b35; color: #fff; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s ease; } .submit-btn:hover { background: #ff8c61; transform: translateY(-3px); } </style>
+        @media (max-width: 992px) {
+            .spotlight-container { grid-template-columns: 1fr; gap: 3rem; }
+            .spotlight-content h2 { text-align: center; }
+            .spotlight-content h2::after { margin: 1rem auto; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body id="home">
+<body>
+
     <nav>
         <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#characters">Characters</a></li>
+            <li><a href="#about">The Saga</a></li>
+            <li><a href="#finale">Act 4</a></li>
+            <li><a href="#gallery">Visuals</a></li>
             <li><a href="#episodes">Episodes</a></li>
             <li><a href="#music">Music</a></li>
-            <li><a href="#support">Support</a></li>
+            <li><a href="#community">Join Us</a></li>
         </ul>
     </nav>
 
-    <header class="hero">
+    <header class="hero" id="home">
         <div class="hero-content">
-            <h1>Tales of Solaria</h1>
+            <div class="new-tag">New Release Today</div>
+            <h1>TALES OF SOLARIA</h1>
             <p>A Dark Fantasy Universe of Tragic Final Stands and Impossible Choices</p>
-            <a href="#about" class="btn">Start the Story</a>
+            <a href="#finale" class="btn"><i class="fas fa-play"></i> Watch Act 4 Finale</a>
         </div>
     </header>
 
     <section id="about">
-        <h2>The Saga Begins</h2>
         <div class="origin-highlight">
-            <div class="origin-icon">🐰</div>
+            <span class="origin-icon">🐰</span>
             <p class="origin-quote">"This all started from voice recordings years ago, on a holiday to Ireland — an imagination of a bunny hopping through the woods. From that single spark of wonder, the entire Tales of Solaria series came to be."</p>
             <p>From a simple recording to a six-book transmedia universe, Tales of Solaria is brought to life through cinematic direction and original scores.</p>
         </div>
-        <p style="text-align: center; max-width: 800px; margin: 0 auto;">Tales of Solaria is a developed IP where cinematic director Adrian Carter combines deep worldbuilding with technical production. Leveraging Sora for visuals and Suno for audio, we create a world of spiritual pressure, environmental distortion, and raw emotion.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">6</span>
+                <span class="stat-label">Planned Books</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">4+</span>
+                <span class="stat-label">Years of Lore</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">AI</span>
+                <span class="stat-label">Powered Visuals</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Imagination</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="finale" class="spotlight-section">
+        <div class="spotlight-container">
+            <div class="spotlight-video">
+                <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64?autoplay=0" allowfullscreen></iframe>
+            </div>
+            <div class="spotlight-content">
+                <div class="new-tag">Official Release</div>
+                <h2>ACT 4 FINALE</h2>
+                <div class="spotlight-desc">
+                    The climax of the current saga. Witness Unity face the Arm of Chaos as catastrophic energy consumes the sky. Experience the most ambitious production in the Solaria universe to date.
+                </div>
+                <a href="https://www.youtube.com/watch?v=XXR2ZlDlT64" target="_blank" class="btn">Full Cinematic Experience</a>
+            </div>
+        </div>
     </section>
 
     <section id="gallery">
         <h2>Visuals of Solaria</h2>
         <div class="gallery-grid">
-        
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1VB1a2DrR6cXpq6p-a0Iz5QU8YouFpGCr" alt="Alara and Evin">
-                <div class="gallery-caption">Alara and Evin</div>
-            </div>
-            <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1-OuCNIyQqKgY4XtxJ8YI9ChmuMmrrupI" alt="Alara">
-                <div class="gallery-caption">Alara</div>
+                <img src="assets/images/Alara-and-Evin.jpg" alt="Alara and Evin">
+                <div class="gallery-caption">Alara & Evin</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1p3hyFPM0BIU_9Zn8ANa6UHazF7L5vvFB" alt="Followers of the void">
-                <div class="gallery-caption">Followers of the Void</div>
+                <img src="assets/images/Alara.jpg" alt="Alara">
+                <div class="gallery-caption">Grand Elder Alara</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1vCGHhkfhKWz0HNdR98PcGpoQScPy5z0d" alt="Jack and Rose">
-                <div class="gallery-caption">Jack and Rose</div>
+                <img src="assets/images/Followers-of-the-void.jpg" alt="Followers of the void">
+                <div class="gallery-caption">The Void's Shadow</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1NzsEQiB8OW1us1je6w0k76Q3dScBD9-2" alt="Jack, Rose, Unity">
-                <div class="gallery-caption">Jack, Rose, & Unity</div>
+                <img src="assets/images/Jack-and-Rose.jpg" alt="Jack and Rose">
+                <div class="gallery-caption">Jack & Rose</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/12sSxVd27xf53JU-g1wx910MYsXFOfq9v" alt="Jack">
-                <div class="gallery-caption">Jack</div>
+                <img src="assets/images/Jack,-Rose,-Unity.jpg" alt="Jack, Rose, Unity">
+                <div class="gallery-caption">Broken Bonds</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1j97NIYzv8yy_CT4-mackKViapNYxnnuo" alt="Koor-i-noor Book 5">
-                <div class="gallery-caption">Koor-i-noor - Floating Kingdom</div>
-            </div>
-      
-                            <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1jRfgR0hBspFfgW-V5IqHkMYFs4Fml6CK" alt="Grand Elder and Alara">
-                <div class="gallery-caption">Grand Elder & Alara</div>
+                <img src="assets/images/Jack.jpg" alt="Jack">
+                <div class="gallery-caption">Jack's Resolve</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1qURJL2FSqaGrvywmb0EAmGVJ99LX00KW" alt="Rose Act 3.5">
-                <div class="gallery-caption">Rose - Act 3.5</div>
-            </div>
-                        <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1_u4Dj-xi7q_ZLdd6bWmdiQFOcC8NC3-s" alt="Arvel's defeat - Evin's Victory">
-                <div class="gallery-caption">Arvel's Defeat - Evin's Victory</div>
+                <img src="assets/images/Koor-i-noor-Book-5.jpg" alt="Koor-i-noor">
+                <div class="gallery-caption">The Floating Kingdom</div>
             </div>
             <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1l_gKa9ljW0TtP1LQdqgrxNkx8gGXBrVI" alt="Act 5 Young Prince in Act 4 with a noblewoman">
-                <div class="gallery-caption">The Young Prince & a Noblewoman</div>
-            </div>
-            <div class="gallery-item">
-                <img src="https://lh3.googleusercontent.com/d/1ufDCEGjYJswNsq77q1RNUNjnSIKIpDmL" alt="Unity and Jack's Sister">
-                <div class="gallery-caption">Unity & Jack's Sister</div>
+                <img src="assets/images/Grand-Elder-and-Alara.jpg" alt="Grand Elder and Alara">
+                <div class="gallery-caption">Ancient Mentors</div>
             </div>
         </div>
     </section>
-
-    <section id="characters">
-  <h2>Meet the Cast</h2>
-  <div class="grid">
-    <div class="card character-card">
-      <h3 class="character-name">Unity</h3>
-      <p class="character-role">An adoptive sister to Rose, whose soul sight powers forced her to confront a truth no bond could survive — that the person she loved most had become a follower of the void.</p>
-    </div>
-    <div class="card character-card">
-      <h3 class="character-name">Rose</h3>
-      <p class="character-role">She once dreamed of witnessing the twin sunsets of a distant kingdom. Fractured by the rift, briefly made whole by love, and ultimately lost when the one who restored her could no longer protect her.</p>
-    </div>
-    <div class="card character-card">
-      <h3 class="character-name">Evin</h3>
-      <p class="character-role">A thief who stole from the rich and gave to the poor — until the day he discovered that magic belongs to everyone, and had to prove it with his life.</p>
-    </div>
-    <div class="card character-card">
-      <h3 class="character-name">Alara</h3>
-      <p class="character-role">The mysterious woman who left a golden harp at a child's door. Mentor, Grand Elder, and keeper of a grief no title could ease — her father was slain by her own brother.</p>
-    </div>
-  </div>
-</section>
 
     <section id="episodes">
         <h2>Cinematic Episodes</h2>
         <div class="grid">
             <div class="card">
-                <span class="badge">START HERE</span>
+                <div class="badge">Flagship</div>
                 <h3>We Were Sisters Once</h3>
                 <p>Before the war tore Solaria apart, Rose and Unity were one. Revisit the time when life was simple.</p>
-                <a href="https://www.youtube.com/watch?v=ieATtHwFqbc" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
-            </div>
-            <div class="card">
-                <span class="badge">FLAGSHIP</span>
-                <h3>Act 4 Finale</h3>
-                <p>The climax of the saga. Unity faces the Arm of Chaos as catastrophic energy consumes the sky.</p>
-                <a href="https://www.youtube.com/watch?v=XXR2ZlDlT64" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
+                <a href="https://www.youtube.com/watch?v=ieATtHwFqbc" class="btn"><i class="fab fa-youtube"></i> Watch Now</a>
             </div>
             <div class="card">
                 <h3>The Final Stand</h3>
-                <p>Witness the weight of a warrior's duty in the face of absolute spiritual pressure.</p>
-                <a href="https://www.youtube.com/watch?v=gsR3gCIZgBY" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
+                <p>Witness the weight of a warrior's duty in the face of absolute spiritual pressure and destiny.</p>
+                <a href="https://www.youtube.com/watch?v=gsR3gCIZgBY" class="btn"><i class="fab fa-youtube"></i> Watch Now</a>
             </div>
-
-                    <div class="card">
-                <h3>I Can't Let You Destroy My World</h3>
-                <p>A warrior's stand against overwhelming darkness - facing destiny with unwavering resolve.</p>
-                <a href="https://www.youtube.com/watch?v=tAqn5_2oRig" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
-                    <div class="card">
-                <h3>This Fight Is Not Over Yet</h3>
-                <p>Determination burns bright even in the darkest hour. The battle continues.</p>
-                <a href="https://www.youtube.com/watch?v=iZEecVFDFQo" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
-            </div>
-
-                    <div class="card">
-                <span class="badge">NEW</span>
+            <div class="card">
+                <div class="badge">New</div>
                 <h3>Twin Sunsets</h3>
                 <p>Witness the beauty and tragedy beneath Solaria's twin suns - a moment of peace before the storm.</p>
-                <a href="https://www.youtube.com/watch?v=Ni9qJ2ontI0" class="btn"><i class="fab fa-youtube"></i> Watch Episode</a>
+                <a href="https://www.youtube.com/watch?v=Ni9qJ2ontI0" class="btn"><i class="fab fa-youtube"></i> Watch Now</a>
             </div>
-                            </div>
+        </div>
     </section>
 
     <section id="music">
         <h2>Original Soundtracks</h2>
-        216
-        
+        <div class="grid">
             <div class="card">
                 <h3>Unity's Reluctance</h3>
                 <p>A haunting score that captures the tragedy of a final blow against a loved one.</p>
                 <a href="https://suno.com/@solarianearl" class="btn"><i class="fas fa-music"></i> Listen on Suno</a>
             </div>
             <div class="card">
+                <div class="badge">New</div>
                 <h3>Krā ti</h3>
-                <p>The theme of ancient powers and the rising rifts in Solaria.</p>
+                <p>The theme of ancient powers and the rising rifts in Solaria's spiritual landscape.</p>
                 <a href="https://suno.com/s/mpDLlgIc6vUkiuHr" class="btn"><i class="fas fa-music"></i> Listen on Suno</a>
             </div>
-
-                        <div class="card">
-                <span class="badge">NEW</span>
+            <div class="card">
                 <h3>Carts & Embers</h3>
-                <p>A medieval folk ballad telling the story of the scapegoat carts and the tragic fire of Act 1.</p>
+                <p>A medieval folk ballad telling the story of the scapegoat carts and the fire of Act 1.</p>
                 <a href="https://suno.com/s/QA2STd4UEjjCREg0" class="btn"><i class="fas fa-music"></i> Listen on Suno</a>
             </div>
         </div>
     </section>
 
-    <section id="support" class="social-footer">
+    <div class="social-footer" id="community">
         <h2>Join the Community</h2>
         <div class="social-links">
             <a href="https://www.tiktok.com/@solarianearl" class="social-btn"><i class="fab fa-tiktok"></i> TikTok</a>
-            <a href="https://www.reddit.com/user/YourRedditUsername" class="social-btn"><i class="fab fa-reddit"></i> Reddit</a>            <a href="https://ko-fi.com/solarianearl" class="social-btn"><i class="fas fa-coffee"></i> Support on Ko-fi</a>
+            <a href="https://www.reddit.com/user/YourRedditUsername" class="social-btn"><i class="fab fa-reddit"></i> Reddit</a>
+            <a href="https://ko-fi.com/solarianearl" class="social-btn"><i class="fas fa-coffee"></i> Support on Ko-fi</a>
             <a href="https://github.com/SolarianEarl0s/talesofsolaria/wiki" class="social-btn"><i class="fas fa-book"></i> Lore Wiki</a>
-            </div><div class="contact-form"><form action="https://formspree.io/f/mpwkdzeo" method="POST"><div class="form-group"><label for="email">Your Email</label><input type="email" id="email" name="email" placeholder="email@example.com" required></div><div class="form-group"><label for="message">Your Message</label><textarea id="message" name="message" placeholder="Leave a message for Adrian..." required></textarea></div><button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Send Message</button></form>
         </div>
-    </section>
+    </div>
 
     <footer>
-        <p>&copy; 2026 Tales of Solaria. Created by Adrian Carter - Creative Content Producer & Storyteller.</p>
+        <p>&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
+        <p>Created with Sora for visuals & Suno for audio.</p>
     </footer>
+
 </body>
 </html>

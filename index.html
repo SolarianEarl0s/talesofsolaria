@@ -4,302 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tales of Solaria | Multimedia Portfolio & Universe Hub</title>
-
-    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Raleway:wght@200;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #ff6b35;
-            --secondary: #ffb84d;
-            --dark-bg: #05050a;
-            --card-bg: rgba(15, 15, 25, 0.85);
-            --text: #e0e0e0;
-            --accent-glow: rgba(255, 107, 53, 0.3);
-        }
-
-        /* Base Styles */
+        :root { --primary: #ff6b35; --secondary: #ffb84d; --dark-bg: #05050a; --card-bg: rgba(15, 15, 25, 0.85); --text: #e0e0e0; --accent-glow: rgba(255, 107, 53, 0.3); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Raleway', sans-serif;
-            background: var(--dark-bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Particles Layer */
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #0a0a1f 0%, var(--dark-bg) 100%);
-        }
-
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            background: rgba(5, 5, 10, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 1.2rem 0;
-            z-index: 1000;
-            border-bottom: 2px solid var(--primary);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-        }
-        nav ul {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            flex-wrap: wrap;
-        }
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.7;
-            transition: 0.3s;
-        }
-        nav a:hover {
-            color: var(--secondary);
-            opacity: 1;
-            text-shadow: 0 0 10px var(--secondary);
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: #000 url('assets/images/Warrior-of-the-Radiant-Skies.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .hero::before {
-            content: '';
-            position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, var(--dark-bg) 95%); z-index: 1;
-        }
-        .hero-content { z-index: 2; max-width: 1000px; padding: 2rem; }
-        .hero-badge {
-            display: inline-block;
-            background: rgba(255, 107, 53, 0.2);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            margin-bottom: 2rem;
-        }
-        .hero h1 {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(3.5rem, 12vw, 7rem);
-            color: var(--secondary);
-            text-shadow: 0 0 50px rgba(255, 184, 77, 0.4);
-            line-height: 0.9;
-            margin-bottom: 1.5rem;
-            font-weight: 900;
-        }
-        .hero p {
-            font-size: clamp(1.1rem, 4vw, 1.5rem);
-            color: #ccc;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            font-weight: 200;
-            letter-spacing: 1px;
-        }
-
-        /* Section Global */
-        section { padding: 8rem 2rem; max-width: 1300px; margin: 0 auto; }
-        .section-header { text-align: center; margin-bottom: 6rem; }
-        .section-header h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 3.5rem;
-            color: var(--secondary);
-            letter-spacing: 4px;
-            margin-bottom: 1rem;
-        }
-        .section-tag { color: var(--primary); text-transform: uppercase; letter-spacing: 5px; font-size: 0.9rem; font-weight: 800; }
-
-        /* About/Portfolio */
-        .bio-section { background: var(--card-bg); border: 1px solid rgba(255, 107, 53, 0.15); border-radius: 40px; padding: 6rem 4rem; margin-bottom: 4rem; }
-        .bio-container { display: flex; align-items: center; gap: 6rem; max-width: 1100px; margin: 0 auto; }
-        .bio-image-box { position: relative; flex-shrink: 0; }
-        .bio-image { width: 380px; height: 380px; border-radius: 30px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 50px var(--accent-glow); }
-        .bio-text h3 { font-family: 'Cinzel', serif; font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem; }
-        .bio-text p { font-size: 1.2rem; color: #bbb; margin-bottom: 2rem; }
-
-        /* Skills Grid */
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
-        .skill-card { background: rgba(255,255,255,0.03); padding: 3rem; border-radius: 25px; border: 1px solid rgba(255,107,53,0.1); text-align: center; transition: 0.4s; }
-        .skill-card:hover { transform: translateY(-15px); border-color: var(--primary); background: rgba(255,107,53,0.05); }
-        .skill-card i { font-size: 3.5rem; color: var(--primary); margin-bottom: 2rem; }
-        .skill-card h4 { font-family: 'Cinzel', serif; color: var(--secondary); font-size: 1.6rem; margin-bottom: 1rem; }
-
-        /* Episodes */
-        .episode-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; }
-        .episode-box { background: rgba(10, 10, 20, 0.8); border-radius: 30px; overflow: hidden; border: 1px solid rgba(255,107,53,0.1); transition: 0.3s; }
-        .episode-box:hover { transform: scale(1.02); border-color: var(--primary); }
-        .thumb { width: 100%; aspect-ratio: 16/9; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
-
-        /* Buttons */
-        .cta-btn { display: inline-flex; align-items: center; gap: 15px; padding: 1.2rem 3.5rem; background: linear-gradient(135deg, var(--primary) 0%, #f7931e 100%); color: #fff; text-decoration: none; border-radius: 60px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Footer */
-        footer { background: #020205; padding: 10rem 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-        .socials { display: flex; justify-content: center; gap: 2rem; margin: 4rem 0; }
-        .social-icon { width: 70px; height: 70px; border: 1px solid rgba(255,107,53,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff; transition: 0.3s; }
+        body { font-family: 'Raleway', sans-serif; background: var(--dark-bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
+        .content-layer { position: relative; z-index: 2; }
+        nav { background: rgba(5, 5, 10, 0.9); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255, 107, 53, 0.2); backdrop-filter: blur(10px); }
+        .logo { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--primary); text-decoration: none; font-weight: 900; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { color: var(--text); text-decoration: none; font-weight: 600; transition: 0.3s; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--primary); text-shadow: 0 0 10px var(--accent-glow); }
+        header { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 10%; background: radial-gradient(circle at center, rgba(255,107,53,0.05) 0%, transparent 70%); }
+        .hero-img { width: 320px; height: 320px; border-radius: 50%; margin-bottom: 2rem; border: 4px solid var(--primary); box-shadow: 0 0 30px var(--accent-glow); object-fit: cover; }
+        h1 { font-family: 'Cinzel', serif; font-size: 4rem; margin-bottom: 1rem; color: var(--secondary); text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .hero-subtitle { font-size: 1.5rem; color: var(--text); max-width: 800px; margin-bottom: 2.5rem; font-weight: 200; }
+        .cta-btn { background: var(--primary); color: white; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.4s; border: 2px solid var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+        .cta-btn:hover { background: transparent; color: var(--primary); box-shadow: 0 0 20px var(--accent-glow); }
+        section { padding: 100px 10%; }
+        h2 { font-family: 'Cinzel', serif; font-size: 3rem; text-align: center; margin-bottom: 4rem; color: var(--primary); }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .skill-card { background: var(--card-bg); padding: 2.5rem; border-radius: 20px; text-align: center; transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .skill-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1); }
+        .skill-card i { font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem; }
+        .episodes-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; }
+        .video-card { background: var(--card-bg); border-radius: 25px; overflow: hidden; border: 1px solid rgba(255, 107, 53, 0.2); }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .video-info { padding: 2rem; }
+        #blog { background: rgba(255, 107, 53, 0.02); }
+        .blog-card { background: var(--card-bg); border-radius: 25px; padding: 3rem; text-align: center; max-width: 800px; margin: 0 auto; border: 1px dashed var(--primary); }
+        .substack-btn { display: inline-flex; align-items: center; gap: 12px; background: #FF6719; color: white; padding: 1rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; margin-top: 2rem; transition: 0.3s; }
+        .substack-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(255, 103, 25, 0.4); }
+        .contact-form { max-width: 700px; margin: 0 auto; background: var(--card-bg); padding: 4rem; border-radius: 30px; }
+        input, textarea { width: 100%; padding: 1.2rem; margin-bottom: 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 10px; font-family: inherit; }
+        footer { padding: 5rem 10%; text-align: center; border-top: 1px solid rgba(255, 107, 53, 0.1); }
+        .social-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 3rem; }
+        .social-links a { color: var(--text); font-size: 1.8rem; transition: 0.3s; }
+        .social-links a:hover { color: var(--primary); transform: translateY(-5px); }
+        @media (max-width: 768px) { h1 { font-size: 2.5rem; } .nav-links { display: none; } }
     </style>
 </head>
 <body>
     <div id="particles-js"></div>
-    <nav>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#portfolio">The Storyteller</a></li>
-            <li><a href="#blog">Chronicles</a></li>
-            <li><a href="#skills">Services</a></li>
-            <li><a href="#episodes">The Archive</a></li>
-            <li><a href="#contact">Work With Me</a></li>
-        </ul>
-    </nav>
-    <header class="hero" id="home">
-        <div class="hero-content">
-            <span class="hero-badge">Act 4 Complete • Act 5 In Progress</span>
-            <h1>TALES OF SOLARIA</h1>
-            <p>I am a multimedia storyteller and worldbuilder. This site serves as both the project archive for Solaria and my creative portfolio for AI cinematography and narrative design.</p>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="#episodes" class="cta-btn">Watch The Saga</a>
-                <a href="#contact" class="cta-btn" style="background: transparent; border: 2px solid var(--primary);">Hire My Expertise</a>
+    <div class="content-layer">
+        <nav>
+            <a href="#" class="logo">SOLARIA</a>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#skills">Skills</a>
+                <a href="#episodes">Episodes</a>
+                <a href="#blog">Blog</a>
+                <a href="#contact">Contact</a>
             </div>
-        </div>
-    </header>
-    <section id="portfolio">
-        <div class="bio-section">
-            <div class="bio-container">
-                <div class="bio-image-box">
-                    <img src="assets/images/adrian-carter.jpg" alt="Adrian Carter" class="bio-image">
+        </nav>
+        <header>
+            <img src="https://via.placeholder.com/320" alt="Solaria Hero" class="hero-img">
+            <h1>Tales of Solaria</h1>
+            <p class="hero-subtitle">Building a narrative universe through AI-assisted storytelling and digital world-building.</p>
+            <a href="#episodes" class="cta-btn">Enter the Universe</a>
+        </header>
+        <section id="skills">
+            <h2>The Craft</h2>
+            <div class="skills-grid">
+                <div class="skill-card"><i class="fas fa-pen-fancy"></i><h3>Narrative Writing</h3><p>Crafting deep lore and complex character arcs for the Solarian universe.</p></div>
+                <div class="skill-card"><i class="fas fa-robot"></i><h3>AI Generation</h3><p>Leveraging Sora, DreamTina, and Veo for cinematic visual storytelling.</p></div>
+                <div class="skill-card"><i class="fas fa-vial"></i><h3>World Building</h3><p>Designing interactive systems and historical frameworks for new worlds.</p></div>
+            </div>
+        </section>
+        <section id="episodes">
+            <h2>Latest Episodes</h2>
+            <div class="episodes-container">
+                <div class="video-card">
+                    <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe></div>
+                    <div class="video-info"><h3>Episode 1: The Awakening</h3><p>The journey begins as the first Solarian discovers their hidden potential.</p></div>
                 </div>
-                <div class="bio-text">
-                    <span class="section-tag">Lead Creative</span>
-                    <h3>Adrian Carter</h3>
-                    <p>Multimedia storyteller and creative entrepreneur building the **Tales of Solaria** universe.</p>
-                    <a href="https://github.com/SolarianEarl0s" class="cta-btn" target="_blank">View GitHub</a>
-                </div>
             </div>
-        </div>
-    </section>
-    <section id="blog">
-        <div class="section-header">
-            <span class="section-tag">Latest Notes</span>
-            <h2>CHRONICLES</h2>
-        </div>
-        <div class="bio-section" style="text-align: center;">
-            <i class="fas fa-feather-alt" style="font-size: 4rem; color: var(--primary); margin-bottom: 2rem;"></i>
-            <h3 style="font-family: 'Cinzel', serif; color: var(--secondary); margin-bottom: 1.5rem;">The Solarian Substack</h3>
-            <p style="max-width: 800px; margin: 0 auto 3rem; font-size: 1.2rem; color: #bbb;">
-                Dive deeper into the lore, production notes, and world-building insights of Solaria.
-            </p>
-                    <a href="https://substack.com/@solarianearl" class="cta-btn" target="_blank">
-            <i class="fas fa-pen-nib"></i> Read Substack
-        </a>
-    </div>
-</section>
-
-<section id="skills">
-    <div class="section-header">
-        <span class="section-tag">Capabilities</span>
-        <h2>Professional Expertise</h2>
-    </div>
-    <div class="skills-grid">
-        <div class="skill-card">
-            <i class="fas fa-film"></i>
-            <h4>AI Video Direction</h4>
-            <p>Cinematic trailer production and scene direction using Sora, Runway, and Kling.</p>
-        </div>
-        <div class="skill-card">
-            <i class="fas fa-book-open"></i>
-            <h4>Worldbuilding & IP</h4>
-            <p>Development of story bibles, character arcs, and lore frameworks.</p>
-        </div>
-        <div class="skill-card">
-            <i class="fas fa-music"></i>
-            <h4>Audio Curation</h4>
-            <p>Thematic soundtrack production and soundscape design.</p>
-        </div>
-    </div>
-</section>
-
-<section id="episodes">
-    <div class="section-header">
-        <span class="section-tag">The Living Archive</span>
-        <h2>Cinematic Episodes</h2>
-    </div>
-    <div class="episode-list">
-        <div class="episode-box">
-            <div class="thumb" style="background-image: url('assets/images/episode-1.jpg');"></div>
-            <div class="epi-info">
-                <h3>We Were Sisters Once</h3>
-                <a href="https://www.youtube.com/watch?v=ieATtHwFqbc" target="_blank" style="color: var(--primary); text-decoration: none;">Watch Episode →</a>
+        </section>
+        <section id="blog">
+            <h2>Chronicles of Solaria</h2>
+            <div class="blog-card">
+                <i class="fas fa-book-open" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                <h3>Deep Lore & Behind the Scenes</h3>
+                <p>Subscribe to my Substack for exclusive narrative drafts, world-building insights, and development updates.</p>
+                <a href="https://solarianearl.substack.com" class="substack-btn" target="_blank"><i class="fas fa-pen-nib"></i> Read the Latest Note</a>
             </div>
-        </div>
+        </section>
+        <section id="contact">
+            <h2>Collaborate</h2>
+            <div class="contact-form">
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <textarea rows="5" placeholder="Message"></textarea>
+                <a href="#" class="cta-btn" style="display: block; text-align: center;">Send Message</a>
+            </div>
+        </section>
+        <footer>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="https://solarianearl.substack.com"><i class="fas fa-pen-nib"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <p>© 2026 Tales of Solaria. Produced by Adrian Carter.</p>
+        </footer>
     </div>
-</section>
-
-<section id="contact">
-    <div class="section-header">
-        <span class="section-tag">Open for Collaboration</span>
-        <h2>Work With Me</h2>
-    </div>
-    <div class="bio-section" style="max-width: 800px; margin: 0 auto;">
-        <p style="text-align: center; margin-bottom: 3rem; font-size: 1.2rem; color: #bbb;">Let's bring your universe to life.</p>
-        <form style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <input type="email" placeholder="Your email address" required style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,107,53,0.3); border-radius:14px; padding:1.1rem 1.5rem; color:#e0e0e0;">
-            <button type="submit" class="cta-btn" style="width: 100%; justify-content: center;">Send Message</button>
-        </form>
-    </div>
-</section>
-
-<footer>
-    <div class="socials">
-        <a href="https://www.tiktok.com/@solarianearl0s" class="social-icon" target="_blank"><i class="fab fa-tiktok"></i></a>
-        <a href="https://www.youtube.com/@SolarianEarl0s" class="social-icon" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://substack.com/@solarianearl" class="social-icon" target="_blank"><i class="fab fa-substack"></i></a>
-    </div>
-    <p>© 2026 Tales of Solaria. Produced by Adrian Carter.</p>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
-particlesJS('particles-js', {
-  "particles": {
-    "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-    "color": { "value": "#ff6b35" },
-    "shape": { "type": "circle" },
-    "opacity": { "value": 0.2, "random": true },
-    "size": { "value": 3, "random": true },
-    "line_linked": { "enable": true, "distance": 150, "color": "#ff6b35", "opacity": 0.1, "width": 1 },
-    "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "out_mode": "out" }
-  }
-});
-</script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ff6b35" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.2, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ff6b35", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "out_mode": "out" }
+            }
+        });
+    </script>
 </body>
 </html>
-            <i class="fas fa-pen-nib"></i> Read the Latest Note
-        </a>

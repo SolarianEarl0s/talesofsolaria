@@ -36,18 +36,6 @@
             overflow-x: hidden;
         }
 
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .content-layer {
-            position: relative;
-            z-index: 2;
-        }
-
         nav {
             background: rgba(5, 5, 10, 0.9);
             padding: 1.5rem 5%;
@@ -102,16 +90,6 @@
             background: radial-gradient(circle at center, rgba(255,107,53,0.05) 0%, transparent 70%);
         }
 
-        .hero-img {
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            margin-bottom: 2rem;
-            border: 4px solid var(--primary);
-            box-shadow: 0 0 30px var(--accent-glow);
-            object-fit: cover;
-        }
-
         h1 {
             font-family: 'Cinzel', serif;
             font-size: 4rem;
@@ -128,25 +106,6 @@
             font-weight: 200;
         }
 
-        .cta-btn {
-            background: var(--primary);
-            color: white;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: 0.4s;
-            border: 2px solid var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .cta-btn:hover {
-            background: transparent;
-            color: var(--primary);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
         section {
             padding: 100px 10%;
         }
@@ -159,13 +118,13 @@
             color: var(--primary);
         }
 
-        .episodes-container {
+        .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2.5rem;
         }
 
-        .video-card {
+        .card {
             background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
@@ -173,40 +132,28 @@
             transition: 0.3s;
         }
 
-        .video-card:hover {
+        .card:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
         }
 
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .card-img {
             width: 100%;
-            height: 100%;
-            border: none;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
         }
 
-        .video-info {
+        .card-content {
             padding: 1.5rem;
         }
 
-        .video-info h3 {
+        .card-content h3 {
             font-family: 'Cinzel', serif;
             color: var(--secondary);
             margin-bottom: 0.5rem;
             font-size: 1.2rem;
-        }
-
-        .video-info p {
-            font-size: 0.9rem;
-            opacity: 0.8;
         }
 
         .footer {
@@ -240,115 +187,89 @@
     </style>
 </head>
 <body>
-    <div id="particles-js"></div>
-    
-    <div class="content-layer">
-        <nav>
-            <a href="#" class="logo">SOLARIA</a>
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#episodes">Episodes</a>
-                <a href="#about">About</a>
-                <a href="https://solarianearl.substack.com">Blog</a>
-            </div>
-        </nav>
+    <nav>
+        <a href="#" class="logo">SOLARIA</a>
+        <div class="nav-links">
+            <a href="#episodes">Episodes</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#about">About</a>
+            <a href="https://solarianearl.substack.com" target="_blank">Blog</a>
+        </div>
+    </nav>
 
-        <header>
-            <img src="assets/image.jpg" alt="Solaria Hero" class="hero-img">
-            <h1>Tales of Solaria</h1>
-            <p class="hero-subtitle">Building a narrative universe through AI-assisted storytelling and digital world-building.</p>
-            <a href="#episodes" class="cta-btn">Enter the Universe</a>
-        </header>
+    <header>
+        <h1>Tales of Solaria</h1>
+        <p class="hero-subtitle">A dark fantasy universe of tragic final stands and impossible choices.</p>
+    </header>
 
-        <section id="episodes">
-            <h2>The Chronicles</h2>
-            <div class="episodes-container">
-                <!-- Video 1 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/rTf3cNMwsV8" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>Ultimate Level 1 Episode 1</h3>
-                        <p>Preview: The journey into the depths of Solaria begins.</p>
-                    </div>
-                </div>
-                <!-- Video 2 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/-CI9-A7eObE" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>Dealing with the rift</h3>
-                        <p>Act 2: The shadows of the rift start to consume the land.</p>
-                    </div>
-                </div>
-                <!-- Video 3 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/Ni9qJ2ontI0" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>Fated - Act 3.5</h3>
-                        <p>The threads of destiny begin to tighten around our heroes.</p>
-                    </div>
-                </div>
-                <!-- Video 4 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>Twin Sunsets</h3>
-                        <p>A quiet moment before the storm in the Solarian sky.</p>
-                    </div>
-                </div>
-                <!-- Video 5 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/ieATtHwFqbc" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>We were sisters once</h3>
-                        <p>Deep lore: The fractured bond that changed Solaria forever.</p>
-                    </div>
-                </div>
-                <!-- Video 6 -->
-                <div class="video-card">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/6VELpAB69k4" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-info">
-                        <h3>Solaria Compilation</h3>
-                        <p>Highlights and key moments from the ever-evolving saga.</p>
-                    </div>
+    <section id="episodes">
+        <h2>Cinematic Episodes</h2>
+        <div class="grid-container">
+            <div class="card">
+                <div class="card-content">
+                    <h3>Ultimate Level 1 Episode 1</h3>
+                    <p>The journey into the depths of Solaria begins. Preview of the first act.</p>
                 </div>
             </div>
-        </section>
-
-        <footer class="footer">
-            <div class="social-links">
-                <a href="https://www.youtube.com/@Game4Digital"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.tiktok.com/@solarianearl"><i class="fab fa-tiktok"></i></a>
-                <a href="https://solarianearl.substack.com"><i class="fas fa-envelope-open-text"></i></a>
+            <div class="card">
+                <div class="card-content">
+                    <h3>Dealing with the rift</h3>
+                    <p>Act 2: The shadows of the rift start to consume the land.</p>
+                </div>
             </div>
-            <p>&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
-        </footer>
-    </div>
+            <div class="card">
+                <div class="card-content">
+                    <h3>Fated - Act 3.5</h3>
+                    <p>The threads of destiny begin to tighten around our heroes.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h3>Twin Sunsets</h3>
+                    <p>A quiet moment before the storm in the Solarian sky.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h3>We were sisters once</h3>
+                    <p>Deep lore: The fractured bond that changed Solaria forever.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h3>Solaria Compilation</h3>
+                    <p>Highlights and key moments from the ever-evolving saga.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS('particles-js', {
-            "particles": {
-                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ff6b35" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.2, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ff6b35", "opacity": 0.1, "width": 1 },
-                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "out_mode": "out" }
-            }
-        });
-    </script>
+    <section id="gallery">
+        <h2>Visuals of Solaria</h2>
+        <div class="grid-container">
+            <div class="card">
+                <img src="assets/images/Warrior-of-the-Radiant-Skies.jpg" alt="Warrior of the Radiant Skies" class="card-img">
+                <div class="card-content">
+                    <h3>Radiant Warrior</h3>
+                </div>
+            </div>
+            <div class="card">
+                <img src="assets/images/ChatGPT-Image-Oct-17-2025-11_31_49-PM.jpg" alt="The Ancient Rift" class="card-img">
+                <div class="card-content">
+                    <h3>The Ancient Rift</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="social-links">
+            <a href="https://www.youtube.com/@Game4Digital" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@solarianearl" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://solarianearl.substack.com" target="_blank"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p>&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
+        <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.6;">Created with Sora for visuals & Suno for audio.</p>
+    </footer>
 </body>
 </html>

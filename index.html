@@ -17,6 +17,7 @@
             --text: #e0e0e0;
             --accent-glow: rgba(255, 107, 53, 0.3);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body {
@@ -26,16 +27,19 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
+
         #particles-js {
             position: fixed;
             width: 100%;
             height: 100%;
             z-index: 1;
         }
+
         .content-layer {
             position: relative;
             z-index: 2;
         }
+
         nav {
             background: rgba(5, 5, 10, 0.9);
             padding: 1.5rem 5%;
@@ -49,6 +53,7 @@
             border-bottom: 1px solid rgba(255, 107, 53, 0.2);
             backdrop-filter: blur(10px);
         }
+
         .logo {
             font-family: 'Cinzel', serif;
             font-size: 1.8rem;
@@ -57,7 +62,12 @@
             font-weight: 900;
             letter-spacing: 2px;
         }
-        .nav-links { display: flex; gap: 2rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
         .nav-links a {
             color: var(--text);
             text-decoration: none;
@@ -67,7 +77,12 @@
             font-size: 0.85rem;
             letter-spacing: 1px;
         }
-        .nav-links a:hover { color: var(--primary); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
         header {
             height: 100vh;
             display: flex;
@@ -78,6 +93,7 @@
             padding: 0 10%;
             background: radial-gradient(circle at center, rgba(255,107,53,0.05) 0%, transparent 70%);
         }
+
         .hero-img {
             width: 320px;
             height: 320px;
@@ -87,6 +103,7 @@
             box-shadow: 0 0 30px var(--accent-glow);
             object-fit: cover;
         }
+
         h1 {
             font-family: 'Cinzel', serif;
             font-size: 4.5rem;
@@ -94,6 +111,7 @@
             color: var(--secondary);
             text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
+
         .hero-subtitle {
             font-size: 1.5rem;
             color: var(--text);
@@ -101,6 +119,7 @@
             margin-bottom: 2.5rem;
             font-weight: 200;
         }
+
         .cta-btn {
             background: var(--primary);
             color: white;
@@ -113,7 +132,13 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        .cta-btn:hover { background: transparent; color: var(--primary); box-shadow: 0 0 20px var(--accent-glow); }
+
+        .cta-btn:hover {
+            background: transparent;
+            color: var(--primary);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
         section { padding: 100px 10%; }
         h2 {
             font-family: 'Cinzel', serif;
@@ -122,6 +147,7 @@
             margin-bottom: 1.5rem;
             color: var(--primary);
         }
+
         .section-subtitle {
             text-align: center;
             margin-bottom: 4rem;
@@ -131,6 +157,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         .category-title {
             font-family: 'Cinzel', serif;
             font-size: 1.8rem;
@@ -139,11 +166,13 @@
             border-left: 4px solid var(--primary);
             padding-left: 1.5rem;
         }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2.5rem;
         }
+
         .card {
             background: var(--card-bg);
             border-radius: 20px;
@@ -151,16 +180,19 @@
             border: 1px solid rgba(255, 107, 53, 0.1);
             transition: 0.3s;
         }
+
         .card:hover {
             transform: translateY(-10px);
             border-color: var(--primary);
             box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
         }
+
         .video-wrapper {
             position: relative;
             padding-bottom: 56.25%;
             height: 0;
         }
+
         .video-wrapper iframe {
             position: absolute;
             top: 0;
@@ -169,9 +201,7 @@
             height: 100%;
             border: none;
         }
-                .shorts-wrapper {
-            padding-bottom: 177.78%;
-        }
+
         .card-content { padding: 1.5rem; }
         .card-content h3 {
             font-family: 'Cinzel', serif;
@@ -180,11 +210,13 @@
             font-size: 1.3rem;
         }
         .card-content p { font-size: 0.95rem; opacity: 0.8; }
+
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
         }
+
         .gallery-item {
             position: relative;
             border-radius: 15px;
@@ -192,13 +224,16 @@
             aspect-ratio: 16/9;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: 0.5s;
         }
+
         .gallery-item:hover img { transform: scale(1.1); }
+
         .gallery-caption {
             position: absolute;
             bottom: 0;
@@ -210,45 +245,81 @@
             font-size: 0.9rem;
             color: var(--secondary);
         }
+
         .music-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
         }
+
         .music-card {
             background: var(--card-bg);
             padding: 2rem;
             border-radius: 20px;
-            text-align: center;
             border: 1px solid rgba(255, 107, 53, 0.1);
             transition: 0.3s;
         }
-        .music-card:hover { border-color: var(--secondary); }
+
+        .music-card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .song-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .song-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .song-list li i {
+            margin-right: 10px;
+            color: var(--secondary);
+            font-size: 0.8rem;
+        }
+
         .music-btn {
-            display: inline-block;
-            margin-top: 1.5rem;
+            display: block;
+            text-align: center;
             color: var(--primary);
             text-decoration: none;
             font-weight: 700;
             border: 1px solid var(--primary);
-            padding: 0.5rem 1.5rem;
+            padding: 0.6rem;
             border-radius: 5px;
             transition: 0.3s;
         }
-        .music-btn:hover { background: var(--primary); color: white; }
+
+        .music-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         .footer {
             padding: 5rem 10%;
             text-align: center;
             border-top: 1px solid rgba(255, 107, 53, 0.1);
         }
+
         .social-links {
             display: flex;
             justify-content: center;
             gap: 2rem;
             margin-bottom: 3rem;
         }
+
         .social-links a { color: var(--text); font-size: 1.8rem; transition: 0.3s; }
         .social-links a:hover { color: var(--primary); transform: translateY(-5px); }
+
         @media (max-width: 768px) {
             h1 { font-size: 2.8rem; }
             .nav-links { display: none; }
@@ -265,12 +336,12 @@
                 <a href="#gallery">Visuals</a>
                 <a href="#music">Music</a>
                 <a href="#about">The Craft</a>
-                <a href="https://solarianearl.substack.com" target="_blank">Chronicles</a>
+                <a href="https://solarianearl.substack.com/" target="_blank">Chronicles</a>
             </div>
         </nav>
 
         <header>
-            <img src="assets/images/Warrior-of-the-Radiant-Skies.jpg" alt="Warrior of the Radiant Skies" class="hero-img">
+            <img src="https://solarianearl0s.github.io/talesofsolaria/assets/img/warrior.jpg" alt="Warrior of the Radiant Skies" class="hero-img" onerror="this.src='https://raw.githubusercontent.com/SolarianEarl0s/talesofsolaria/main/assets/img/warrior.jpg'">
             <h1>Tales of Solaria</h1>
             <p class="hero-subtitle">Building a narrative universe through AI-assisted storytelling and digital world-building.</p>
             <a href="#episodes" class="cta-btn">Enter the Universe</a>
@@ -282,21 +353,21 @@
             <div class="grid-container">
                 <div class="card">
                     <div class="card-content">
-                        <i class="fas fa-pen-fancy" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                        <i class="fas fa-feather-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                         <h3>Narrative Writing</h3>
                         <p>Crafting deep lore and complex character arcs for the Solarian universe. From voice recordings in Ireland to a multi-book saga.</p>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-content">
-                        <i class="fas fa-robot" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                        <i class="fas fa-magic" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                         <h3>AI Generation</h3>
                         <p>Leveraging Sora, Suno, and advanced prompt engineering for cinematic visual and audio storytelling.</p>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-content">
-                        <i class="fas fa-vial" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                        <i class="fas fa-globe-europe" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                         <h3>World Building</h3>
                         <p>Designing interactive systems, historical frameworks, and spiritual landscapes for the rift-torn world of Solaria.</p>
                     </div>
@@ -379,11 +450,8 @@
                 </div>
                 <div class="card">
                     <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64" allowfullscreen></iframe>
+                         <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64" allowfullscreen></iframe>
                     </div>
-                                    <div class="video-wrapper shorts-wrapper">
-                    <iframe src="https://www.youtube.com/embed/KE9ONUot7Ho" title="Twin Sunsets Short" allowfullscreen></iframe>
-                </div>
                     <div class="card-content">
                         <h3>Twin Sunsets</h3>
                         <p>A quiet moment of reflection beneath the iconic twin suns of the home world.</p>
@@ -397,11 +465,11 @@
             <p class="section-subtitle">Cinematic captures and AI-generated artistry.</p>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="assets/images/Warrior-of-the-Radiant-Skies.jpg" alt="Warrior of the Radiant Skies">
+                    <img src="https://img.youtube.com/vi/yzHbd7MOpC4/maxresdefault.jpg" alt="Radiant Warrior">
                     <div class="gallery-caption">Radiant Warrior</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/ChatGPT-Image-Oct-17-2025-11_31_49-PM.jpg" alt="The Ancient Rift">
+                    <img src="https://img.youtube.com/vi/-CI9-A7eObE/maxresdefault.jpg" alt="The Ancient Rift">
                     <div class="gallery-caption">The Ancient Rift</div>
                 </div>
                 <div class="gallery-item">
@@ -409,8 +477,16 @@
                     <div class="gallery-caption">Act 4 Climax</div>
                 </div>
                 <div class="gallery-item">
+                    <img src="https://img.youtube.com/vi/Ni9qJ2ontI0/maxresdefault.jpg" alt="Beneath the Sands">
+                    <div class="gallery-caption">Beneath the Sands</div>
+                </div>
+                <div class="gallery-item">
                     <img src="https://img.youtube.com/vi/XXR2ZlDlT64/maxresdefault.jpg" alt="Twin Sunsets View">
                     <div class="gallery-caption">Twin Sunsets View</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://img.youtube.com/vi/0hQ6vq4lGco/maxresdefault.jpg" alt="Enter Gigi">
+                    <div class="gallery-caption">Character: Gigi</div>
                 </div>
             </div>
         </section>
@@ -420,22 +496,36 @@
             <p class="section-subtitle">The sounds of Solaria, composed with Suno AI.</p>
             <div class="music-grid">
                 <div class="music-card">
-                    <i class="fas fa-music" style="font-size: 2rem; color: var(--primary);"></i>
-                    <h3>Unity's Reluctance</h3>
-                    <p>A haunting score capturing the tragedy of a final blow.</p>
-                    <a href="https://suno.com/@solarianearl" target="_blank" class="music-btn">Listen on Suno</a>
+                    <h3>Act 1: The Fire</h3>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> Mirrored Edge</li>
+                        <li><i class="fas fa-music"></i> Carts & Embers</li>
+                        <li><i class="fas fa-music"></i> Eyes of the Scorned</li>
+                        <li><i class="fas fa-music"></i> Eyes beyond the shadows</li>
+                        <li><i class="fas fa-music"></i> Voiceless Dreamś</li>
+                    </ul>
+                    <a href="https://suno.com/playlist/a461e8d9-6262-4e7d-9068-92c73698ad4f" target="_blank" class="music-btn">Full Act 1 Playlist</a>
                 </div>
                 <div class="music-card">
-                    <i class="fas fa-music" style="font-size: 2rem; color: var(--primary);"></i>
-                    <h3>Krā ti</h3>
-                    <p>Ancient powers and rising spiritual rifts.</p>
-                    <a href="https://suno.com/s/mpDLlgIc6vUkiuHr" target="_blank" class="music-btn">Listen on Suno</a>
+                    <h3>Act 2: The Rift</h3>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> Rift-shattered</li>
+                        <li><i class="fas fa-music"></i> Ulokerā</li>
+                        <li><i class="fas fa-music"></i> Miterâ</li>
+                        <li><i class="fas fa-music"></i> Unhealed memories</li>
+                        <li><i class="fas fa-music"></i> Emoh Ema</li>
+                    </ul>
+                    <a href="https://suno.com/playlist/588c3815-ad36-432d-94bd-359f6bff061e" target="_blank" class="music-btn">Full Act 2 Playlist</a>
                 </div>
                 <div class="music-card">
-                    <i class="fas fa-music" style="font-size: 2rem; color: var(--primary);"></i>
-                    <h3>Carts & Embers</h3>
-                    <p>A folk ballad of the fire of Act 1.</p>
-                    <a href="https://suno.com/s/QA2STd4UEjjCREg0" target="_blank" class="music-btn">Listen on Suno</a>
+                    <h3>Act 3.5: Fated</h3>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> On Dele</li>
+                        <li><i class="fas fa-music"></i> Fated Theme</li>
+                        <li><i class="fas fa-music"></i> Ancient Mysteries</li>
+                        <li><i class="fas fa-music"></i> Sand & Spirit</li>
+                    </ul>
+                    <a href="https://suno.com/playlist/6a28bcc6-b817-4b30-919d-66668d2570cb" target="_blank" class="music-btn">Full Act 3.5 Playlist</a>
                 </div>
             </div>
         </section>
@@ -444,24 +534,25 @@
             <div class="social-links">
                 <a href="https://www.youtube.com/@Game4Digital" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
                 <a href="https://www.tiktok.com/@solarianearl0s" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                <a href="https://solarianearl.substack.com" target="_blank" title="Newsletter"><i class="fas fa-envelope"></i></a>
+                <a href="https://solarianearl.substack.com/" target="_blank" title="Newsletter"><i class="fas fa-envelope"></i></a>
                 <a href="https://github.com/SolarianEarl0s/talesofsolaria/wiki" target="_blank" title="Lore Wiki"><i class="fas fa-book"></i></a>
             </div>
-            <p>© 2026 Tales of Solaria. Produced by Adrian Carter.</p>
-            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.6;">Created with Sora for visuals & Suno for audio.</p>
+            <p>&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
+            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.5;">Created with Sora for visuals & Suno for audio.</p>
         </footer>
     </div>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
-            "particles": {
-                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ff6b35" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.2, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ff6b35", "opacity": 0.1, "width": 1 },
-                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "out_mode": "out" }
+            \"particles\": {
+                \"number\": { \"value\": 60, \"density\": { \"enable\": true, \"value_area\": 800 } },
+                \"color\": { \"value\": \"#ff6b35\" },
+                \"shape\": { \"type\": \"circle\" },
+                \"opacity\": { \"value\": 0.2, \"random\": true },
+                \"size\": { \"value\": 3, \"random\": true },
+                \"line_linked\": { \"enable\": true, \"distance\": 150, \"color\": \"#ff6b35\", \"opacity\": 0.1, \"width\": 1 },
+                \"move\": { \"enable\": true, \"speed\": 1.5, \"direction\": \"none\", \"random\": true, \"out_mode\": \"out\" }
             }
         });
     </script>

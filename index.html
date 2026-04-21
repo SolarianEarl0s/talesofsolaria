@@ -10,13 +10,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #ff6b35;
-            --secondary: #ffb84d;
-            --dark-bg: #05050a;
-            --card-bg: rgba(15, 15, 25, 0.85);
-            --text: #e0e0e0;
-            --accent-glow: rgba(255, 107, 53, 0.3);
-        }
+        --primary: #a855f7;
+        --secondary: #8b5cf6;
+        --accent: #ec4899;
+        --rift-glow: #c084fc;
+        --dark-bg: linear-gradient(135deg, #0f0715 0%, #1a0b2e 50%, #16213e 100%);
+        --card-bg: linear-gradient(145deg, rgba(139, 92, 246, 0.05), rgba(168, 85, 247, 0.08));
+        --card-border: linear-gradient(145deg, rgba(192, 132, 252, 0.3), rgba(236, 72, 153, 0.2));
+        --text: #f3f4f6;
+        --text-muted: #d1d5db;
+        --accent-glow: rgba(168, 85, 247, 0.4);
+        --rift-shadow: 0 0 40px rgba(168, 85, 247, 0.3), 0 0 80px rgba(236, 72, 153, 0.2);        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -91,8 +95,7 @@
             align-items: center;
             text-align: center;
             padding: 0 10%;
-            background: radial-gradient(circle at center, rgba(255,107,53,0.05) 0%, transparent 70%);
-        }
+        background: radial-gradient(ellipse at center top, rgba(168, 85, 247, 0.15) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%), radial-gradient(circle at 30% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);        }
 
         .hero-img {
             width: 300px;
@@ -177,8 +180,9 @@
             background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(255, 107, 53, 0.1);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 2px solid;
+        border-image: var(--card-border) 1;
+        box-shadow: var(--rift-shadow), inset 0 0 20px rgba(168, 85, 247, 0.05);            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .card:hover {

@@ -237,46 +237,6 @@
             gap: 2rem;
         }
 
-        .gallery-item {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.6s;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.15);
-        }
-
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            color: var(--secondary);
-            transform: translateY(10px);
-            opacity: 0;
-            transition: 0.3s;
-        }
-
-        .gallery-item:hover .gallery-caption {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
         .music-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -394,7 +354,6 @@
             <a href="#" class="logo">SOLARIA</a>
             <div class="nav-links">
                 <a href="#episodes">The Chronicles</a>
-                <a href="#gallery">Visuals</a>
                 <a href="#music">Music</a>
                 <a href="#about">The Craft</a>
                 <a href="https://solarianearl.substack.com/" target="_blank">Substack</a>
@@ -518,62 +477,6 @@
                         <h3>Twin Sunsets</h3>
                         <p>Capturing the quiet, ethereal beauty of the Solarian sky beneath the iconic twin suns.</p>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="gallery">
-            <h2>Visuals of Solaria</h2>
-            <p class="section-subtitle">Cinematic captures and AI-generated artistry from across the Solarian universe.</p>
-
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="assets/radiant_skies.jpg" alt="Radiant Skies">
-                    <div class="gallery-caption">Radiant Skies</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/warrior_alt.jpg" alt="Radiant Warrior">
-                    <div class="gallery-caption">Radiant Warrior</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/rift.jpg" alt="Rift Fracture">
-                    <div class="gallery-caption">Rift Fracture</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/ancient_rift.jpg" alt="The Ancient Rift">
-                    <div class="gallery-caption">The Ancient Rift</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/final_stand.jpg" alt="Final Stand">
-                    <div class="gallery-caption">Final Stand</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/climax.jpg" alt="Act 4 Climax">
-                    <div class="gallery-caption">Act 4 Climax</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/ruins.jpg" alt="Desert Ruins">
-                    <div class="gallery-caption">Desert Ruins</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/sands.jpg" alt="Beneath the Sands">
-                    <div class="gallery-caption">Beneath the Sands</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/gigi_portrait.jpg" alt="Gigi Portrait">
-                    <div class="gallery-caption">Gigi Portrait</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/gigi_ascendant.jpg" alt="Gigi Ascendant">
-                    <div class="gallery-caption">Gigi Ascendant</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/sunsets_view.jpg" alt="Twin Sunsets View">
-                    <div class="gallery-caption">Twin Sunsets View</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/sunsets_alt.jpg" alt="Twin Sunsets View">
-                    <div class="gallery-caption">Twin Sunsets View</div>
                 </div>
             </div>
         </section>

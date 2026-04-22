@@ -10,17 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-        --primary: #a855f7;
-        --secondary: #8b5cf6;
-        --accent: #ec4899;
-        --rift-glow: #c084fc;
-        --dark-bg: linear-gradient(135deg, #0f0715 0%, #1a0b2e 50%, #16213e 100%);
-        --card-bg: linear-gradient(145deg, rgba(139, 92, 246, 0.05), rgba(168, 85, 247, 0.08));
-        --card-border: linear-gradient(145deg, rgba(192, 132, 252, 0.3), rgba(236, 72, 153, 0.2));
-        --text: #f3f4f6;
-        --text-muted: #d1d5db;
-        --accent-glow: rgba(168, 85, 247, 0.4);
-        --rift-shadow: 0 0 40px rgba(168, 85, 247, 0.3), 0 0 80px rgba(236, 72, 153, 0.2);        }
+            --primary: #a855f7;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --rift-glow: #c084fc;
+            --dark-bg: linear-gradient(135deg, #0f0715 0%, #1a0b2e 50%, #16213e 100%);
+            --card-bg: linear-gradient(145deg, rgba(139, 92, 246, 0.05), rgba(168, 85, 247, 0.08));
+            --card-border: linear-gradient(145deg, rgba(192, 132, 252, 0.3), rgba(236, 72, 153, 0.2));
+            --text: #f3f4f6;
+            --text-muted: #d1d5db;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --rift-shadow: 0 0 40px rgba(168, 85, 247, 0.3), 0 0 80px rgba(236, 72, 153, 0.2);
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -95,7 +96,9 @@
             align-items: center;
             text-align: center;
             padding: 0 10%;
-        background: radial-gradient(ellipse at center top, rgba(168, 85, 247, 0.15) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%), radial-gradient(circle at 30% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);        }
+            background: radial-gradient(ellipse at center top, rgba(168, 85, 247, 0.15) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%),
+                        radial-gradient(circle at 30% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+        }
 
         .hero-img {
             width: 300px;
@@ -142,7 +145,10 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        section { padding: 120px 10%; }
+        section {
+            padding: 120px 10%;
+        }
+
         h2 {
             font-family: 'Cinzel', serif;
             font-size: clamp(2.2rem, 5vw, 3rem);
@@ -180,9 +186,10 @@
             background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
-        border: 2px solid;
-        border-image: var(--card-border) 1;
-        box-shadow: var(--rift-shadow), inset 0 0 20px rgba(168, 85, 247, 0.05);            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid;
+            border-image: var(--card-border) 1;
+            box-shadow: var(--rift-shadow), inset 0 0 20px rgba(168, 85, 247, 0.05);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .card:hover {
@@ -207,14 +214,22 @@
             border: none;
         }
 
-        .card-content { padding: 2rem; }
+        .card-content {
+            padding: 2rem;
+        }
+
         .card-content h3 {
             font-family: 'Cinzel', serif;
             color: var(--secondary);
             margin-bottom: 1rem;
             font-size: 1.4rem;
         }
-        .card-content p { font-size: 1rem; opacity: 0.8; line-height: 1.7; }
+
+        .card-content p {
+            font-size: 1rem;
+            opacity: 0.8;
+            line-height: 1.7;
+        }
 
         .gallery-grid {
             display: grid;
@@ -238,7 +253,9 @@
             transition: 0.6s;
         }
 
-        .gallery-item:hover img { transform: scale(1.15); }
+        .gallery-item:hover img {
+            transform: scale(1.15);
+        }
 
         .gallery-caption {
             position: absolute;
@@ -344,14 +361,14 @@
             margin-bottom: 3.5rem;
         }
 
-        .social-links a { 
-            color: var(--text); 
-            font-size: 2rem; 
-            transition: 0.4s; 
+        .social-links a {
+            color: var(--text);
+            font-size: 2rem;
+            transition: 0.4s;
         }
 
-        .social-links a:hover { 
-            color: var(--primary); 
+        .social-links a:hover {
+            color: var(--primary);
             transform: translateY(-8px) scale(1.1);
             text-shadow: 0 0 15px var(--accent-glow);
         }
@@ -371,6 +388,7 @@
 </head>
 <body>
     <div id="particles-js"></div>
+
     <div class="content-layer">
         <nav>
             <a href="#" class="logo">SOLARIA</a>
@@ -384,7 +402,7 @@
         </nav>
 
         <header>
-            <img src="https://solarianearl0s.github.io/talesofsolaria/assets/img/warrior.jpg" alt="Warrior of the Radiant Skies" class="hero-img" onerror="this.src='https://raw.githubusercontent.com/SolarianEarl0s/talesofsolaria/main/assets/img/warrior.jpg'">
+            <img src="assets/warrior.jpg" alt="Warrior of the Radiant Skies" class="hero-img">
             <h1>Tales of Solaria</h1>
             <p class="hero-subtitle">Building a narrative universe through AI-assisted storytelling and digital world-building.</p>
             <a href="#episodes" class="cta-btn">Explore the Archive</a>
@@ -393,27 +411,22 @@
         <section id="about">
             <h2>The Craft</h2>
             <p class="section-subtitle">Bridging the gap between imagination and digital reality with modern AI workflows.</p>
+
             <div class="grid-container">
-                <div class="card">
-                    <div class="card-content">
-                        <i class="fas fa-feather-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
-                        <h3>Narrative Architecture</h3>
-                        <p>Constructing multi-layered character arcs and historical lore. The foundation of Solaria is a living script that evolves with every act.</p>
-                    </div>
+                <div class="music-card">
+                    <i class="fas fa-scroll fa-3x" style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;"></i>
+                    <h3>Narrative Architecture</h3>
+                    <p>Constructing multi-layered character arcs and historical lore. The foundation of Solaria is a living script that evolves with every act.</p>
                 </div>
-                <div class="card">
-                    <div class="card-content">
-                        <i class="fas fa-magic" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
-                        <h3>Cinematic Generation</h3>
-                        <p>Leveraging tools like Sora, Kling, and Luma for high-fidelity visuals, paired with Suno AI for custom-tailored orchestral scores.</p>
-                    </div>
+                <div class="music-card">
+                    <i class="fas fa-film fa-3x" style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;"></i>
+                    <h3>Cinematic Generation</h3>
+                    <p>Leveraging tools like Sora, Kling, and Luma for high-fidelity visuals, paired with Suno AI for custom-tailored orchestral scores.</p>
                 </div>
-                <div class="card">
-                    <div class="card-content">
-                        <i class="fas fa-microchip" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
-                        <h3>Digital Worldbuilding</h3>
-                        <p>Designing the spiritual landscapes and power systems of the rift-torn world. A blend of philosophy and interactive design.</p>
-                    </div>
+                <div class="music-card">
+                    <i class="fas fa-microchip fa-3x" style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;"></i>
+                    <h3>Digital Worldbuilding</h3>
+                    <p>Designing the spiritual landscapes and power systems of the rift-torn world. A blend of philosophy and interactive design.</p>
                 </div>
             </div>
         </section>
@@ -426,22 +439,24 @@
             <div class="grid-container">
                 <div class="card">
                     <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/gsR3gCIZgBY" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/uNzCj63pcCU" allowfullscreen></iframe>
                     </div>
                     <div class="card-content">
                         <h3>Act 4: Together as One</h3>
                         <p>The climactic stand. When the weight of duty and the pressure of the rift reach their breaking point.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/Ni9qJ2ontI0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/yzHbd7MOpC4" allowfullscreen></iframe>
                     </div>
                     <div class="card-content">
                         <h3>Act 3.5: Fated</h3>
                         <p>Ancient mysteries are unearthed beneath the shifting sands as destiny begins to tighten its grip.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/-CI9-A7eObE" allowfullscreen></iframe>
@@ -451,6 +466,7 @@
                         <p>The shadows of the spiritual rift begin to fracture the land, consuming everything in their path.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/yzHbd7MOpC4" allowfullscreen></iframe>
@@ -473,6 +489,7 @@
                         <p>A deeper look into the power systems and the mechanics of the Solarian spiritual flow.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/0hQ6vq4lGco" allowfullscreen></iframe>
@@ -482,6 +499,7 @@
                         <p>A character spotlight on the fierce and formidable newcomer to the Solarian landscape.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/ieATtHwFqbc" allowfullscreen></iframe>
@@ -491,9 +509,10 @@
                         <p>The fractured bond between Rose and Unity. A story of betrayal and forgotten oaths.</p>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="video-wrapper">
-                         <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/XXR2ZlDlT64" allowfullscreen></iframe>
                     </div>
                     <div class="card-content">
                         <h3>Twin Sunsets</h3>
@@ -506,29 +525,54 @@
         <section id="gallery">
             <h2>Visuals of Solaria</h2>
             <p class="section-subtitle">Cinematic captures and AI-generated artistry from across the Solarian universe.</p>
+
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/yzHbd7MOpC4/maxresdefault.jpg" alt="Radiant Skies">
+                    <img src="assets/radiant_skies.jpg" alt="Radiant Skies">
+                    <div class="gallery-caption">Radiant Skies</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/warrior_alt.jpg" alt="Radiant Warrior">
                     <div class="gallery-caption">Radiant Warrior</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/-CI9-A7eObE/maxresdefault.jpg" alt="Rift Fracture">
+                    <img src="assets/rift.jpg" alt="Rift Fracture">
+                    <div class="gallery-caption">Rift Fracture</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/ancient_rift.jpg" alt="The Ancient Rift">
                     <div class="gallery-caption">The Ancient Rift</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/gsR3gCIZgBY/maxresdefault.jpg" alt="Final Stand">
+                    <img src="assets/final_stand.jpg" alt="Final Stand">
+                    <div class="gallery-caption">Final Stand</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/climax.jpg" alt="Act 4 Climax">
                     <div class="gallery-caption">Act 4 Climax</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/Ni9qJ2ontI0/maxresdefault.jpg" alt="Desert Ruins">
+                    <img src="assets/ruins.jpg" alt="Desert Ruins">
+                    <div class="gallery-caption">Desert Ruins</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/sands.jpg" alt="Beneath the Sands">
                     <div class="gallery-caption">Beneath the Sands</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/0hQ6vq4lGco/maxresdefault.jpg" alt="Gigi Portrait">
+                    <img src="assets/gigi_portrait.jpg" alt="Gigi Portrait">
+                    <div class="gallery-caption">Gigi Portrait</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/gigi_ascendant.jpg" alt="Gigi Ascendant">
                     <div class="gallery-caption">Gigi Ascendant</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://img.youtube.com/vi/XXR2ZlDlT64/maxresdefault.jpg" alt="Twin Sunsets View">
+                    <img src="assets/sunsets_view.jpg" alt="Twin Sunsets View">
+                    <div class="gallery-caption">Twin Sunsets View</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/sunsets_alt.jpg" alt="Twin Sunsets View">
                     <div class="gallery-caption">Twin Sunsets View</div>
                 </div>
             </div>
@@ -536,53 +580,60 @@
 
         <section id="music">
             <h2>Original Soundtracks</h2>
-            <p class="section-subtitle"The sounds of Solaria, composed with Suno AI.</p>
             <div class="music-grid">
-            <div class="music-card">
-                <i class="fas fa-music" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; display: block; text-align: center;"></i>
-                <h3>Unity's Reluctance</h3>
-                <p>A haunting score capturing the tragedy of a final blow.</p>
-                <a href="https://suno.com" target="_blank" class="music-btn">Listen on Suno</a>
-            </div>
-            <div class="music-card">
-                <i class="fas fa-music" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; display: block; text-align: center;"></i>
-                <h3>Krā ti</h3>
-                <p>Ancient powers and rising spiritual rifts.</p>
-                <a href="https://suno.com" target="_blank" class="music-btn">Listen on Suno</a>
-            </div>
-            <div class="music-card">
-                <i class="fas fa-music" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; display: block; text-align: center;"></i>
-                <h3>Carts & Embers</h3>
-                <p>A folk ballad of the fire of Act 1.</p>
-                <a href="https://suno.com" target="_blank" class="music-btn">Listen on Suno</a>
-            </div>
+                <div class="music-card">
+                    <h3>Unity's Reluctance</h3>
+                    <p style="margin-bottom: 1.5rem; opacity: 0.8;">A haunting score capturing the tragedy of a final blow.</p>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> Orchestral Theme</li>
+                        <li><i class="fas fa-music"></i> Emotional Strings</li>
+                    </ul>
+                    <a href="https://suno.com" class="music-btn">Listen on Suno</a>
+                </div>
+                <div class="music-card">
+                    <h3>Krā ti</h3>
+                    <p style="margin-bottom: 1.5rem; opacity: 0.8;">Ancient powers and rising spiritual rifts.</p>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> Tribal Rhythms</li>
+                        <li><i class="fas fa-music"></i> Dark Synth</li>
+                    </ul>
+                    <a href="https://suno.com" class="music-btn">Listen on Suno</a>
+                </div>
+                <div class="music-card">
+                    <h3>Carts & Embers</h3>
+                    <p style="margin-bottom: 1.5rem; opacity: 0.8;">A folk ballad of the fire of Act 1.</p>
+                    <ul class="song-list">
+                        <li><i class="fas fa-music"></i> Acoustic Folk</li>
+                        <li><i class="fas fa-music"></i> Narrative Vocals</li>
+                    </ul>
+                    <a href="https://suno.com" class="music-btn">Listen on Suno</a>
+                </div>
             </div>
         </section>
-537
-        
+
         <footer class="footer">
             <div class="social-links">
-                <a href="https://www.youtube.com/@Game4Digital" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.tiktok.com/@solarianearl0s" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                <a href="https://solarianearl.substack.com/" target="_blank" title="Newsletter"><i class="fas fa-envelope"></i></a>
-                <a href="https://github.com/SolarianEarl0s/talesofsolaria/wiki" target="_blank" title="Lore Wiki"><i class="fas fa-book-open"></i></a>
+                <a href="https://www.youtube.com/@Game4Digital" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@solarianearl0s" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://solarianearl.substack.com/" target="_blank"><i class="fas fa-envelope"></i></a>
+                <a href="https://github.com/SolarianEarl0s/talesofsolaria/wiki" target="_blank"><i class="fas fa-book-open"></i></a>
             </div>
-            <p class="copyright">&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
-            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.4;">Built with modern AI tools & storytelling passion.</p>
+            <p>© 2026 Tales of Solaria. Produced by Adrian Carter.</p>
+            <p class="copyright">Built with modern AI tools & storytelling passion.</p>
         </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
-            \"particles\": {
-                \"number\": { \"value\": 70, \"density\": { \"enable\": true, \"value_area\": 900 } },
-                \"color\": { \"value\": \"#ff6b35\" },
-                \"shape\": { \"type\": \"circle\" },
-                \"opacity\": { \"value\": 0.25, \"random\": true },
-                \"size\": { \"value\": 2.5, \"random\": true },
-                \"line_linked\": { \"enable\": true, \"distance\": 150, \"color\": \"#ff6b35\", \"opacity\": 0.1, \"width\": 1 },
-                \"move\": { \"enable\": true, \"speed\": 1.2, \"direction\": \"none\", \"random\": true, \"out_mode\": \"out\" }
+            "particles": {
+                "number": { "value": 70, "density": { "enable": true, "value_area": 900 } },
+                "color": { "value": "#ff6b35" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.25, "random": true },
+                "size": { "value": 2.5, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ff6b35", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 1.2, "direction": "none", "random": true, "out_mode": "out" }
             }
         });
     </script>

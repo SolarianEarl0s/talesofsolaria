@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tales of Solaria | A Six-Act Fantasy Saga</title>
+  <meta name="description" content="A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #0d0b1a;
+      color: #e8e0cc;
+      font-family: 'Raleway', 'Helvetica Neue', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    :root {
+      --color-bg: #0d0b1a;
+      --color-surface: #13102b;
+      --color-surface-2: #1a1535;
+      --color-surface-offset: #221d40;
+      --color-border: rgba(201,168,76,0.15);
+      --color-gold: #c9a84c;
+      --color-gold-hover: #e2c06a;
+      --color-gold-dim: rgba(201,168,76,0.6);
+      --color-text: #e8e0cc;
+      --color-text-muted: #a09880;
+      --color-text-faint: #5a5245;
+      --font-display: 'Cinzel', 'Georgia', serif;
+      --font-body: 'Raleway', 'Helvetica Neue', sans-serif;
+      --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem;
+      --space-16: 4rem; --space-20: 5rem;
+    }
+
+    .skip-link {
+      position: absolute; top: -100px; left: var(--space-4);
+      background: var(--color-gold); color: #0d0b1a;
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-display); font-size: 0.8rem;
+      z-index: 9999; border-radius: 0 0 4px 4px; transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+    #starfield-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-4) var(--space-8);
+      background: rgba(13,11,26,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.2); z-index: 1000;
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--color-gold); letter-spacing: 0.1em; }
+    .nav-links { display: flex; align-items: center; gap: var(--space-8); list-style: none; }
+    .nav-links a { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--color-text-muted); transition: color 0.2s; text-transform: uppercase; }
+    .nav-links a:hover { color: var(--color-gold); }
+    .nav-links .nav-special { color: var(--color-gold); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: var(--space-2); }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--color-gold); border-radius: 2px; transition: all 0.3s; }
+    .mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: rgba(13,11,26,0.98); border-bottom: 1px solid var(--color-border); padding: var(--space-6) var(--space-8); z-index: 999; }
+    .mobile-menu.open { display: block; }
+    .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-4); }
+    .mobile-menu a { font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.1em; color: var(--color-text-muted); text-transform: uppercase; }
+    .mobile-menu a:hover { color: var(--color-gold); }
+
+    /* ===== SECTION LABELS ===== */
+    .section-label { font-family: var(--font-display); font-size: clamp(1.2rem, 2.5vw, 1.6rem); letter-spacing: 0.15em; color: var(--color-gold); text-align: center; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: var(--space-4); }
+    .section-label::before, .section-label::after { content: ''; flex: 1; max-width: 80px; height: 1px; background: var(--color-border); }
+    .section-sub { font-family: var(--font-body); font-size: 0.9rem; color: var(--color-text-muted); text-align: center; margin-top: var(--space-2); }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary { display: inline-flex; align-items: center; gap: var(--space-2); background: var(--color-gold); color: #0d0b1a; font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem var(--space-6); border: 2px solid var(--color-gold); cursor: pointer; transition: background 0.2s, color 0.2s; min-height: 44px; }
+    .btn-primary:hover { background: var(--color-gold-hover); border-color: var(--color-gold-hover); }
+    .btn-outline { display: inline-flex; align-items: center; gap: var(--space-2); background: transparent; color: var(--color-gold); font-family: var(--font-display); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem var(--space-6); border: 2px solid var(--color-gold); cursor: pointer; transition: background 0.2s, color 0.2s; min-height: 44px; }
+    .btn-outline:hover { background: rgba(201,168,76,0.1); }
+
+    /* ===== HERO ===== */
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding: 120px var(--space-8) var(--space-20); overflow: hidden; z-index: 1; }
+    .hero-glow { position: absolute; top: 0; left: 0; width: 60%; height: 100%; background: radial-gradient(ellipse at 30% 50%, rgba(120,80,200,0.18) 0%, transparent 65%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; max-width: 560px; }
+    .hero-eyebrow { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; color: var(--color-gold); letter-spacing: 0.2em; text-transform: uppercase; line-height: 1; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(4rem, 10vw, 8rem); font-weight: 900; color: var(--color-gold); letter-spacing: 0.05em; text-transform: uppercase; line-height: 0.9; margin-bottom: var(--space-6); }
+    .hero-subtitle { font-size: 1rem; color: var(--color-text-muted); font-weight: 300; max-width: 420px; margin-bottom: var(--space-8); line-height: 1.8; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+    .hero-art { position: absolute; right: 0; top: 0; bottom: 0; width: 55%; z-index: 1; background: linear-gradient(to right, #0d0b1a 5%, transparent 35%); }
+    .hero-art img { width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0.75; }
+    .hero-art-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #1a1535 0%, #0d0b1a 100%); display: flex; align-items: center; justify-content: center; color: var(--color-text-faint); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.1em; text-align: center; }
+
+    /* ===== CHRONICLES ===== */
+    .chronicles { position: relative; z-index: 1; padding: var(--space-20) var(--space-8); background: linear-gradient(to bottom, transparent, rgba(19,16,43,0.5) 20%, rgba(19,16,43,0.5) 80%, transparent); }
+    .section-header { margin-bottom: var(--space-12); }
+    .acts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-6); max-width: 1100px; margin: 0 auto; }
+    .act-card { background: var(--color-surface); border: 1px solid var(--color-border); overflow: hidden; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .act-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(201,168,76,0.15); }
+    .act-thumbnail { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; background: var(--color-surface-2); }
+    .act-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    .act-thumb-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #1a1535, #0d0b1a); display: flex; align-items: center; justify-content: center; color: var(--color-text-faint); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; }
+    .act-badge { position: absolute; top: var(--space-3); left: var(--space-3); background: var(--color-gold); color: #0d0b1a; font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .act-badge-wide { position: absolute; top: var(--space-3); left: var(--space-3); background: var(--color-gold); color: #0d0b1a; font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; padding: 0 0.5rem; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+    .act-body { padding: var(--space-4); }
+    .act-title { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--color-text); margin-bottom: var(--space-2); }
+    .act-description { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: var(--space-4); }
+    .act-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); }
+    .act-status { display: inline-block; font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 0.1em; font-weight: 600; padding: 0.25rem 0.75rem; border-width: 1px; border-style: solid; }
+    .act-status.complete { background: rgba(80,180,100,0.1); border-color: rgba(80,180,100,0.4); color: #6ecf85; }
+    .act-status.in-progress { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.4); color: var(--color-gold); }
+    .act-status.upcoming { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: var(--color-text-faint); }
+    .act-watch { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--color-gold); text-transform: uppercase; transition: color 0.2s; }
+    .act-watch:hover { color: var(--color-gold-hover); }
+    .act-episodes { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 0.3rem; }
+    .act-episode-link { font-size: 0.72rem; color: var(--color-text-muted); transition: color 0.2s; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .act-episode-link:hover { color: var(--color-gold); }
+    .view-all-link { display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin-top: var(--space-8); font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.12em; color: var(--color-gold); text-transform: uppercase; transition: color 0.2s; }
+    .view-all-link:hover { color: var(--color-gold-hover); }
+
+    /* ===== IMAGE GALLERY BANNER ===== */
+    .gallery-banner { position: relative; z-index: 1; padding: var(--space-12) var(--space-8); }
+    .gallery-banner-inner { max-width: 1100px; margin: 0 auto; background: var(--color-surface); border: 1px solid var(--color-border); padding: var(--space-8) var(--space-12); display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); flex-wrap: wrap; }
+    .gallery-banner-title { font-family: var(--font-display); font-size: clamp(0.9rem, 1.8vw, 1.1rem); font-weight: 700; letter-spacing: 0.12em; color: var(--color-text); text-transform: uppercase; margin-bottom: var(--space-2); }
+    .gallery-banner-sub { font-size: 0.82rem; color: var(--color-text-muted); }
+    .gallery-icon { font-size: 2rem; color: var(--color-gold); flex-shrink: 0; }
+
+    /* ===== BEHIND THE CRAFT ===== */
+    .behind-craft {
+      position: relative; z-index: 1;
+      padding: var(--space-20) var(--space-8);
+    }
+    .behind-craft-inner { max-width: 1100px; margin: 0 auto; }
+    .behind-craft-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+      margin-top: var(--space-12);
+    }
+    .craft-log {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-8);
+      display: flex; flex-direction: column; gap: var(--space-4);
+    }
+    .craft-log-phase {
+      font-family: var(--font-display); font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--color-gold); margin-bottom: var(--space-2);
+    }
+    .craft-log-title {
+      font-family: var(--font-display); font-size: 0.95rem;
+      font-weight: 700; letter-spacing: 0.06em; color: var(--color-text);
+      margin-bottom: var(--space-3);
+    }
+    .craft-log-body {
+      font-size: 0.83rem; color: var(--color-text-muted);
+      line-height: 1.8; flex: 1;
+    }
+    .craft-log-links {
+      display: flex; flex-direction: column; gap: 0.4rem;
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
+    }
+    .craft-log-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--font-display); font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--color-gold); transition: color 0.2s;
+    }
+    .craft-log-link:hover { color: var(--color-gold-hover); }
+    .craft-log-link.tiktok { color: var(--color-text-muted); }
+    .craft-log-link.tiktok:hover { color: var(--color-gold); }
+
+    /* Tools table */
+    .tools-section {
+      margin-top: var(--space-12);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-8);
+    }
+    .tools-section-title {
+      font-family: var(--font-display); font-size: 0.8rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--color-gold); margin-bottom: var(--space-6);
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-4);
+    }
+    .tool-item {
+      display: flex; gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .tool-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--color-gold); flex-shrink: 0;
+      margin-top: 0.45rem;
+    }
+    .tool-name {
+      font-family: var(--font-display); font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 0.08em;
+      color: var(--color-text); display: block; margin-bottom: 0.2rem;
+    }
+    .tool-desc {
+      font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.6;
+    }
+
+    /* ===== CHARACTERS ===== */
+    .characters { position: relative; z-index: 1; padding: var(--space-20) var(--space-8); }
+    .characters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-6); max-width: 1100px; margin: 0 auto; }
+    .character-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: var(--space-4); text-align: left; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s; }
+    .character-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); }
+    .character-portrait { width: 100%; aspect-ratio: 1/1; overflow: hidden; margin-bottom: var(--space-4); background: var(--color-surface-2); }
+    .character-portrait img { width: 100%; height: 100%; object-fit: cover; }
+    .portrait-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #221d40, #13102b); display: flex; align-items: center; justify-content: center; color: var(--color-text-faint); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; }
+    .character-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--color-text); letter-spacing: 0.08em; margin-bottom: var(--space-2); }
+    .character-bio { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: var(--space-4); }
+    .character-link { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--color-gold); text-transform: uppercase; transition: color 0.2s; display: inline-flex; align-items: center; gap: var(--space-2); }
+    .character-link:hover { color: var(--color-gold-hover); }
+
+    /* ===== THE CRAFT ===== */
+    .craft { position: relative; z-index: 1; padding: var(--space-20) var(--space-8); background: linear-gradient(to bottom, transparent, rgba(19,16,43,0.5) 20%, rgba(19,16,43,0.5) 80%, transparent); }
+    .craft-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-6); max-width: 1100px; margin: 0 auto; }
+    .craft-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+    .craft-icon { width: 40px; height: 40px; color: var(--color-gold); }
+    .craft-title { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-text); text-transform: uppercase; }
+    .craft-desc { font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.7; }
+
+    /* ===== THE WORLD ===== */
+    .world { position: relative; z-index: 1; min-height: 500px; display: flex; align-items: center; overflow: hidden; }
+    .world-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #0d0b1a 0%, #1a1535 50%, #0d0b1a 100%); }
+    .world-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
+    .world-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(13,11,26,0.95) 40%, rgba(13,11,26,0.4) 100%); }
+    .world-content { position: relative; z-index: 2; padding: var(--space-20) var(--space-8); max-width: 560px; }
+    .world-heading { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: var(--color-gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-4); }
+    .world-body { font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.8; margin-bottom: var(--space-8); }
+
+    /* ===== NEWSLETTER ===== */
+    .newsletter { position: relative; z-index: 1; padding: var(--space-16) var(--space-8); background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+    .newsletter-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
+    .newsletter-icon { font-size: 2.5rem; color: var(--color-gold); flex-shrink: 0; }
+    .newsletter-text { flex: 1; min-width: 260px; }
+    .newsletter-heading { font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700; letter-spacing: 0.1em; color: var(--color-text); text-transform: uppercase; margin-bottom: var(--space-2); }
+    .newsletter-sub { font-size: 0.875rem; color: var(--color-text-muted); }
+    .newsletter-form { flex: 1; min-width: 260px; }
+    .newsletter-input-row { display: flex; gap: 0; border: 1px solid var(--color-border); }
+    .newsletter-input { flex: 1; background: var(--color-bg); border: none; outline: none; padding: 0.75rem var(--space-4); color: var(--color-text); font-family: var(--font-body); font-size: 0.875rem; }
+    .newsletter-input::placeholder { color: var(--color-text-faint); }
+    .newsletter-btn { background: var(--color-gold); color: #0d0b1a; font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: none; padding: 0.75rem var(--space-4); cursor: pointer; white-space: nowrap; transition: background 0.2s; min-height: 44px; }
+    .newsletter-btn:hover { background: var(--color-gold-hover); }
+    .newsletter-note { font-size: 0.75rem; color: var(--color-text-faint); margin-top: var(--space-2); text-align: center; }
+    .newsletter-success { display: none; color: var(--color-gold); font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.05em; margin-top: var(--space-2); }
+
+    /* ===== FOOTER ===== */
+    .footer { position: relative; z-index: 1; padding: var(--space-16) var(--space-8) var(--space-8); background: var(--color-bg); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--space-8); max-width: 1100px; margin: 0 auto; padding-bottom: var(--space-8); border-bottom: 1px solid var(--color-border); }
+    .footer-logo { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--color-gold); letter-spacing: 0.1em; margin-bottom: var(--space-2); }
+    .footer-logo-sub { font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 0.15em; color: var(--color-text-faint); text-transform: uppercase; margin-bottom: var(--space-4); }
+    .footer-tagline { font-style: italic; font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.6; }
+    .footer-col-title { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.15em; color: var(--color-gold); text-transform: uppercase; margin-bottom: var(--space-4); }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+    .footer-col a { font-size: 0.82rem; color: var(--color-text-muted); transition: color 0.2s; }
+    .footer-col a:hover { color: var(--color-gold); }
+    .social-icons { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+    .social-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-border); color: var(--color-text-muted); transition: color 0.2s, border-color 0.2s; border-radius: 2px; }
+    .social-icon:hover { color: var(--color-gold); border-color: var(--color-gold); }
+    .social-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); max-width: 1100px; margin: var(--space-8) auto 0; font-size: 0.75rem; color: var(--color-text-faint); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-art { width: 50%; }
+      .gallery-banner-inner { padding: var(--space-6) var(--space-8); }
+      .behind-craft-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero { padding: 100px var(--space-6) var(--space-16); }
+      .hero-art { display: none; }
+      .hero-content { max-width: 100%; }
+      .chronicles, .characters, .craft, .behind-craft { padding: var(--space-12) var(--space-6); }
+      .world-content { padding: var(--space-12) var(--space-6); }
+      .newsletter-inner { flex-direction: column; gap: var(--space-6); }
+      .footer { padding: var(--space-12) var(--space-6) var(--space-8); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+      .footer-brand { grid-column: 1 / -1; }
+      .gallery-banner { padding: var(--space-8) var(--space-6); }
+      .gallery-banner-inner { flex-direction: column; gap: var(--space-4); text-align: center; }
+      .tools-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .acts-grid { grid-template-columns: 1fr; }
+      .characters-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <canvas id="starfield-canvas" aria-hidden="true"></canvas>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#" class="nav-logo" aria-label="Tales of Solaria home">&#10022; SOLARIA</a>
+    <ul class="nav-links" id="nav-menu" role="list">
+      <li><a href="#chronicles">The Chronicles</a></li>
+      <li><a href="#behind-craft">Making Of</a></li>
+      <li><a href="#craft">The Craft</a></li>
+      <li><a href="#characters">Characters</a></li>
+      <li><a href="#world">Lore</a></li>
+      <li><a href="https://drive.google.com/drive/folders/1c-M64hQCSmppuHC09xjV266-s41DFB5K?usp=drive_link" target="_blank" rel="noopener noreferrer">Gallery</a></li>
+      <li><a href="https://substack.com/@solarianearl" target="_blank" rel="noopener noreferrer" class="nav-special">Substack &#10022;</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+    <ul>
+      <li><a href="#chronicles" class="mobile-link">The Chronicles</a></li>
+      <li><a href="#behind-craft" class="mobile-link">Making Of</a></li>
+      <li><a href="#craft" class="mobile-link">The Craft</a></li>
+      <li><a href="#characters" class="mobile-link">Characters</a></li>
+      <li><a href="#world" class="mobile-link">Lore</a></li>
+      <li><a href="https://drive.google.com/drive/folders/1c-M64hQCSmppuHC09xjV266-s41DFB5K?usp=drive_link" target="_blank" rel="noopener noreferrer">Gallery</a></li>
+      <li><a href="https://substack.com/@solarianearl" target="_blank" rel="noopener noreferrer">Substack &#10022;</a></li>
+    </ul>
+  </div>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-art" aria-hidden="true">
+        <!-- <img src="assets/images/hero-ensemble.jpg" alt="Tales of Solaria characters"> -->
+        <div class="hero-art-placeholder">[ Add hero artwork here ]</div>
+      </div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Tales of</p>
+        <h1 class="hero-title">Solaria</h1>
+        <p class="hero-subtitle">A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding.</p>
+        <div class="hero-ctas">
+          <a href="#chronicles" class="btn-primary">Enter the Chronicles &rsaquo;</a>
+          <a href="#world" class="btn-outline">Explore the World &#10022;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE CHRONICLES -->
+    <section class="chronicles" id="chronicles" aria-labelledby="chronicles-heading">
+      <div class="section-header">
+        <h2 class="section-label" id="chronicles-heading">&#10022; The Chronicles &#10022;</h2>
+        <p class="section-sub">Six Acts. One Epic Saga.</p>
+      </div>
+      <div class="acts-grid">
+
+        <!-- ACT 1 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-1.jpg" alt="Act I: The Journey" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act I Artwork</div>
+            <span class="act-badge" aria-label="Act number">1</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act I: The Journey</h3>
+            <p class="act-description">Two souls set forth across a fractured world, bound by fate and a song not yet written.</p>
+            <div class="act-footer">
+              <span class="act-status complete">Complete</span>
+              <a href="https://youtu.be/yzHbd7MOpC4" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+            <div class="act-episodes">
+              <a href="https://youtu.be/6VELpAB69k4" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Prologue (Pre-Generation)</a>
+              <a href="https://www.tiktok.com/@solarianearl/video/7505349974037892354" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Ch.1 Continuation (TikTok)</a>
+              <a href="https://youtu.be/yzHbd7MOpC4" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Full Scene (Video Generation)</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 2 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-2.jpg" alt="Act II: The Trials" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act II Artwork</div>
+            <span class="act-badge" aria-label="Act number">2</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act II: The Trials</h3>
+            <p class="act-description">Bonds are forged and broken as the path grows perilous and every choice carries a price.</p>
+            <div class="act-footer">
+              <span class="act-status complete">Complete</span>
+              <a href="https://youtu.be/-CI9-A7eObE" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+            <div class="act-episodes">
+              <a href="https://youtu.be/-CI9-A7eObE" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Part 1</a>
+              <a href="https://youtu.be/0hQ6vq4lGco" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Part 2</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 3 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-3.jpg" alt="Act III: The Reckoning" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act III Artwork</div>
+            <span class="act-badge" aria-label="Act number">3</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act III: The Reckoning</h3>
+            <p class="act-description">A gathering storm forces a confrontation with the shadows long left behind.</p>
+            <div class="act-footer">
+              <span class="act-status complete">Complete</span>
+              <a href="https://youtube.com/shorts/ZPR8opUtJKk" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 3.5 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-3-5.jpg" alt="Act 3.5: Fated" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act 3.5 Artwork</div>
+            <span class="act-badge-wide" aria-label="Act number">3.5</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act 3.5: Fated</h3>
+            <p class="act-description">Trials of fire and shadow shape a destiny that neither time nor fate can fully control.</p>
+            <div class="act-footer">
+              <span class="act-status complete">Complete</span>
+              <a href="https://youtu.be/Ni9qJ2ontI0" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 4 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-4.jpg" alt="Act 4: Together as One" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act 4 Artwork</div>
+            <span class="act-badge" aria-label="Act number">4</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act 4: Together as One</h3>
+            <p class="act-description">Allies gather. Hearts align. In unity, the light of Solaria burns brightest.</p>
+            <div class="act-footer">
+              <span class="act-status in-progress">In Progress</span>
+              <a href="https://youtube.com/shorts/8kgg4-WCbe8" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+            <div class="act-episodes">
+              <a href="https://youtube.com/shorts/8kgg4-WCbe8" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Teaser</a>
+              <a href="https://youtu.be/wF7EWK-vu88" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Highlights I</a>
+              <a href="https://youtu.be/iZEecVFDFQo" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Highlights II</a>
+              <a href="https://youtu.be/tAqn5_2oRig" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Highlights III</a>
+              <a href="https://youtu.be/gsR3gCIZgBY" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Highlights IV</a>
+              <a href="https://youtu.be/ieATtHwFqbc" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Highlights V</a>
+              <a href="https://youtu.be/XXR2ZlDlT64" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Finale &#10022;</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 5 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-5.jpg" alt="Act 5: New Horizons" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act 5 Artwork</div>
+            <span class="act-badge" aria-label="Act number">5</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act 5: New Horizons</h3>
+            <p class="act-description">Old crowns. New promises. The future of Solaria begins with a single choice.</p>
+            <div class="act-footer">
+              <span class="act-status in-progress">In Progress</span>
+              <a href="https://youtube.com/shorts/YvIcKBCsziA" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ACT 6 -->
+        <article class="act-card reveal">
+          <div class="act-thumbnail">
+            <!-- <img src="assets/images/act-6.jpg" alt="Act 6: The Eternal Dawn" width="400" height="225" loading="lazy"> -->
+            <div class="act-thumb-placeholder">Act 6 Artwork</div>
+            <span class="act-badge" aria-label="Act number">6</span>
+          </div>
+          <div class="act-body">
+            <h3 class="act-title">Act 6: The Eternal Dawn</h3>
+            <p class="act-description">Ancient powers converge. The final gambit begins — and the fate of Solaria hangs on one impossible choice.</p>
+            <div class="act-footer">
+              <span class="act-status in-progress">In Progress</span>
+              <a href="https://youtube.com/shorts/_PmXm7g0DoI" target="_blank" rel="noopener noreferrer" class="act-watch">&#9654; Watch</a>
+            </div>
+            <div class="act-episodes">
+              <a href="https://youtube.com/shorts/_PmXm7g0DoI" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Clip I</a>
+              <a href="https://youtube.com/shorts/XQUGvqEB1MM" target="_blank" rel="noopener noreferrer" class="act-episode-link">&#9654; Clip II</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+      <a href="https://talesofsolaria.fandom.com" target="_blank" rel="noopener noreferrer" class="view-all-link">
+        View All Acts &#8594;
+      </a>
+    </section>
+
+    <!-- IMAGE GALLERY BANNER -->
+    <section class="gallery-banner" aria-labelledby="gallery-heading" id="gallery">
+      <div class="gallery-banner-inner reveal">
+        <div class="gallery-icon" aria-hidden="true">&#10022;</div>
+        <div>
+          <h2 class="gallery-banner-title" id="gallery-heading">Image Gallery</h2>
+          <p class="gallery-banner-sub">Concept art, character portraits, and world visuals from across the saga.</p>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1c-M64hQCSmppuHC09xjV266-s41DFB5K?usp=drive_link"
+           target="_blank" rel="noopener noreferrer"
+           class="btn-outline">View Gallery &#8594;</a>
+      </div>
+    </section>
+
+    <!-- BEHIND THE CRAFT -->
+    <section class="behind-craft" id="behind-craft" aria-labelledby="behind-craft-heading">
+      <div class="behind-craft-inner">
+        <div class="section-header">
+          <h2 class="section-label" id="behind-craft-heading">&#10022; Behind the Craft &#10022;</h2>
+          <p class="section-sub">How a document and a vision became a living saga.</p>
+        </div>
+
+        <div class="behind-craft-grid">
+
+          <!-- Phase 1 -->
+          <div class="craft-log reveal">
+            <p class="craft-log-phase">Act I &nbsp;&#183;&nbsp; Phase One</p>
+            <h3 class="craft-log-title">Before Video Generation</h3>
+            <p class="craft-log-body">
+              The video that jumpstarted the entire project. Images were AI-generated using ChatGPT, then character and scene elements were manually cut out using the Picsart mobile app. At the time, I was adapting Act I of <em>Tales of Solaria: Evin's Tale</em> — with the source document and a clear creative vision already in hand. Short clips were created and posted to TikTok (@Solarianearl), with the full scenes then compiled and uploaded to YouTube. The only editing tool used at this stage was InShot — for simple keyframing, cutouts, and transitions. The results weren't spectacular, but they brought the visuals to life. The final output came together as a slideshow for the Act I Prologue scene.
+            </p>
+            <div class="craft-log-links">
+              <a href="https://youtu.be/6VELpAB69k4" target="_blank" rel="noopener noreferrer" class="craft-log-link">&#9654; Watch: Act I Prologue (Slideshow)</a>
+              <a href="https://www.tiktok.com/@solarianearl/video/7505349974037892354" target="_blank" rel="noopener noreferrer" class="craft-log-link tiktok">&#9654; TikTok: Act I Ch.1 Continuation</a>
+            </div>
+            <p style="font-size:0.78rem; color:var(--color-text-faint); margin-top:var(--space-3); font-style:italic;">
+              Note: A continuation of the Act I, Chapter 1 scene was also produced, ending on a deliberate cliffhanger. The intention was to produce more videos in this style, though limited tools and experience at the time made it difficult to take further.
+            </p>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="craft-log reveal">
+            <p class="craft-log-phase">Act I &nbsp;&#183;&nbsp; Phase Two</p>
+            <h3 class="craft-log-title">Video Generation Era</h3>
+            <p class="craft-log-body">
+              This was the version I was most eager to bring to life as a fully realised scene. Unlike Act 3.5 — Jack's Final Message — this was a project I genuinely invested in from the start. With the full book series on Wattpad, I knew the plot from beginning to end and had a clear vision of how I wanted it to play out. The main obstacle at this stage was Sora 2's unpredictable content moderation. Sourcing all the individual clips — particularly the battle sequences between characters — was a genuine challenge, but working through those limitations made the final result all the more rewarding.
+            </p>
+            <div class="craft-log-links">
+              <a href="https://youtu.be/yzHbd7MOpC4" target="_blank" rel="noopener noreferrer" class="craft-log-link">&#9654; Watch: Act I — Full Scene (Generated)</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tools Breakdown -->
+        <div class="tools-section reveal">
+          <h3 class="tools-section-title">&#10022; Production Toolkit</h3>
+          <div class="tools-grid">
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">ChatGPT</span>
+                <span class="tool-desc">AI-generated anime scene imagery; also used to write character interactions from visual prompts.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">Gemini</span>
+                <span class="tool-desc">Minor modifications and refinements applied to AI-generated scene images.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">Picsart</span>
+                <span class="tool-desc">Manual character and scene cutouts for cases where AI tools fell short. Essential for the early pre-generation phase.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">Google AI Studio</span>
+                <span class="tool-desc">Used in two ways: (1) a prompted collage app combined uploaded images into inputs for Sora 2 and Dreamina; (2) a video-to-frames tool broke reference clips into collages used to guide scene writing in ChatGPT and Claude.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">InShot</span>
+                <span class="tool-desc">Mobile video editor used to assemble all generated clips. A practical alternative to Adobe Premiere Pro, especially when working on mobile or without PC access.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">Sora 2</span>
+                <span class="tool-desc">Primary AI video generation platform during the early production phase. Powerful but limited by inconsistent content moderation.</span>
+              </div>
+            </div>
+            <div class="tool-item">
+              <div class="tool-dot"></div>
+              <div>
+                <span class="tool-name">Dreamina (Seedance 2)</span>
+                <span class="tool-desc">Current primary AI video generation platform, powering the cinematic sequences across Acts 4 and beyond.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CHARACTER FOCUS -->
+    <section class="characters" id="characters" aria-labelledby="characters-heading">
+      <div class="section-header">
+        <h2 class="section-label" id="characters-heading">&#10022; Character Focus &#10022;</h2>
+        <p class="section-sub">Meet the souls who shape the fate of Solaria.</p>
+      </div>
+      <div class="characters-grid">
+
+        <article class="character-card reveal">
+          <div class="character-portrait">
+            <img src="assets/images/My-Jack-5.jpg" alt="Jack — wandering musician" width="300" height="300" loading="lazy">
+          </div>
+          <h3 class="character-name">Jack</h3>
+          <p class="character-bio">A wandering musician with a past wrapped in silence and melodies that move the world.</p>
+          <a href="#characters" class="character-link">View Profile &#8594;</a>
+        </article>
+
+        <article class="character-card reveal">
+          <div class="character-portrait">
+            <img src="assets/images/My-Rose-4.jpg" alt="Rose — fierce protector" width="300" height="300" loading="lazy">
+          </div>
+          <h3 class="character-name">Rose</h3>
+          <p class="character-bio">A fierce protector of those she loves, forging her path with courage and conviction.</p>
+          <a href="#characters" class="character-link">View Profile &#8594;</a>
+        </article>
+
+        <article class="character-card reveal">
+          <div class="character-portrait">
+            <img src="assets/images/Unity-Reluctant-heroine-2.jpg" alt="Unity — reluctant heroine" width="300" height="300" loading="lazy">
+          </div>
+          <h3 class="character-name">Unity</h3>
+          <p class="character-bio">A reluctant heroine thrust into a destiny she never chose, carrying the weight of a fractured world on uncertain shoulders.</p>
+          <a href="#characters" class="character-link">View Profile &#8594;</a>
+        </article>
+
+        <article class="character-card reveal">
+          <div class="character-portrait">
+            <img src="assets/images/Alara-3.jpg" alt="Alara — heir to an ancient lineage" width="300" height="300" loading="lazy">
+          </div>
+          <h3 class="character-name">Alara</h3>
+          <p class="character-bio">Heir to an ancient lineage, guided by wonder, wisdom, and an unbreakable light.</p>
+          <a href="#characters" class="character-link">View Profile &#8594;</a>
+        </article>
+
+        <article class="character-card reveal">
+          <div class="character-portrait">
+            <img src="assets/images/Evin.jpg" alt="Evin — voice from the void" width="300" height="300" loading="lazy">
+          </div>
+          <h3 class="character-name">Evin</h3>
+          <p class="character-bio">A voice from the void seeking balance — or oblivion — through evalos and allure.</p>
+          <a href="#characters" class="character-link">View Profile &#8594;</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- THE CRAFT -->
+    <section class="craft" id="craft" aria-labelledby="craft-heading">
+      <div class="section-header">
+        <h2 class="section-label" id="craft-heading">&#10022; The Craft &#10022;</h2>
+        <p class="section-sub">Blending imagination, technology, and storytelling into living worlds.</p>
+      </div>
+      <div class="craft-grid">
+
+        <div class="craft-card reveal">
+          <svg class="craft-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          <h3 class="craft-title">Narrative Architecture</h3>
+          <p class="craft-desc">Intricate plots, layered themes, and cohesive arcs crafted across six interconnected acts.</p>
+        </div>
+
+        <div class="craft-card reveal">
+          <svg class="craft-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+          </svg>
+          <h3 class="craft-title">Cinematic Generation</h3>
+          <p class="craft-desc">AI-powered visuals and animation bring every scene, emotion, and moment to life using Dreamina, Veo 3, and Suno.</p>
+        </div>
+
+        <div class="craft-card reveal">
+          <svg class="craft-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="craft-title">Digital Worldbuilding</h3>
+          <p class="craft-desc">Rich lore, maps, cultures, and histories woven into a persistent, evolving universe.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- THE WORLD -->
+    <section class="world" id="world" aria-labelledby="world-heading">
+      <div class="world-bg" aria-hidden="true">
+        <!-- <img src="assets/images/world-landscape.jpg" alt=""> -->
+      </div>
+      <div class="world-overlay" aria-hidden="true"></div>
+      <div class="world-content reveal">
+        <h2 class="world-heading">The World &#10022;</h2>
+        <p class="world-body">Solaria is a realm of wonder and contradiction — ancient magic and rising empires, forgotten prophecies and choices that shape history. From the glittering spires of Koor-i-noor to the shadows beyond the Void, every corner holds a story waiting to be discovered.</p>
+        <a href="https://talesofsolaria.fandom.com" target="_blank" rel="noopener noreferrer" class="btn-outline">Explore Solaria &#8594;</a>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter" aria-labelledby="newsletter-heading">
+      <div class="newsletter-inner">
+        <div class="newsletter-icon" aria-hidden="true">&#10022;</div>
+        <div class="newsletter-text">
+          <h2 class="newsletter-heading" id="newsletter-heading">Journey Deeper into Solaria</h2>
+          <p class="newsletter-sub">Get behind-the-scenes updates, lore drops, and exclusive content delivered to your inbox.</p>
+        </div>
+        <div class="newsletter-form">
+          <form id="newsletter-form" action="https://substack.com/@solarianearl" method="get" target="_blank">
+            <div class="newsletter-input-row">
+              <label for="email-input" class="sr-only">Your email address</label>
+              <input type="email" id="email-input" name="email" class="newsletter-input" placeholder="Enter your email" required>
+              <button type="submit" class="newsletter-btn">Join the Archive &#10022;</button>
+            </div>
+          </form>
+          <p class="newsletter-note">No spam. Only stories worth telling.</p>
+          <p class="newsletter-success" id="newsletter-success" role="alert">Thank you — check your inbox for your first story drop.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand footer-col">
+        <p class="footer-logo">&#10022; SOLARIA</p>
+        <p class="footer-logo-sub">Tales of Solaria &nbsp;|&nbsp; A Six-Act Fantasy Saga</p>
+        <p class="footer-tagline">In every star, a story.<br>In every story, a world.</p>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Explore</p>
+        <ul>
+          <li><a href="#chronicles">The Chronicles</a></li>
+          <li><a href="#behind-craft">Making Of</a></li>
+          <li><a href="#craft">The Craft</a></li>
+          <li><a href="#characters">Characters</a></li>
+          <li><a href="#world">Lore</a></li>
+          <li><a href="#gallery">Image Gallery</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Connect</p>
+        <ul>
+          <li><a href="https://substack.com/@solarianearl" target="_blank" rel="noopener noreferrer">Substack</a></li>
+          <li><a href="https://talesofsolaria.fandom.com" target="_blank" rel="noopener noreferrer">Archive / Wiki</a></li>
+          <li><a href="https://drive.google.com/drive/folders/1c-M64hQCSmppuHC09xjV266-s41DFB5K?usp=drive_link" target="_blank" rel="noopener noreferrer">Image Gallery</a></li>
+          <li><a href="https://substack.com/@solarianearl" target="_blank" rel="noopener noreferrer">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Follow</p>
+        <div class="social-icons">
+          <a href="https://www.youtube.com/@Game4Digital/videos" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Follow on YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.5 31.5 0 000 12a31.5 31.5 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.5 31.5 0 0024 12a31.5 31.5 0 00-.5-5.8zm-13.9 9.3V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@solarianearl" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Follow on TikTok">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 3h-3.2v12.3a2.8 2.8 0 11-2.8-2.8c.2 0 .5 0 .7.1V9.3a6.1 6.1 0 100 12.2 6.1 6.1 0 006.1-6.1V7.7a9.7 9.7 0 005.3 1.6V6.1a6.1 6.1 0 01-6.1-3.1z"/></svg>
+          </a>
+          <a href="https://substack.com/@solarianearl" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Follow on Substack">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="Join Discord">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 4.2A19.7 19.7 0 0015.5 3c-.2.4-.4.9-.6 1.3a18 18 0 00-5.8 0A12.8 12.8 0 008.5 3a19.6 19.6 0 00-4.8 1.2C.7 8.4.1 12.5.8 16.6a20 20 0 006 3 14.6 14.6 0 001.3-2 13 13 0 01-2-.9l.5-.4a14.1 14.1 0 0012.2 0c.2.1.3.3.5.4a13 13 0 01-2 1 14 14 0 001.3 2 19.9 19.9 0 006-3c.8-4.7-.4-8.8-2.3-12.4zM8.1 14c-1.2 0-2.2-1.1-2.2-2.5S6.9 9 8.1 9s2.2 1.1 2.2 2.5S9.3 14 8.1 14zm7.8 0c-1.2 0-2.2-1.1-2.2-2.5S14.7 9 15.9 9s2.2 1.1 2.2 2.5-1 2.5-2.2 2.5z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&#169; 2025 Tales of Solaria. All rights reserved.</span>
+      <span>Crafted with &#10022; for dreamers and storytellers.</span>
+    </div>
+  </footer>
+
+  <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('starfield-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      const COUNT = 200;
+      function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      function makeStars() {
+        stars = Array.from({ length: COUNT }, () => ({
+          x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+          r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.005 + 0.002
+        }));
+      }
+      function draw(t) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(s => {
+          const alpha = 0.25 + 0.65 * Math.abs(Math.sin(t * s.speed + s.phase));
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(201,168,76,${alpha * 0.55})`; ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      resize(); makeStars();
+      window.addEventListener('resize', () => { resize(); makeStars(); });
+      requestAnimationFrame(draw);
+    })();
+
+    (function() {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    })();
+
+    (function() {
+      const btn = document.getElementById('hamburger');
+      const menu = document.getElementById('mobile-menu');
+      btn.addEventListener('click', () => { const open = menu.classList.toggle('open'); btn.setAttribute('aria-expanded', open); });
+      document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => { menu.classList.remove('open'); btn.setAttribute('aria-expanded', false); });
+      });
+    })();
+
+    (function() {
+      const form = document.getElementById('newsletter-form');
+      const success = document.getElementById('newsletter-success');
+      form.addEventListener('submit', () => { success.style.display = 'block'; });
+    })();
+  </script>
+</body>
+</html>

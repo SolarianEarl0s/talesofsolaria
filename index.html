@@ -235,6 +235,35 @@
     .chronicle-link { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-gold); border-bottom: 1px solid rgba(201,168,76,0.3); padding-bottom: 2px; transition: border-color 0.2s; }
     .chronicle-link:hover { border-color: var(--color-gold); }
 
+    /* ===== PLAYLIST BLOCK ===== */
+    .playlist-block {
+      padding: var(--space-12) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .playlist-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-8);
+    }
+    .playlist-meta { flex: 1; min-width: 260px; }
+    .playlist-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-display); font-size: 0.62rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--color-gold);
+      border: 1px solid rgba(201,168,76,0.25); border-radius: 2px;
+      padding: 3px 10px; margin-bottom: var(--space-4);
+      background: rgba(201,168,76,0.06);
+    }
+    .playlist-badge::before { content: '\25BA'; font-size: 0.55rem; }
+    .playlist-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-text); margin-bottom: var(--space-3); }
+    .playlist-desc { font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.8; max-width: 520px; margin-bottom: var(--space-6); }
+    .playlist-embed {
+      border-radius: 6px; overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .playlist-embed .video-embed { padding-bottom: 56.25%; }
+    .playlist-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
     @media (max-width: 768px) {
       .chronicle-entry { grid-template-columns: 1fr; }
       .chronicle-entry.reverse { direction: ltr; }
@@ -440,19 +469,31 @@
 
         <!-- MAIN SAGA TAB -->
         <div id="tab-main" class="tab-panel active" role="tabpanel">
-          <div class="chronicle-entry reveal">
-            <div class="chronicle-video">
-              <div class="video-embed">
-                <iframe src="https://www.youtube.com/embed/uNzCj63pcCU" title="Act 4: Together as One" allowfullscreen loading="lazy"></iframe>
+
+          <!-- ACT IV PLAYLIST -->
+          <div class="playlist-block reveal">
+            <div class="playlist-header">
+              <div class="playlist-meta">
+                <span class="playlist-badge">Act IV Playlist</span>
+                <h3 class="playlist-title">Together as One</h3>
+                <p class="playlist-desc">The complete Act IV playlist. The climactic stand, where the weight of duty and the pressure of the rift reach their breaking point, and every soul in Solaria must choose a side. Watch every scene, in order.</p>
+                <a href="https://www.youtube.com/watch?v=NCVntf3jMno&list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR" class="chronicle-link" target="_blank" rel="noopener">Open Full Playlist on YouTube &#8599;</a>
               </div>
             </div>
-            <div class="chronicle-text">
-              <p class="chronicle-label">Act IV · Latest Release</p>
-              <h3 class="chronicle-title">Together as One</h3>
-              <p class="chronicle-body">The climactic stand. When the weight of duty and the pressure of the rift reach their breaking point, every soul in Solaria must choose a side.</p>
-              <a href="https://www.youtube.com/@Game4Digital" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+            <div class="playlist-embed">
+              <div class="video-embed" style="position:relative; padding-bottom:56.25%; height:0;">
+                <iframe
+                  src="https://www.youtube.com/embed/NCVntf3jMno?list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR&index=1"
+                  title="Act IV: Together as One, Full Playlist"
+                  allowfullscreen
+                  loading="lazy"
+                  style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
+                ></iframe>
+              </div>
             </div>
           </div>
+
+          <!-- Sisters of Silence -->
           <div class="chronicle-entry reverse reveal">
             <div class="chronicle-video">
               <div class="video-embed">
@@ -466,6 +507,8 @@
               <a href="https://www.youtube.com/@Game4Digital" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
+
+          <!-- Fated -->
           <div class="chronicle-entry reveal">
             <div class="chronicle-video" style="background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.15); border-radius: 4px; display:flex; align-items:center; justify-content:center; min-height:180px;">
               <p style="font-family:'Cinzel',serif; font-size:0.85rem; color:rgba(201,168,76,0.5); text-align:center; padding:2rem;">&#9654; Video Coming Soon</p>
@@ -477,6 +520,8 @@
               <a href="https://www.youtube.com/@Game4Digital" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
+
+          <!-- The Rift -->
           <div class="chronicle-entry reverse reveal">
             <div class="chronicle-video">
               <div class="video-embed">
@@ -490,6 +535,8 @@
               <a href="https://www.youtube.com/@Game4Digital" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
+
+          <!-- The Journey -->
           <div class="chronicle-entry reveal">
             <div class="chronicle-video" style="background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.15); border-radius: 4px; display:flex; align-items:center; justify-content:center; min-height:180px;">
               <p style="font-family:'Cinzel',serif; font-size:0.85rem; color:rgba(201,168,76,0.5); text-align:center; padding:2rem;">&#9654; Video Coming Soon</p>
@@ -500,6 +547,7 @@
               <p class="chronicle-body">Revisit the sparks that ignited the Solarian flame. The beginning of a journey into the unknown, where two souls first stepped into a fractured world.</p>
             </div>
           </div>
+
         </div>
 
         <!-- LORE & SIDE STORIES TAB -->

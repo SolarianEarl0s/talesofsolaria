@@ -248,6 +248,7 @@
       transition: border-color 0.3s, transform 0.3s;
     }
     .character-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-3px); }
+    .character-card.coming-soon { opacity: 0.5; pointer-events: none; }
     .char-avatar {
       width: 72px; height: 72px; border-radius: 50%;
       background: var(--color-surface-offset);
@@ -256,10 +257,12 @@
       font-family: var(--font-display); font-size: 1.5rem; color: var(--color-gold);
     }
     .char-name { font-family: var(--font-display); font-size: 1rem; color: var(--color-text); margin-bottom: var(--space-2); }
+    .char-tagline { font-size: 0.72rem; color: var(--color-gold); font-style: italic; margin-bottom: var(--space-3); letter-spacing: 0.04em; }
     .char-role { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: var(--space-4); }
     .char-bio { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: var(--space-4); }
     .char-link { font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-gold); }
     .char-link:hover { text-decoration: underline; }
+    .char-coming-soon { font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-faint); }
 
     /* ===== WORLD ===== */
     .world-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; }
@@ -537,7 +540,7 @@
             <div class="chronicle-text">
               <p class="chronicle-label">Act I · Phase One</p>
               <h3 class="chronicle-title">The Beginning</h3>
-              <p class="chronicle-body">The video that jumpstarted the entire project. Images were AI-generated using ChatGPT, then character and scene elements were manually cut out using the Picsart mobile app. At the time, I was adapting Act I of <em>Tales of Solaria: Evin’s Tale</em> — with the source document and a clear creative vision already in hand. Short clips were created and posted to TikTok (@Solarianearl), with the full scenes then compiled and uploaded to YouTube. The only editing tool used at this stage was InShot — for simple keyframing, cutouts, and transitions.</p>
+              <p class="chronicle-body">The video that jumpstarted the entire project. Images were AI-generated using ChatGPT, then character and scene elements were manually cut out using the Picsart mobile app. At the time, I was adapting Act I of <em>Tales of Solaria: Evin's Tale</em> — with the source document and a clear creative vision already in hand. Short clips were created and posted to TikTok (@Solarianearl), with the full scenes then compiled and uploaded to YouTube. The only editing tool used at this stage was InShot — for simple keyframing, cutouts, and transitions.</p>
               <a href="https://youtu.be/6VELpAB69k4" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
             <div class="chronicle-video">
@@ -572,7 +575,7 @@
             <div class="chronicle-text">
               <p class="chronicle-label">Act I · Phase Two</p>
               <h3 class="chronicle-title">Fully Realised</h3>
-              <p class="chronicle-body">This was the version I was most eager to bring to life as a fully realised scene. Unlike Act 3.5 — Jack’s Final Message — this was a project I genuinely invested in from the start. With the full book series on Wattpad, I knew the plot from beginning to end and had a clear vision of how I wanted it to play out. The main obstacle at this stage was Sora 2’s unpredictable content moderation. Sourcing all the individual clips — particularly the battle sequences between characters — was a genuine challenge, but working through those limitations made the final result all the more rewarding.</p>
+              <p class="chronicle-body">This was the version I was most eager to bring to life as a fully realised scene. Unlike Act 3.5 — Jack's Final Message — this was a project I genuinely invested in from the start. With the full book series on Wattpad, I knew the plot from beginning to end and had a clear vision of how I wanted it to play out. The main obstacle at this stage was Sora 2's unpredictable content moderation. Sourcing all the individual clips — particularly the battle sequences between characters — was a genuine challenge, but working through those limitations made the final result all the more rewarding.</p>
               <a href="https://youtu.be/yzHbd7MOpC4" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
@@ -590,41 +593,86 @@
           <div class="divider"></div>
         </div>
         <div class="characters-grid">
+
+          <!-- Evin -->
           <article class="character-card reveal">
             <div class="char-avatar">E</div>
             <h3 class="char-name">Evin</h3>
-            <p class="char-role">The Wanderer</p>
-            <p class="char-bio">A wandering musician with a past wrapped in silence and melodies that move the world.</p>
+            <p class="char-tagline">"He's not the hero you think he is."</p>
+            <p class="char-role">The One Who Was Never Just a Hero</p>
+            <p class="char-bio">A farmer who fights for his people against those with power over them. On the surface, that sounds familiar. It isn't. Evin is easy to misread — and that's exactly the point. The longer you watch him, the less you think you understand him.</p>
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
-          <article class="character-card reveal">
-            <div class="char-avatar">R</div>
-            <h3 class="char-name">Rose</h3>
-            <p class="char-role">The Protector</p>
-            <p class="char-bio">A fierce protector of those she loves, forging her path with courage and conviction.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
-          <article class="character-card reveal">
-            <div class="char-avatar">U</div>
-            <h3 class="char-name">Unity</h3>
-            <p class="char-role">The Reluctant Heroine</p>
-            <p class="char-bio">A reluctant heroine thrust into a destiny she never chose, carrying the weight of a fractured world on uncertain shoulders.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+
+          <!-- Jack -->
           <article class="character-card reveal">
             <div class="char-avatar">J</div>
             <h3 class="char-name">Jack</h3>
-            <p class="char-role">The Heir</p>
-            <p class="char-bio">Heir to an ancient lineage, guided by wonder, wisdom, and an unbreakable light.</p>
+            <p class="char-tagline">"He chose love over everything."</p>
+            <p class="char-role">The Anchor Who Chose Love</p>
+            <p class="char-bio">A wandering musician whose power flows through rhythm and belief. Jack doesn't fight for the world — he fights for her. When faced with an impossible choice, he gives everything to save the one person holding him together.</p>
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
+
+          <!-- Rose -->
+          <article class="character-card reveal">
+            <div class="char-avatar">R</div>
+            <h3 class="char-name">Rose</h3>
+            <p class="char-tagline">"She was never meant to be saved."</p>
+            <p class="char-role">The Hero Who Was Never Meant to Be</p>
+            <p class="char-bio">A fierce protector, admired as a hero — but built on something broken. From the very beginning, something within her was wrong: silent, unseen, and waiting. With her anchor gone, what remains is not just a fallen hero, but something far more dangerous.</p>
+            <a href="#" class="char-link">View Profile &#8594;</a>
+          </article>
+
+          <!-- Unity -->
+          <article class="character-card reveal">
+            <div class="char-avatar">U</div>
+            <h3 class="char-name">Unity</h3>
+            <p class="char-tagline">"She made the choice no one else could."</p>
+            <p class="char-role">The One Who Has to Let Go</p>
+            <p class="char-bio">A loyal friend who stood beside them both — never the strongest, but always the one who stayed. When everything falls apart, Unity is left with the choice no one else could make: hold on to hope… or accept the truth.</p>
+            <a href="#" class="char-link">View Profile &#8594;</a>
+          </article>
+
+          <!-- Juan Souls -->
+          <article class="character-card reveal">
+            <div class="char-avatar">JS</div>
+            <h3 class="char-name">Juan Souls</h3>
+            <p class="char-tagline">"He already knows how it ends."</p>
+            <p class="char-role">The One Who Already Knows</p>
+            <p class="char-bio">A twisted, gremlin-like entity that sees what others can't: the future. He doesn't guess. He doesn't hope. He knows. And with that knowledge, he moves to break the only outcomes that could stop what's coming.</p>
+            <a href="#" class="char-link">View Profile &#8594;</a>
+          </article>
+
+          <!-- Alara -->
           <article class="character-card reveal">
             <div class="char-avatar">A</div>
-            <h3 class="char-name">Arvel</h3>
-            <p class="char-role">The Voice from the Void</p>
-            <p class="char-bio">A voice from the void seeking balance — or oblivion — through evalos and allure.</p>
+            <h3 class="char-name">Alara</h3>
+            <p class="char-tagline">"She was there… before and after."</p>
+            <p class="char-role">The One Who Watches</p>
+            <p class="char-bio">A quiet, mysterious presence — seen only in fragments, never fully understood. She appears when the world begins, and again when it nears its end. Her presence lingers, as if she understands something about this story that no one else does.</p>
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
+
+          <!-- Arvel -->
+          <article class="character-card reveal">
+            <div class="char-avatar">Ar</div>
+            <h3 class="char-name">Arvel</h3>
+            <p class="char-tagline">"He lost everything. He kept going."</p>
+            <p class="char-role">The One Who Carries the Weight</p>
+            <p class="char-bio">Arvel doesn't wear his burden loudly. He carries it quietly — and that's what makes him dangerous. His story isn't about power. It's about what someone does when they've already lost the thing that made them who they were.</p>
+            <a href="#" class="char-link">View Profile &#8594;</a>
+          </article>
+
+          <!-- Sepa — Coming Soon -->
+          <article class="character-card coming-soon reveal" aria-hidden="true">
+            <div class="char-avatar">S</div>
+            <h3 class="char-name">Sepa</h3>
+            <p class="char-role">Book III</p>
+            <p class="char-bio">His story is still unfolding.</p>
+            <span class="char-coming-soon">Coming Soon</span>
+          </article>
+
         </div>
       </div>
     </section>

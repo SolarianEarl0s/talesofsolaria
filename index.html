@@ -294,6 +294,67 @@
     .char-link:hover { text-decoration: underline; }
     .char-coming-soon { font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-faint); }
 
+    /* ===== CHARACTER CARD FLIP ===== */
+    .char-flip-wrapper { perspective: 1200px; }
+    .char-flip {
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 400px;
+    }
+    .char-flip.is-flipped { transform: rotateY(180deg); }
+    .char-front, .char-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 4px; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .char-front {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-6); text-align: center;
+      justify-content: flex-start;
+      transition: border-color 0.3s;
+    }
+    .char-flip-wrapper:hover .char-front { border-color: rgba(201,168,76,0.35); }
+    .char-back {
+      background: #000;
+      transform: rotateY(180deg);
+      justify-content: flex-end;
+    }
+    .char-back img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+    }
+    .char-back-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(13,11,26,0.85) 0%, transparent 100%);
+      height: 80px; pointer-events: none;
+    }
+    .char-flip-btn {
+      background: none; border: none;
+      padding: 0 0 var(--space-2);
+      cursor: pointer; font-family: var(--font-display);
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--color-gold);
+      margin-top: auto;
+    }
+    .char-flip-btn:hover { text-decoration: underline; }
+    .char-back-btn {
+      position: relative; z-index: 2;
+      font-family: var(--font-display); font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--color-gold);
+      background: rgba(13,11,26,0.75);
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 2px; padding: var(--space-2) var(--space-4);
+      margin-bottom: var(--space-4);
+      cursor: pointer; backdrop-filter: blur(6px); transition: background 0.2s;
+    }
+    .char-back-btn:hover { background: rgba(201,168,76,0.15); }
+
     /* ===== WORLD ===== */
     .world-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: center; }
     .world-features { display: flex; flex-direction: column; gap: var(--space-6); margin-top: var(--space-8); }
@@ -648,27 +709,45 @@
         </div>
         <div class="characters-grid">
 
-          <!-- Evin -->
-          <article class="character-card reveal">
-            <div class="char-avatar">E</div>
-            <h3 class="char-name">Evin</h3>
-            <p class="char-tagline">"He's not the hero you think he is."</p>
-            <p class="char-role">The One Who Was Never Just a Hero</p>
-            <p class="char-bio">A farmer who fights for his people against those with power over them. On the surface, that sounds familiar. It isn't. Evin is easy to misread, and that's exactly the point. The longer you watch him, the less you think you understand him.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <!-- Evin — flip card -->
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-evin">
+              <div class="char-front">
+                <div class="char-avatar">E</div>
+                <h3 class="char-name">Evin</h3>
+                <p class="char-tagline">"He's not the hero you think he is."</p>
+                <p class="char-role">The One Who Was Never Just a Hero</p>
+                <p class="char-bio">A farmer who fights for his people against those with power over them. On the surface, that sounds familiar. It isn't. Evin is easy to misread, and that's exactly the point. The longer you watch him, the less you think you understand him.</p>
+                <button class="char-flip-btn" data-target="card-evin">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/Evin.png" alt="Evin" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-evin">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
-          <!-- Jack -->
-          <article class="character-card reveal">
-            <div class="char-avatar">J</div>
-            <h3 class="char-name">Jack</h3>
-            <p class="char-tagline">"He chose love over everything."</p>
-            <p class="char-role">The Anchor Who Chose Love</p>
-            <p class="char-bio">A wandering musician whose power flows through rhythm and belief. Jack doesn't fight for the world, he fights for her. When faced with an impossible choice, he gives everything to save the one person holding him together.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <!-- Jack — flip card -->
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-jack">
+              <div class="char-front">
+                <div class="char-avatar">J</div>
+                <h3 class="char-name">Jack</h3>
+                <p class="char-tagline">"He chose love over everything."</p>
+                <p class="char-role">The Anchor Who Chose Love</p>
+                <p class="char-bio">A wandering musician whose power flows through rhythm and belief. Jack doesn't fight for the world, he fights for her. When faced with an impossible choice, he gives everything to save the one person holding him together.</p>
+                <button class="char-flip-btn" data-target="card-jack">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/My Jack.png" alt="Jack" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-jack">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
-          <!-- Rose -->
+          <!-- Rose — no image yet, plain card -->
           <article class="character-card reveal">
             <div class="char-avatar">R</div>
             <h3 class="char-name">Rose</h3>
@@ -678,17 +757,26 @@
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
 
-          <!-- Unity -->
-          <article class="character-card reveal">
-            <div class="char-avatar">U</div>
-            <h3 class="char-name">Unity</h3>
-            <p class="char-tagline">"She made the choice no one else could."</p>
-            <p class="char-role">The One Who Has to Let Go</p>
-            <p class="char-bio">A loyal friend who stood beside them both, never the strongest, but always the one who stayed. When everything falls apart, Unity is left with the choice no one else could make: hold on to hope... or accept the truth.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <!-- Unity — flip card -->
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-unity">
+              <div class="char-front">
+                <div class="char-avatar">U</div>
+                <h3 class="char-name">Unity</h3>
+                <p class="char-tagline">"She made the choice no one else could."</p>
+                <p class="char-role">The One Who Has to Let Go</p>
+                <p class="char-bio">A loyal friend who stood beside them both, never the strongest, but always the one who stayed. When everything falls apart, Unity is left with the choice no one else could make: hold on to hope... or accept the truth.</p>
+                <button class="char-flip-btn" data-target="card-unity">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/My Unity.png" alt="Unity" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-unity">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
-          <!-- Juan Souls -->
+          <!-- Juan Souls — no image yet, plain card -->
           <article class="character-card reveal">
             <div class="char-avatar">JS</div>
             <h3 class="char-name">Juan Souls</h3>
@@ -698,7 +786,7 @@
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
 
-          <!-- Alara -->
+          <!-- Alara — no image yet, plain card -->
           <article class="character-card reveal">
             <div class="char-avatar">A</div>
             <h3 class="char-name">Alara</h3>
@@ -708,15 +796,24 @@
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
 
-          <!-- Arvel -->
-          <article class="character-card reveal">
-            <div class="char-avatar">Ar</div>
-            <h3 class="char-name">Arvel</h3>
-            <p class="char-tagline">"He lost everything. He kept going."</p>
-            <p class="char-role">The One Who Carries the Weight</p>
-            <p class="char-bio">Arvel doesn't wear his burden loudly. He carries it quietly, and that's what makes him dangerous. His story isn't about power. It's about what someone does when they've already lost the thing that made them who they were.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <!-- Arvel — flip card -->
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-arvel">
+              <div class="char-front">
+                <div class="char-avatar">Ar</div>
+                <h3 class="char-name">Arvel</h3>
+                <p class="char-tagline">"He lost everything. He kept going."</p>
+                <p class="char-role">The One Who Carries the Weight</p>
+                <p class="char-bio">Arvel doesn't wear his burden loudly. He carries it quietly, and that's what makes him dangerous. His story isn't about power. It's about what someone does when they've already lost the thing that made them who they were.</p>
+                <button class="char-flip-btn" data-target="card-arvel">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/Arvel Isen.png" alt="Arvel Isen" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-arvel">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
           <!-- Sepa, Coming Soon -->
           <article class="character-card coming-soon reveal" aria-hidden="true">
@@ -876,6 +973,16 @@
       const form = document.getElementById('newsletter-form');
       const success = document.getElementById('newsletter-success');
       form.addEventListener('submit', () => { success.style.display = 'block'; });
+    })();
+
+    // Character card flip
+    (function() {
+      document.querySelectorAll('[data-target]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = document.getElementById(btn.dataset.target);
+          if (card) card.classList.toggle('is-flipped');
+        });
+      });
     })();
   </script>
 </body>

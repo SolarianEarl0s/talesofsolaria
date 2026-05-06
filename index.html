@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tales of Solaria | A Six-Act Fantasy Saga</title>
   <meta name="description" content="A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding.">
+  <meta property="og:title" content="Tales of Solaria | A Six-Act Fantasy Saga">
+  <meta property="og:description" content="A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding.">
+  <meta property="og:url" content="https://solarianearl0s.github.io/talesofsolaria/">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -199,9 +203,17 @@
       letter-spacing: 0.1em; text-transform: uppercase;
       padding: 2px 8px; border-radius: 2px; margin-top: var(--space-4);
     }
-    .status-completed { background: rgba(201,168,76,0.12); color: var(--color-gold); border: 1px solid rgba(201,168,76,0.25); }
-    .status-production { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
+    .status-available { background: rgba(201,168,76,0.12); color: var(--color-gold); border: 1px solid rgba(201,168,76,0.25); }
+    .status-wip { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
     .status-planned { background: rgba(255,255,255,0.04); color: var(--color-text-faint); border: 1px solid rgba(255,255,255,0.08); }
+    .act-wattpad-link {
+      display: inline-block; margin-top: var(--space-3);
+      font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--color-gold);
+      border-bottom: 1px solid rgba(201,168,76,0.3); padding-bottom: 1px;
+      transition: border-color 0.2s;
+    }
+    .act-wattpad-link:hover { border-color: var(--color-gold); }
 
     /* ===== CHRONICLES ===== */
     .chronicles-tabs { display: flex; gap: var(--space-4); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-12); flex-wrap: wrap; }
@@ -449,14 +461,15 @@
       <div class="hero-inner">
         <div class="hero-eyebrow">A Transmedia Fantasy Universe</div>
         <h1 class="hero-title" id="hero-title">Tales of<br><span>Solaria</span></h1>
-        <p class="hero-tagline">A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding.</p>
+        <p class="hero-tagline">A six-act fantasy saga brought to life through cinematic storytelling, living lore, and digital worldbuilding. The books are being written. The world is already alive.</p>
         <div class="hero-acts" aria-label="Acts overview">
-          <span class="act-pill active">Act I · The Journey</span>
-          <span class="act-pill">Act II · The Storm</span>
+          <span class="act-pill active">Act I · Evin's Tale</span>
+          <span class="act-pill">Act II · Alara's Story</span>
           <span class="act-pill">Act III · The Trial</span>
-          <span class="act-pill">Act IV · Together as One</span>
-          <span class="act-pill">Act V · The Crown</span>
-          <span class="act-pill">Act VI · Origin</span>
+          <span class="act-pill">Act III.V · Fated</span>
+          <span class="act-pill">Act IV · Unity's Choice</span>
+          <span class="act-pill">Act V · Koh-i-Noor</span>
+          <span class="act-pill">Act VI · The Fabled Knight</span>
         </div>
         <div class="hero-cta">
           <a href="#chronicles" class="btn-primary">Watch the Chronicles</a>
@@ -470,47 +483,70 @@
     <section id="acts" aria-labelledby="acts-title">
       <div class="container">
         <div class="reveal">
-          <p class="section-label">The Six Acts</p>
-          <h2 class="section-title" id="acts-title">Six Acts. One Epic Saga.</h2>
+          <p class="section-label">The Saga</p>
+          <h2 class="section-title" id="acts-title">One world. Many stories. All connected.</h2>
+          <p class="section-subtitle" style="margin-bottom: var(--space-4);">The books are being written act by act. The cinematic videos are the first look at a world already in motion.</p>
           <div class="divider"></div>
         </div>
         <div class="acts-grid">
+
+          <!-- Act I -->
           <article class="act-card reveal">
             <p class="act-number">Act I</p>
-            <h3>The Journey</h3>
-            <p>Two souls set forth across a fractured world, bound by fate and a song not yet written.</p>
-            <span class="act-status status-completed">Completed</span>
+            <h3>Evin's Tale</h3>
+            <p>A young thief with more depth than the world gives him credit for. His powers awaken through rhythm and golden light — and the journey has only just begun.</p>
+            <span class="act-status status-available">Draft Available</span><br>
+            <a href="https://www.wattpad.com/1512055057-solaria-evin%27s-tale-draft-the-mysterious-lady" class="act-wattpad-link" target="_blank" rel="noopener">Read Draft on Wattpad &#8599;</a>
           </article>
+
+          <!-- Act II -->
           <article class="act-card reveal">
             <p class="act-number">Act II</p>
-            <h3>The Storm</h3>
-            <p>A gathering storm forces a confrontation with the shadows long left behind.</p>
-            <span class="act-status status-completed">Completed</span>
+            <h3>Alara's Story</h3>
+            <p>The mentor. The Seer. The sister. Alara steps from the shadows of Act I into her own story — and the brother she lost is the one standing in her way.</p>
+            <span class="act-status status-wip">Writing in Progress</span>
           </article>
+
+          <!-- Act III -->
           <article class="act-card reveal">
             <p class="act-number">Act III</p>
-            <h3>The Trial</h3>
-            <p>Trials of fire and shadow shape a destiny that neither time nor fate can fully control.</p>
-            <span class="act-status status-production">In Production</span>
+            <h3>The Village Chief's Son</h3>
+            <p>Sepa carries the weight of his tribe and the doubt that weakens his shield. To contain the Rift, he must first believe in himself.</p>
+            <span class="act-status status-planned">Coming Soon</span>
           </article>
+
+          <!-- Act III.V -->
+          <article class="act-card reveal">
+            <p class="act-number">Act III.V</p>
+            <h3>Fated</h3>
+            <p>Unity, Jack, and Rose face Juan Souls — the Dancing Death. The arc that sets Rose on the path no one could stop, and the Void makes its first claim.</p>
+            <span class="act-status status-planned">Coming Soon</span>
+          </article>
+
+          <!-- Act IV -->
           <article class="act-card reveal">
             <p class="act-number">Act IV</p>
-            <h3>Together as One</h3>
-            <p>Allies gather. Hearts align. In unity, the light of Solaria burns brightest.</p>
-            <span class="act-status status-completed">Completed</span>
+            <h3>Unity's Choice</h3>
+            <p>Rose has fallen. The artifact carries the energy of every hero who came before. Unity must make the choice no one else could — and carry them all when she does.</p>
+            <span class="act-status status-planned">Coming Soon</span>
           </article>
+
+          <!-- Act V -->
           <article class="act-card reveal">
             <p class="act-number">Act V</p>
-            <h3>The Crown</h3>
-            <p>Old crowns. New promises. The future of Solaria begins with a single choice.</p>
-            <span class="act-status status-planned">Planned</span>
+            <h3>Koh-i-Noor Crisis</h3>
+            <p>The Prince of Koh-i-Noor loses his magic. A conspiracy by his own uncle threatens to unravel everything the kingdom stands for.</p>
+            <span class="act-status status-planned">Coming Soon</span>
           </article>
+
+          <!-- Act VI -->
           <article class="act-card reveal">
             <p class="act-number">Act VI</p>
-            <h3>Origin</h3>
-            <p>How a document and a vision became a living saga.</p>
-            <span class="act-status status-planned">Planned</span>
+            <h3>The Fabled Knight</h3>
+            <p>On one side of the world, Jaser mirrors Oodengard's atrocities. On the other, the Fabled Knight faces el Muerto — the reincarnation of Juan Souls. Two battles. One ending.</p>
+            <span class="act-status status-planned">Coming Soon</span>
           </article>
+
         </div>
       </div>
     </section>
@@ -537,7 +573,7 @@
             <div class="playlist-header">
               <div class="playlist-meta">
                 <span class="playlist-badge">Act IV Playlist</span>
-                <h3 class="playlist-title">Together as One</h3>
+                <h3 class="playlist-title">Unity's Choice</h3>
                 <p class="playlist-desc">The complete Act IV playlist. The climactic stand, where the weight of duty and the pressure of the rift reach their breaking point, and every soul in Solaria must choose a side. Watch every scene, in order.</p>
                 <a href="https://www.youtube.com/watch?v=NCVntf3jMno&list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR" class="chronicle-link" target="_blank" rel="noopener">Open Full Playlist on YouTube &#8599;</a>
               </div>
@@ -546,7 +582,7 @@
               <div class="video-embed" style="position:relative; padding-bottom:56.25%; height:0;">
                 <iframe
                   src="https://www.youtube.com/embed/NCVntf3jMno?list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR&index=1"
-                  title="Act IV: Together as One, Full Playlist"
+                  title="Act IV: Unity's Choice, Full Playlist"
                   allowfullscreen
                   loading="lazy"
                   style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
@@ -593,7 +629,7 @@
               </div>
             </div>
             <div class="chronicle-text">
-              <p class="chronicle-label">Act II · In Production</p>
+              <p class="chronicle-label">Act II · Writing in Progress</p>
               <h3 class="chronicle-title">The Rift</h3>
               <p class="chronicle-body">The shadows of the spiritual rift begin to fracture the land, consuming everything in their path. The second act of the Solarian saga.</p>
               <a href="https://www.youtube.com/@Game4Digital" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
@@ -608,7 +644,7 @@
               </div>
             </div>
             <div class="chronicle-text">
-              <p class="chronicle-label">Act I · Now Streaming</p>
+              <p class="chronicle-label">Act I · Draft on Wattpad</p>
               <h3 class="chronicle-title">The Journey</h3>
               <p class="chronicle-body">Revisit the sparks that ignited the Solarian flame. The beginning of a journey into the unknown, where two souls first stepped into a fractured world.</p>
               <a href="https://youtu.be/6VELpAB69k4" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
@@ -650,7 +686,6 @@
         <!-- THE CRAFT TAB -->
         <div id="tab-craft" class="tab-panel" role="tabpanel">
 
-          <!-- The Beginning: main YouTube video -->
           <div class="chronicle-entry reveal">
             <div class="chronicle-text">
               <p class="chronicle-label">Act I · Phase One</p>
@@ -665,7 +700,6 @@
             </div>
           </div>
 
-          <!-- The Beginning: TikTok continuation clip -->
           <div class="chronicle-entry reverse reveal">
             <div class="chronicle-video" style="max-width: 340px; margin: 0 auto;">
               <div class="tiktok-embed">
@@ -680,7 +714,6 @@
             </div>
           </div>
 
-          <!-- Fully Realised -->
           <div class="chronicle-entry reveal">
             <div class="chronicle-video">
               <div class="video-embed">
@@ -709,7 +742,7 @@
         </div>
         <div class="characters-grid">
 
-          <!-- Evin — flip card -->
+          <!-- Evin -->
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-evin">
               <div class="char-front">
@@ -728,7 +761,7 @@
             </div>
           </div>
 
-          <!-- Jack — flip card -->
+          <!-- Jack -->
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-jack">
               <div class="char-front">
@@ -747,7 +780,7 @@
             </div>
           </div>
 
-          <!-- Rose — flip card -->
+          <!-- Rose -->
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-rose">
               <div class="char-front">
@@ -766,7 +799,7 @@
             </div>
           </div>
 
-          <!-- Unity — flip card -->
+          <!-- Unity -->
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-unity">
               <div class="char-front">
@@ -785,27 +818,27 @@
             </div>
           </div>
 
-          <!-- Juan Souls — no image yet, plain card -->
+          <!-- Juan Souls -->
           <article class="character-card reveal">
             <div class="char-avatar">JS</div>
             <h3 class="char-name">Juan Souls</h3>
             <p class="char-tagline">"He already knows how it ends."</p>
-            <p class="char-role">The One Who Already Knows</p>
-            <p class="char-bio">A twisted, gremlin-like entity that sees what others can't: the future. He doesn't guess. He doesn't hope. He knows. And with that knowledge, he moves to break the only outcomes that could stop what's coming.</p>
+            <p class="char-role">The Dancing Death</p>
+            <p class="char-bio">A twisted entity that sees what others can't: the future. He doesn't guess. He doesn't hope. He knows. And with that knowledge, he moves to break the only outcomes that could stop what's coming.</p>
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
 
-          <!-- Alara — no image yet, plain card -->
+          <!-- Alara -->
           <article class="character-card reveal">
             <div class="char-avatar">A</div>
             <h3 class="char-name">Alara</h3>
             <p class="char-tagline">"She was there... before and after."</p>
-            <p class="char-role">The One Who Watches</p>
-            <p class="char-bio">A quiet, mysterious presence, seen only in fragments, never fully understood. She appears when the world begins, and again when it nears its end. Her presence lingers, as if she understands something about this story that no one else does.</p>
+            <p class="char-role">The Seer. The Mentor. The Sister.</p>
+            <p class="char-bio">A quiet, mysterious presence seen only in fragments in Act I. She appears when the world begins, and again when it nears its end. Her name is not spoken until Act II — and by then, everything looks different.</p>
             <a href="#" class="char-link">View Profile &#8594;</a>
           </article>
 
-          <!-- Arvel — flip card -->
+          <!-- Arvel -->
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-arvel">
               <div class="char-front">
@@ -871,7 +904,7 @@
           </div>
           <div class="reveal">
             <div class="world-lore">
-              <blockquote>"Solaria is a realm of wonder and contradiction, ancient magic and rising empires, forgotten prophecies and choices that shape history. From the glittering spires of Koor-i-noor to the shadows beyond the Void, every corner holds a story waiting to be discovered."</blockquote>
+              <blockquote>"Solaria is a realm of wonder and contradiction, ancient magic and rising empires, forgotten prophecies and choices that shape history. From the glittering spires of Koh-i-Noor to the shadows beyond the Void, every corner holds a story waiting to be discovered."</blockquote>
               <cite>, Tales of Solaria: Evin's Tale</cite>
               <div style="margin-top: var(--space-6);">
                 <a href="https://ko-fi.com/solarianearl" class="btn-ghost" target="_blank" rel="noopener">Explore Solaria &#8599;</a>
@@ -909,7 +942,8 @@
           <a href="https://www.youtube.com/@Game4Digital" target="_blank" rel="noopener">YouTube</a>
           <a href="https://www.tiktok.com/@solarianearl0s" target="_blank" rel="noopener">TikTok</a>
           <a href="https://solarianearl.substack.com/" target="_blank" rel="noopener">Substack</a>
-          <a href="https://ko-fi.com/solarianearl" target="_blank" rel="noopener">Wiki</a>
+          <a href="https://ko-fi.com/solarianearl" target="_blank" rel="noopener">Ko-fi</a>
+          <a href="https://www.wattpad.com/1512055057-solaria-evin%27s-tale-draft-the-mysterious-lady" target="_blank" rel="noopener">Wattpad</a>
         </nav>
         <p class="footer-copy">&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
       </div>

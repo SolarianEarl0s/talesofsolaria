@@ -100,6 +100,8 @@
       border-radius: 2px; transition: background 0.2s, color 0.2s;
     }
     .nav-cta:hover { background: var(--color-gold); color: #0d0b1a; }
+    .nav-cta-collabs { background: transparent; color: var(--color-gold); border-color: rgba(201,168,76,0.4); margin-right: var(--space-2); }
+    .nav-cta-collabs:hover { background: rgba(201,168,76,0.12); color: var(--color-gold); border-color: var(--color-gold); }
     .nav-mobile-btn { display: none; background: none; border: none; cursor: pointer; padding: var(--space-2); }
     .nav-mobile-btn span { display: block; width: 22px; height: 2px; background: var(--color-text-muted); margin: 4px 0; transition: 0.3s; }
     .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13,11,26,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-8); }
@@ -400,6 +402,8 @@
     .char-link { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-gold); }
     .char-link:hover { text-decoration: underline; }
     .char-coming-soon { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-faint); }
+    .char-avatar-img { width: 100px; height: 120px; border-radius: 4px; overflow: hidden; margin: 0 auto var(--space-4); }
+    .char-avatar-img img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 
     /* ===== CHARACTER CARD FLIP ===== */
     .char-flip-wrapper { perspective: 1200px; }
@@ -483,6 +487,12 @@
     .world-lore cite { font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.05em; }
     @media (max-width: 768px) { .world-split { grid-template-columns: 1fr; } }
 
+    /* ===== WORLD / COLLABS SHARED ===== */
+    .world { }
+    .world-inner { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 1; }
+    .world-header { margin-bottom: var(--space-8); }
+    .world-intro { font-size: 1rem; color: var(--color-text-muted); max-width: 620px; }
+
     /* ===== NEWSLETTER ===== */
     .newsletter-box {
       background: var(--color-surface); border: 1px solid var(--color-border);
@@ -536,6 +546,7 @@
       <li><a href="#characters">Characters</a></li>
       <li><a href="#world">World</a></li>
     </ul>
+    <a href="#collabs" class="nav-cta nav-cta-collabs" aria-label="Go to collaborations section">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="nav-cta" target="_blank" rel="noopener" aria-label="Subscribe to the Solaria newsletter on Substack">Subscribe</a>
     <button class="nav-mobile-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
@@ -549,6 +560,7 @@
     <a href="#chronicles" class="mobile-link">Chronicles</a>
     <a href="#characters" class="mobile-link">Characters</a>
     <a href="#world" class="mobile-link">World</a>
+    <a href="#collabs" class="mobile-link">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="mobile-link" target="_blank" rel="noopener">Subscribe</a>
   </div>
 
@@ -979,23 +991,41 @@
             </div>
           </div>
 
-          <article class="character-card reveal">
-            <div class="char-avatar" aria-label="Juan Souls character card">JS</div>
-            <h3 class="char-name">Juan Souls</h3>
-            <p class="char-tagline">"He already knows how it ends."</p>
-            <p class="char-role">The Dancing Death</p>
-            <p class="char-bio">A twisted entity that sees what others can't: the future. He doesn't guess. He doesn't hope. He knows. And with that knowledge, he moves to break the only outcomes that could stop what's coming.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-juan">
+              <div class="char-front">
+                <div class="char-avatar-img"><img src="assets/characters/Juan Souls.png" alt="Juan Souls — character portrait" loading="lazy"></div>
+                <h3 class="char-name">Juan Souls</h3>
+                <p class="char-tagline">"He already knows how it ends."</p>
+                <p class="char-role">The Dancing Death</p>
+                <p class="char-bio">A twisted entity that sees what others can't: the future. He doesn't guess. He doesn't hope. He knows.</p>
+                <button class="char-flip-btn" data-target="card-juan" aria-label="View Juan Souls's character art">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/Juan Souls.png" alt="Juan Souls — full character art" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-juan" aria-label="Return to Juan Souls's character description">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
-          <article class="character-card reveal">
-            <div class="char-avatar" aria-label="Alara character card">A</div>
-            <h3 class="char-name">Alara</h3>
-            <p class="char-tagline">"She was there... before and after."</p>
-            <p class="char-role">The Seer. The Mentor. The Sister.</p>
-            <p class="char-bio">A quiet, mysterious presence seen only in fragments in Act I. She appears when the world begins, and again when it nears its end. Her name is not spoken until Act II.</p>
-            <a href="#" class="char-link">View Profile &#8594;</a>
-          </article>
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-alara">
+              <div class="char-front">
+                <div class="char-avatar-img"><img src="assets/characters/Alara.png" alt="Alara — character portrait" loading="lazy"></div>
+                <h3 class="char-name">Alara</h3>
+                <p class="char-tagline">"She was there... before and after."</p>
+                <p class="char-role">The Seer. The Mentor. The Sister.</p>
+                <p class="char-bio">A quiet, mysterious presence seen only in fragments in Act I. She appears when the world begins, and again when it nears its end.</p>
+                <button class="char-flip-btn" data-target="card-alara" aria-label="View Alara's character art">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="assets/characters/Alara.png" alt="Alara — full character art" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-alara" aria-label="Return to Alara's character description">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-arvel">
@@ -1015,13 +1045,23 @@
             </div>
           </div>
 
-          <article class="character-card coming-soon reveal" aria-hidden="true">
-            <div class="char-avatar">S</div>
-            <h3 class="char-name">Sepa</h3>
-            <p class="char-role">Book III</p>
-            <p class="char-bio">His story is still unfolding.</p>
-            <span class="char-coming-soon">Coming Soon</span>
-          </article>
+          <div class="char-flip-wrapper reveal">
+            <div class="char-flip" id="card-sepa">
+              <div class="char-front">
+                <div class="char-avatar-img"><img src="Sepa.png" alt="Sepa — character portrait" loading="lazy"></div>
+                <h3 class="char-name">Sepa</h3>
+                <p class="char-tagline">"The shield only holds if you believe in it."</p>
+                <p class="char-role">The Shieldbearer. Book III.</p>
+                <p class="char-bio">Sepa carries the weight of his tribe and the doubt that weakens his shield. To contain the Rift, he must first believe in himself.</p>
+                <button class="char-flip-btn" data-target="card-sepa" aria-label="View Sepa's character art">View Profile &#8594;</button>
+              </div>
+              <div class="char-back">
+                <img src="Sepa.png" alt="Sepa — full character art" loading="lazy">
+                <div class="char-back-overlay"></div>
+                <button class="char-back-btn" data-target="card-sepa" aria-label="Return to Sepa's character description">&#8592; Back</button>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -1067,6 +1107,22 @@
                 <a href="https://ko-fi.com/solarianearl" class="btn-ghost" target="_blank" rel="noopener" aria-label="Support Tales of Solaria on Ko-fi">Support the Saga &#8599;</a>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLLABS -->
+    <section id="collabs" aria-labelledby="collabs-title" style="border-top: 1px solid var(--color-border);">
+      <div class="container">
+        <div class="reveal">
+          <p class="section-label">Collaborations</p>
+          <h2 class="section-title" id="collabs-title">Build the world with us.</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle" style="margin-bottom: var(--space-8);">Solaria is built to grow. If you're a writer, artist, composer, or creator who wants to add your voice to the saga &mdash; or if you'd like to support the project &mdash; this is where stories begin.</p>
+          <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+            <a href="https://ko-fi.com/solarianearl" class="btn-primary" target="_blank" rel="noopener noreferrer" aria-label="Support Tales of Solaria on Ko-fi">Support on Ko-fi</a>
+            <a href="https://solarianearl.substack.com/" class="btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Follow Tales of Solaria on Substack">Follow on Substack</a>
           </div>
         </div>
       </div>

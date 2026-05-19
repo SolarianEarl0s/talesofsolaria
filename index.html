@@ -25,11 +25,24 @@
     html { scroll-behavior: smooth; }
     body {
       background-color: #0d0b1a;
+      background-image: url('assets/Generated%20Image%20May%2019%2C%202026%20-%208_21PM.jpg');
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
       color: #e8e0cc;
       font-family: 'Raleway', 'Helvetica Neue', sans-serif;
       font-weight: 400;
       line-height: 1.7;
       overflow-x: hidden;
+    }
+    /* Dark overlay so text stays readable over the cathedral background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 11, 26, 0.78);
+      z-index: 0;
+      pointer-events: none;
     }
     img { max-width: 100%; display: block; }
     a { color: inherit; text-decoration: none; }
@@ -77,7 +90,7 @@
     #starfield-canvas {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
+      z-index: 1; pointer-events: none;
     }
 
     /* ===== NAVIGATION ===== */
@@ -116,7 +129,7 @@
     }
 
     /* ===== LAYOUT ===== */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 1; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 2; }
     section { padding: var(--space-20) 0; }
     .section-label {
       font-family: var(--font-display); font-size: 0.75rem; font-weight: 600;
@@ -135,7 +148,7 @@
     .hero {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       text-align: center; padding: var(--space-20) var(--space-8) 6rem;
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
     }
     .hero-inner { max-width: 760px; position: relative; z-index: 2; }
     .hero-eyebrow {
@@ -489,7 +502,7 @@
 
     /* ===== WORLD / COLLABS SHARED ===== */
     .world { }
-    .world-inner { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 1; }
+    .world-inner { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 2; }
     .world-header { margin-bottom: var(--space-8); }
     .world-intro { font-size: 1rem; color: var(--color-text-muted); max-width: 620px; }
 
@@ -523,7 +536,7 @@
     /* ===== FOOTER ===== */
     .footer {
       border-top: 1px solid var(--color-border); padding: var(--space-12) 0;
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
     }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-6); }
     .footer-logo { font-family: var(--font-display); font-size: 0.9rem; color: var(--color-gold); letter-spacing: 0.12em; }

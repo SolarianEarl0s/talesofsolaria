@@ -35,7 +35,6 @@
       line-height: 1.7;
       overflow-x: hidden;
     }
-    /* Dark overlay so text stays readable over the cathedral background */
     body::before {
       content: '';
       position: fixed;
@@ -47,7 +46,6 @@
     img { max-width: 100%; display: block; }
     a { color: inherit; text-decoration: none; }
 
-    /* ===== FOCUS VISIBLE — WCAG 2.1 AA ===== */
     :focus { outline: none; }
     :focus-visible {
       outline: 2px solid #c9a84c;
@@ -115,12 +113,27 @@
     .nav-cta:hover { background: var(--color-gold); color: #0d0b1a; }
     .nav-cta-collabs { background: transparent; color: var(--color-gold); border-color: rgba(201,168,76,0.4); margin-right: var(--space-2); }
     .nav-cta-collabs:hover { background: rgba(201,168,76,0.12); color: var(--color-gold); border-color: var(--color-gold); }
+    /* Hub button in nav — gold filled */
+    .nav-cta-hub {
+      background: var(--color-gold); color: #0d0b1a;
+      border-color: var(--color-gold); margin-left: var(--space-2);
+      font-weight: 700;
+    }
+    .nav-cta-hub:hover { background: var(--color-gold-hover); border-color: var(--color-gold-hover); color: #0d0b1a; }
     .nav-mobile-btn { display: none; background: none; border: none; cursor: pointer; padding: var(--space-2); }
     .nav-mobile-btn span { display: block; width: 22px; height: 2px; background: var(--color-text-muted); margin: 4px 0; transition: 0.3s; }
     .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13,11,26,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-8); }
     .mobile-menu.open { display: flex; }
     .mobile-link { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-text-muted); transition: color 0.2s; }
     .mobile-link:hover { color: var(--color-gold); }
+    .mobile-link-hub {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+      color: #0d0b1a; background: var(--color-gold);
+      padding: var(--space-3) var(--space-8); border-radius: 2px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .mobile-link-hub:hover { background: var(--color-gold-hover); color: #0d0b1a; }
     .mobile-close { position: absolute; top: var(--space-6); right: var(--space-8); background: none; border: none; color: var(--color-text-muted); font-size: 1.5rem; cursor: pointer; }
 
     @media (max-width: 768px) {
@@ -196,6 +209,18 @@
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-ghost:hover { border-color: var(--color-gold-dim); color: var(--color-gold); }
+    /* Hub / Contact Me button style */
+    .btn-hub {
+      font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      background: transparent;
+      border: 2px solid var(--color-gold);
+      color: var(--color-gold);
+      padding: var(--space-4) var(--space-8); border-radius: 2px;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-hub:hover { background: var(--color-gold); color: #0d0b1a; transform: translateY(-1px); }
     .scroll-indicator {
       position: absolute; bottom: var(--space-8); left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
@@ -322,21 +347,14 @@
       position: absolute; top: 0; left: 0;
       width: 100%; height: 100%; border: none;
     }
-    .short-meta {
-      padding: var(--space-4);
-    }
+    .short-meta { padding: var(--space-4); }
     .short-act {
       font-family: var(--font-display); font-size: 0.65rem;
       letter-spacing: 0.15em; text-transform: uppercase;
       color: var(--color-gold); margin-bottom: var(--space-2);
     }
-    .short-title {
-      font-family: var(--font-display); font-size: 0.9rem;
-      color: var(--color-text); margin-bottom: var(--space-2);
-    }
-    .short-views {
-      font-size: 0.75rem; color: var(--color-text-muted);
-    }
+    .short-title { font-family: var(--font-display); font-size: 0.9rem; color: var(--color-text); margin-bottom: var(--space-2); }
+    .short-views { font-size: 0.75rem; color: var(--color-text-muted); }
 
     /* ===== CHRONICLE ENTRIES ===== */
     .chronicle-entry {
@@ -500,7 +518,6 @@
     .world-lore cite { font-size: 0.78rem; color: var(--color-text-muted); letter-spacing: 0.05em; }
     @media (max-width: 768px) { .world-split { grid-template-columns: 1fr; } }
 
-    /* ===== WORLD / COLLABS SHARED ===== */
     .world { }
     .world-inner { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-8); position: relative; z-index: 2; }
     .world-header { margin-bottom: var(--space-8); }
@@ -561,6 +578,7 @@
     </ul>
     <a href="#collabs" class="nav-cta nav-cta-collabs" aria-label="Go to collaborations section">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="nav-cta" target="_blank" rel="noopener" aria-label="Subscribe to the Solaria newsletter on Substack">Subscribe</a>
+    <a href="https://solarianearl0s.github.io" class="nav-cta nav-cta-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and contact page">Hub / Contact Me</a>
     <button class="nav-mobile-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
@@ -575,6 +593,7 @@
     <a href="#world" class="mobile-link">World</a>
     <a href="#collabs" class="mobile-link">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="mobile-link" target="_blank" rel="noopener">Subscribe</a>
+    <a href="https://solarianearl0s.github.io" class="mobile-link mobile-link-hub" target="_blank" rel="noopener" aria-label="Creator Hub and contact">Hub / Contact Me &#8599;</a>
   </div>
 
   <main id="main">
@@ -597,6 +616,7 @@
         <div class="hero-cta">
           <a href="#chronicles" class="btn-primary">Watch the Chronicles</a>
           <a href="#acts" class="btn-ghost">Explore the Saga</a>
+          <a href="https://solarianearl0s.github.io" class="btn-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and get in touch">Hub / Contact Me &#8599;</a>
         </div>
       </div>
       <div class="scroll-indicator" aria-hidden="true">Scroll</div>
@@ -676,7 +696,6 @@
           <div class="divider"></div>
         </div>
 
-        <!-- STATS BLOCK -->
         <div class="stats-block reveal" aria-label="Production statistics">
           <div class="stat-item">
             <span class="stat-value">394+</span>
@@ -708,7 +727,6 @@
         <!-- MAIN SAGA TAB -->
         <div id="tab-main" class="tab-panel active" role="tabpanel">
 
-          <!-- SHORTS GRID -->
           <div class="reveal">
             <div class="shorts-header">
               <p class="shorts-label">&#9654; Shorts &mdash; Scene Highlights</p>
@@ -718,11 +736,7 @@
 
               <div class="short-card pinned reveal">
                 <div class="short-video-wrap">
-                  <iframe
-                    src="https://www.youtube.com/embed/vqfrwZCPMI0"
-                    title="This fight ends here — Act 5, Tales of Solaria"
-                    allowfullscreen loading="lazy"
-                  ></iframe>
+                  <iframe src="https://www.youtube.com/embed/vqfrwZCPMI0" title="This fight ends here — Act 5, Tales of Solaria" allowfullscreen loading="lazy"></iframe>
                 </div>
                 <div class="short-meta">
                   <p class="short-act">Act V</p>
@@ -733,11 +747,7 @@
 
               <div class="short-card reveal">
                 <div class="short-video-wrap">
-                  <iframe
-                    src="https://www.youtube.com/embed/0HaekAifROo"
-                    title="Adjusting to the new powers — Act 1, Tales of Solaria"
-                    allowfullscreen loading="lazy"
-                  ></iframe>
+                  <iframe src="https://www.youtube.com/embed/0HaekAifROo" title="Adjusting to the new powers — Act 1, Tales of Solaria" allowfullscreen loading="lazy"></iframe>
                 </div>
                 <div class="short-meta">
                   <p class="short-act">Act I</p>
@@ -748,11 +758,7 @@
 
               <div class="short-card reveal">
                 <div class="short-video-wrap">
-                  <iframe
-                    src="https://www.youtube.com/embed/PtesRnjA5bQ"
-                    title="This is talesofsolaria — Series Trailer"
-                    allowfullscreen loading="lazy"
-                  ></iframe>
+                  <iframe src="https://www.youtube.com/embed/PtesRnjA5bQ" title="This is talesofsolaria — Series Trailer" allowfullscreen loading="lazy"></iframe>
                 </div>
                 <div class="short-meta">
                   <p class="short-act">Series Trailer</p>
@@ -764,7 +770,6 @@
             </div>
           </div>
 
-          <!-- ACT IV PLAYLIST -->
           <div class="playlist-block reveal">
             <div class="playlist-header">
               <div class="playlist-meta">
@@ -776,12 +781,7 @@
             </div>
             <div class="playlist-embed">
               <div class="video-embed" style="position:relative; padding-bottom:56.25%; height:0;">
-                <iframe
-                  src="https://www.youtube.com/embed/NCVntf3jMno?list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR&index=1"
-                  title="Act IV: Unity's Choice, Full Playlist"
-                  allowfullscreen loading="lazy"
-                  style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
-                ></iframe>
+                <iframe src="https://www.youtube.com/embed/NCVntf3jMno?list=PLqTA7356OEMn2owHUEpIrQtEDGcOXEKoR&index=1" title="Act IV: Unity's Choice, Full Playlist" allowfullscreen loading="lazy" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
               </div>
             </div>
           </div>
@@ -1133,9 +1133,10 @@
           <h2 class="section-title" id="collabs-title">Build the world with us.</h2>
           <div class="divider"></div>
           <p class="section-subtitle" style="margin-bottom: var(--space-8);">Solaria is built to grow. If you're a writer, artist, composer, or creator who wants to add your voice to the saga &mdash; or if you'd like to support the project &mdash; this is where stories begin.</p>
-          <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+          <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
             <a href="https://ko-fi.com/solarianearl" class="btn-primary" target="_blank" rel="noopener noreferrer" aria-label="Support Tales of Solaria on Ko-fi">Support on Ko-fi</a>
             <a href="https://solarianearl.substack.com/" class="btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Follow Tales of Solaria on Substack">Follow on Substack</a>
+            <a href="https://solarianearl0s.github.io" class="btn-hub" target="_blank" rel="noopener noreferrer" aria-label="Visit the Creator Hub to get in touch or collaborate">Hub / Contact Me &#8599;</a>
           </div>
         </div>
       </div>
@@ -1173,6 +1174,7 @@
           <a href="https://solarianearl.substack.com/" target="_blank" rel="noopener" aria-label="Solaria newsletter on Substack">Substack</a>
           <a href="https://ko-fi.com/solarianearl" target="_blank" rel="noopener" aria-label="Support on Ko-fi">Ko-fi</a>
           <a href="https://www.wattpad.com/1512055057-solaria-evin%27s-tale-draft-the-mysterious-lady" target="_blank" rel="noopener" aria-label="Read the draft on Wattpad">Wattpad</a>
+          <a href="https://solarianearl0s.github.io" target="_blank" rel="noopener" aria-label="Creator Hub">Creator Hub</a>
         </nav>
         <p class="footer-copy">&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
       </div>

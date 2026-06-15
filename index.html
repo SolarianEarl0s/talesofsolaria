@@ -113,7 +113,6 @@
     .nav-cta:hover { background: var(--color-gold); color: #0d0b1a; }
     .nav-cta-collabs { background: transparent; color: var(--color-gold); border-color: rgba(201,168,76,0.4); margin-right: var(--space-2); }
     .nav-cta-collabs:hover { background: rgba(201,168,76,0.12); color: var(--color-gold); border-color: var(--color-gold); }
-    /* Hub button in nav — gold filled */
     .nav-cta-hub {
       background: var(--color-gold); color: #0d0b1a;
       border-color: var(--color-gold); margin-left: var(--space-2);
@@ -209,7 +208,6 @@
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-ghost:hover { border-color: var(--color-gold-dim); color: var(--color-gold); }
-    /* Hub / Contact Me button style */
     .btn-hub {
       font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
       letter-spacing: 0.12em; text-transform: uppercase;
@@ -261,6 +259,7 @@
     .status-available { background: rgba(201,168,76,0.12); color: var(--color-gold); border: 1px solid rgba(201,168,76,0.25); }
     .status-wip { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
     .status-planned { background: rgba(255,255,255,0.04); color: var(--color-text-muted); border: 1px solid rgba(255,255,255,0.08); }
+    .status-new { background: rgba(34,197,94,0.10); color: #86efac; border: 1px solid rgba(34,197,94,0.25); }
     .act-wattpad-link {
       display: inline-block; margin-top: var(--space-3);
       font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em;
@@ -607,6 +606,7 @@
         <div class="hero-acts" aria-label="Acts overview">
           <span class="act-pill active">Act I &middot; Evin's Tale</span>
           <span class="act-pill">Act II &middot; Alara's Story</span>
+          <span class="act-pill">Act II.V &middot; The Rift Between</span>
           <span class="act-pill">Act III &middot; The Trial</span>
           <span class="act-pill">Act III.V &middot; Fated</span>
           <span class="act-pill">Act IV &middot; Unity's Choice</span>
@@ -646,6 +646,14 @@
             <h3>Alara's Story</h3>
             <p>The mentor. The Seer. The sister. Alara steps from the shadows of Act I into her own story &mdash; and the brother she lost is the one standing in her way.</p>
             <span class="act-status status-wip">Writing in Progress</span>
+          </article>
+
+          <article class="act-card reveal">
+            <p class="act-number">Act II.V</p>
+            <h3>The Rift Between</h3>
+            <p>Between Alara's reckoning and the trials ahead, the world fractures in silence. Old wounds resurface, the Void stirs beneath the surface, and the fate of those caught in between hangs by a thread no one yet knows is there.</p>
+            <span class="act-status status-new">New</span>
+            <span class="act-status status-wip" style="margin-left: 0.4rem;">In Development</span>
           </article>
 
           <article class="act-card reveal">

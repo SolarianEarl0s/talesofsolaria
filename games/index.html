@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tales of Solaria Games</title>
+<meta name="description" content="Browser RPGs set in Tales of Solaria. Act I is out now on itch.io; Act II and Act II·V are in beta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a night-sky ground, a reading-order line of three flames, then one framed "cabinet" per game, alternating sides. */
+:root{
+  color-scheme:dark;
+  --ground:#07070f;
+  --surface:#120f22;
+  --surface-2:#181431;
+  --gold:#d9a441;
+  --gold-deep:#c9953a;
+  --pale:#f2d58a;
+  --ink:#efe3c4;
+  --dim:#9a93b0;
+  --line:rgba(217,164,65,.28);
+  --ember:#f0b94e;
+  --emerald:#6fd88a;
+  --rose:#ff8ab8;
+  --display:"Cinzel",Georgia,"Times New Roman",serif;
+  --body:"EB Garamond",Georgia,"Times New Roman",serif;
+  --step--1:.9rem; --step-0:1.1rem; --step-1:1.3rem; --step-2:1.75rem; --step-3:clamp(2rem,5vw,2.9rem); --step-4:clamp(2.6rem,8vw,4.6rem);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--ground)}
+body{
+  margin:0;color:var(--ink);font-family:var(--body);font-size:var(--step-0);line-height:1.6;
+  background:
+    radial-gradient(ellipse 60% 40% at 18% 8%,rgba(240,185,78,.08),transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 30%,rgba(111,216,138,.05),transparent 70%),
+    radial-gradient(ellipse 60% 50% at 30% 75%,rgba(255,138,184,.05),transparent 70%),
+    var(--ground);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%,#dfe8f4 50%,transparent 51%),
+    radial-gradient(1px 1px at 72% 9%,#dfe8f4 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 41% 33%,#f2d58a 50%,transparent 51%),
+    radial-gradient(1px 1px at 88% 52%,#dfe8f4 50%,transparent 51%),
+    radial-gradient(1px 1px at 23% 64%,#dfe8f4 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 63% 77%,#f2d58a 50%,transparent 51%),
+    radial-gradient(1px 1px at 8% 91%,#dfe8f4 50%,transparent 51%),
+    radial-gradient(1px 1px at 51% 95%,#dfe8f4 50%,transparent 51%);
+  background-size:520px 520px;
+}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--pale);outline-offset:3px}
+img{max-width:100%;display:block}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding-inline:20px}
+
+/* NAV */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(7,7,15,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.mark{font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.22em;color:var(--gold);text-decoration:none;white-space:nowrap}
+.nav-links{display:flex;gap:22px;flex-wrap:wrap;justify-content:flex-end}
+.nav-links a{font-family:var(--display);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-decoration:none}
+.nav-links a:hover{color:var(--pale)}
+
+/* HERO */
+.hero{padding-block:72px 40px;text-align:center}
+.eyebrow{font-family:var(--display);font-weight:600;font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin:0}
+.hero h1{
+  font-family:var(--display);font-weight:700;font-size:var(--step-4);line-height:1.02;letter-spacing:.02em;margin:18px 0 18px;text-wrap:balance;
+  background:linear-gradient(180deg,#fff0c2 0%,var(--gold-deep) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero .lede{max-width:56ch;margin:0 auto;color:var(--ink);opacity:.9;font-size:var(--step-1);line-height:1.5}
+
+/* READING ORDER */
+.order{margin:56px auto 0;max-width:880px;display:grid;grid-template-columns:repeat(3,1fr);position:relative;list-style:none;padding:0}
+.order::before{content:"";position:absolute;left:16.6%;right:16.6%;top:38px;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 12%,var(--gold) 88%,transparent);opacity:.55}
+.order li{min-width:0}
+.order a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;padding:0 8px 6px}
+.flame{width:76px;height:76px;position:relative;display:grid;place-items:center}
+.flame::before{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 32%,transparent) 0%,transparent 68%)}
+.flame svg{width:34px;height:34px;position:relative;transform-origin:50% 90%;animation:flicker 3.2s ease-in-out infinite}
+.order li:nth-child(2) .flame svg{animation-delay:-1.1s}
+.order li:nth-child(3) .flame svg{animation-delay:-2.2s}
+@keyframes flicker{0%,100%{transform:scale(1,1)}30%{transform:scale(.96,1.06)}60%{transform:scale(1.03,.97)}}
+.order a > div{display:grid;justify-items:center;gap:5px}
+.order .act{font-family:var(--display);font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.order .name{font-family:var(--display);font-weight:600;font-size:var(--step-1);color:var(--pale);text-align:center;text-wrap:balance}
+.order a:hover .name{color:#fff0c2}
+
+/* STATUS */
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;padding:5px 11px;border-radius:2px;white-space:nowrap}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.status.released{background:linear-gradient(180deg,var(--pale),var(--gold-deep));color:#1a1006}
+.status.released .dot{background:#1a1006;box-shadow:none}
+.status.beta{border:1px solid color-mix(in srgb,var(--c) 60%,transparent);color:var(--ink)}
+
+/* GAME CABINETS */
+.games{display:grid;gap:110px;padding-block:70px 40px}
+.game{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;align-items:start;scroll-margin-top:90px}
+.game.flip .media{order:2}
+.frame{margin:0;border:1px solid var(--gold-deep);outline:1px solid rgba(217,164,65,.35);outline-offset:4px;box-shadow:0 0 0 9px var(--ground),0 0 0 10px rgba(217,164,65,.18),0 24px 70px rgba(0,0,0,.7);background:#000}
+.frame img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.media{display:grid;gap:34px;min-width:0}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.shots figure{margin:0;display:grid;gap:10px}
+.shots .frame{box-shadow:0 0 0 6px var(--ground),0 0 0 7px rgba(217,164,65,.14),0 14px 40px rgba(0,0,0,.6);outline-offset:3px}
+.shots figcaption{font-style:italic;font-size:var(--step--1);color:var(--dim);line-height:1.35}
+.copy{min-width:0;display:grid;gap:18px;align-content:start}
+.copy h2{font-family:var(--display);font-weight:700;font-size:var(--step-3);line-height:1.08;margin:0;color:var(--pale);text-wrap:balance}
+.tagline{margin:-6px 0 0;font-style:italic;font-size:var(--step-1);color:var(--ink);opacity:.85}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.meta span.small{font-size:var(--step--1);color:var(--dim)}
+.copy p.blurb{margin:0;max-width:62ch}
+.specs{margin:0;display:grid;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.specs div{display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:12px;align-items:baseline}
+.specs dt{font-family:var(--display);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding-top:3px}
+.specs dd{margin:0;font-size:1.02rem;line-height:1.5}
+.keys{display:flex;flex-wrap:wrap;gap:6px 14px}
+.keys span{white-space:nowrap;color:var(--dim)}
+kbd{font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.08em;color:var(--pale);border:1px solid rgba(217,164,65,.45);padding:1px 6px;margin-right:5px;border-radius:2px;background:rgba(255,255,255,.02)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:14px 22px;border-radius:2px;transition:transform .18s ease,filter .18s ease,background .18s ease}
+.btn.primary{background:linear-gradient(180deg,var(--pale),var(--gold-deep));color:#1a1006;border:1px solid #fff0c2;box-shadow:0 8px 26px rgba(201,149,58,.28)}
+.btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.ghost{border:1px solid rgba(217,164,65,.5);color:var(--pale)}
+.btn.ghost:hover{background:rgba(217,164,65,.1)}
+.note{margin:0;padding:12px 14px;border-left:2px solid var(--c);background:rgba(255,255,255,.025);font-size:1rem;line-height:1.5;color:var(--ink)}
+.note b{font-family:var(--display);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pale);margin-right:6px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);margin-top:60px}
+footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;text-align:center}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 24px}
+.foot-links a{font-family:var(--display);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-decoration:none}
+.foot-links a:hover{color:var(--pale)}
+.disc{max-width:60ch;margin:0;font-style:italic;font-size:var(--step--1);color:var(--dim);line-height:1.5}
+
+@media (max-width:860px){
+  .game,.game.flip{grid-template-columns:minmax(0,1fr);gap:40px}
+  .game.flip .media{order:0}
+  .games{gap:90px}
+}
+@media (max-width:600px){
+  .hero{padding-block:48px 24px}
+  .order{grid-template-columns:minmax(0,1fr);gap:10px;max-width:360px}
+  .order::before{left:38px;right:auto;top:30px;bottom:30px;width:1px;height:auto;background:linear-gradient(180deg,transparent,var(--gold) 12%,var(--gold) 88%,transparent)}
+  .order a{flex-direction:row;align-items:center;gap:14px;padding:0}
+  .order a > div{display:grid;justify-items:start}
+  .order .name{text-align:left}
+  .shots{gap:18px}
+  .specs div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .nav-links{gap:14px}
+  .nav-links .hide-sm{display:none}
+  .mark{font-size:.74rem;letter-spacing:.18em}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .flame svg{animation:none}
+  .btn{transition:none}
+}
+</style>
+<meta property="og:title" content="Tales of Solaria Games">
+<meta property="og:description" content="Browser RPGs set in Tales of Solaria. Act I is out now on itch.io; Act II and Act II·V are in beta.">
+<meta property="og:url" content="https://talesofsolaria.co.uk/games/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://talesofsolaria.co.uk/games/img/og-games.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07070f">
+<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/SolarianEarl0s/SolarianEarl0s.github.io/main/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/SolarianEarl0s/SolarianEarl0s.github.io/main/favicon-32x32.png">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="flame" viewBox="-24 -24 48 48">
+      <path fill="currentColor" d="M0-20C14-6 16 8 0 20C-16 8-12-4 0-20Z"/>
+      <path fill="rgba(255,250,230,.88)" d="M0-4C6 2 6 10 0 16C-6 10-5 4 0-4Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<nav class="nav" aria-label="Site">
+  <div class="wrap">
+    <a class="mark" href="/">TALES OF SOLARIA</a>
+    <div class="nav-links">
+      <a class="hide-sm" href="#evins-tale">Act I</a>
+      <a class="hide-sm" href="#two-flames">Act II</a>
+      <a class="hide-sm" href="#age-of-pirates">Act II·V</a>
+      <a href="/">The Saga</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Tales of Solaria &middot; The Games</p>
+      <h1>Play the Saga</h1>
+      <p class="lede">Small story RPGs that run in your browser, one for each chapter told so far. Act I is finished and free on itch.io. Act II and Act II·V are open betas.</p>
+
+      <ol class="order" aria-label="Play order">
+        <li style="--c:var(--ember)">
+          <a href="#evins-tale">
+            <span class="flame" style="color:var(--ember)"><svg><use href="#flame"/></svg></span>
+            <div>
+              <span class="act">Act I</span>
+              <span class="name">Evin's Tale</span>
+              <span class="status released"><span class="dot"></span>Released</span>
+            </div>
+          </a>
+        </li>
+        <li style="--c:var(--emerald)">
+          <a href="#two-flames">
+            <span class="flame" style="color:var(--emerald)"><svg><use href="#flame"/></svg></span>
+            <div>
+              <span class="act">Act II</span>
+              <span class="name">Two Flames</span>
+              <span class="status beta"><span class="dot"></span>Beta</span>
+            </div>
+          </a>
+        </li>
+        <li style="--c:var(--rose)">
+          <a href="#age-of-pirates">
+            <span class="flame" style="color:var(--rose)"><svg><use href="#flame"/></svg></span>
+            <div>
+              <span class="act">Act II·V</span>
+              <span class="name">The Age of Pirates</span>
+              <span class="status beta"><span class="dot"></span>Beta</span>
+            </div>
+          </a>
+        </li>
+      </ol>
+    </div>
+  </header>
+
+  <div class="wrap games">
+
+    <!-- ACT I -->
+    <article class="game" id="evins-tale" style="--c:var(--ember)" aria-labelledby="t-evin">
+      <div class="media">
+        <figure class="frame"><img src="img/evin-cover.webp" width="960" height="720" alt="Evin's Tale cover art: Evin in a green hood, the King of Calbra, and the Seer with her golden harp"></figure>
+        <div class="shots">
+          <figure>
+            <div class="frame"><img src="img/evin-prologue.webp" width="640" height="480" loading="lazy" alt="Prologue scene: the Seer with her harp on a moonlit street"></div>
+            <figcaption>Prologue: The Seer and the Golden Harp</figcaption>
+          </figure>
+          <figure>
+            <div class="frame"><img src="img/evin-calbra.webp" width="640" height="480" loading="lazy" alt="Gameplay in the streets of Calbra, seventeen years ago, with a dialogue box"></div>
+            <figcaption>Calbra, seventeen years ago</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Act I &middot; Book 1</p>
+        <h2 id="t-evin">Evin's Tale</h2>
+        <p class="tagline">A soul of fire. A world of secrets.</p>
+        <div class="meta">
+          <span class="status released"><span class="dot"></span>Released</span>
+          <span class="small">28 September 2026 &middot; Free</span>
+        </div>
+        <p class="blurb">Everyone is born able to cast magic. The nobles have spent centuries making sure no one remembers that. Evin is a street thief turned palace servant. Invisible, lowborn, and certain magic is a birthright he'll never have. Then a forbidden melody draws him into a room he was never meant to enter, and the lie that built his entire world begins to come apart in his hands.</p>
+        <dl class="specs">
+          <div><dt>You play as</dt><dd>Evin, in the Kingdom of Calbra</dd></div>
+          <div><dt>Plays in</dt><dd>Your browser, on desktop or phone (on-screen pad for touch)</dd></div>
+          <div><dt>Controls</dt><dd class="keys"><span><kbd>Arrows</kbd>move</span><span><kbd>Z</kbd>talk / confirm</span><span><kbd>X</kbd>back, hold to sprint</span><span><kbd>C</kbd>journal</span><span><kbd>M</kbd>sound</span></dd></div>
+        </dl>
+        <div class="ctas">
+          <a class="btn primary" href="https://talesofsolaria.itch.io/evins-tale" target="_blank" rel="noopener">Play on itch.io &#8599;</a>
+          <a class="btn ghost" href="https://www.wattpad.com/story/388548881-tales-of-solaria-evin%27s-tale" target="_blank" rel="noopener">Read Book 1 &#8599;</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ACT II -->
+    <article class="game flip" id="two-flames" style="--c:var(--emerald)" aria-labelledby="t-flames">
+      <div class="media">
+        <figure class="frame"><img src="img/flames-title.webp" width="960" height="720" loading="lazy" alt="Two Flames title screen: Alara and Oōdengard face each other across the title"></figure>
+        <div class="shots">
+          <figure>
+            <div class="frame"><img src="img/flames-road.webp" width="640" height="480" loading="lazy" alt="Chapter card reading Oōdengard's Road, Snowhollow, an Oscelarian village"></div>
+            <figcaption>Oōdengard's Road begins in Snowhollow</figcaption>
+          </figure>
+          <figure>
+            <div class="frame"><img src="img/flames-snowhollow.webp" width="640" height="480" loading="lazy" alt="Gameplay in snowy Snowhollow with the quest: find Alara, she always hides somewhere clever"></div>
+            <figcaption>&ldquo;Find Alara. She always hides somewhere clever.&rdquo;</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Act II &middot; Alara's Story</p>
+        <h2 id="t-flames">Two Flames</h2>
+        <p class="tagline">Grief ignites. Power awakens. Worlds break.</p>
+        <div class="meta">
+          <span class="status beta"><span class="dot"></span>Beta</span>
+          <span class="small">Free &middot; Plays in your browser</span>
+        </div>
+        <p class="blurb">A brother and a sister, separated by one snowy morning, each sure the other is dead. Walk Oōdengard's road and Alara's road in either order. Neither of them knows the whole story. By the end, you will.</p>
+        <dl class="specs">
+          <div><dt>You play as</dt><dd>Oōdengard and Alara, one road each</dd></div>
+          <div><dt>Skills</dt><dd>Guard, Flute Gust, Cube Ice and Soul Sight</dd></div>
+          <div><dt>Controls</dt><dd class="keys"><span><kbd>Arrows</kbd>move</span><span><kbd>Z</kbd>attack / talk</span><span><kbd>X</kbd>roll</span><span><kbd>C</kbd>skill</span><span><kbd>E</kbd>eat</span><span><kbd>V</kbd>Soul Sight</span><span><kbd>Esc</kbd>journal</span></dd></div>
+        </dl>
+        <div class="ctas">
+          <a class="btn primary" href="two-flames/">Play the beta &#8599;</a>
+        </div>
+        <p class="note"><b>Beta</b>Still being polished, so expect rough edges. The finished version will come to itch.io.</p>
+      </div>
+    </article>
+
+    <!-- ACT II·V -->
+    <article class="game" id="age-of-pirates" style="--c:var(--rose)" aria-labelledby="t-pirates">
+      <div class="media">
+        <figure class="frame"><img src="img/pirates-title.webp" width="960" height="720" loading="lazy" alt="The Age of Pirates title screen with Chili and Shadow Cloak on a ship's deck and the mode menu"></figure>
+        <div class="shots">
+          <figure>
+            <div class="frame"><img src="img/pirates-mode.webp" width="640" height="480" loading="lazy" alt="Chapter card: The Rookie and The Expert, the Frontiers send two of their own to sea"></div>
+            <figcaption>The Frontiers send two of their own to sea</figcaption>
+          </figure>
+          <figure>
+            <div class="frame"><img src="img/pirates-haven.webp" width="640" height="480" loading="lazy" alt="Grand Elder Alara greets Chili and Shadow Cloak in the Frontier haven"></div>
+            <figcaption>Grand Elder Alara's grove</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Act II·V &middot; Interlude</p>
+        <h2 id="t-pirates">The Age of Pirates</h2>
+        <p class="tagline">Why are the pirates preparing, and for what?</p>
+        <div class="meta">
+          <span class="status beta"><span class="dot"></span>Beta</span>
+          <span class="small">Version 9 &middot; Free &middot; Plays in your browser</span>
+        </div>
+        <p class="blurb">The pirates used to wave at Frontier ships. Now they fire on them, and every kingdom on the coast is building a fleet. Grand Elder Alara sends two of her own to find out why: Chili, who can talk to anyone, and Shadow Cloak, who notices everything.</p>
+        <dl class="specs">
+          <div><dt>You play as</dt><dd>Chili and Shadow Cloak, swapping between them</dd></div>
+          <div><dt>Modes</dt><dd>The Rookie &amp; The Expert: playable, both routes. The Pirate Captain: in progress.</dd></div>
+          <div><dt>Controls</dt><dd class="keys"><span><kbd>Arrows</kbd>move</span><span><kbd>Z</kbd>attack / talk</span><span><kbd>X</kbd>roll</span><span><kbd>C</kbd>skill</span><span><kbd>V</kbd>swap</span><span><kbd>E</kbd>eat</span><span><kbd>Esc</kbd>journal</span></dd></div>
+          <div><dt>Also works with</dt><dd>Touch screens and game controllers</dd></div>
+        </dl>
+        <div class="ctas">
+          <a class="btn primary" href="age-of-pirates/">Play the beta &#8599;</a>
+          <a class="btn ghost" href="https://hub.talesofsolaria.co.uk/act2v/" target="_blank" rel="noopener">Sally's story &#8599;</a>
+        </div>
+        <p class="note"><b>Beta</b>The Pirate Captain mode, Sally's side of the story, arrives in a later update.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="/">TALES OF SOLARIA</a>
+    <nav class="foot-links" aria-label="Elsewhere">
+      <a href="/">The Saga</a>
+      <a href="https://talesofsolaria.itch.io/evins-tale" target="_blank" rel="noopener">itch.io</a>
+      <a href="https://www.wattpad.com/story/388548881-tales-of-solaria-evin%27s-tale" target="_blank" rel="noopener">Wattpad</a>
+      <a href="https://www.tiktok.com/@kentoclark" target="_blank" rel="noopener">TikTok</a>
+    </nav>
+    <p class="disc">Each game is a loose reinterpretation of its act. Events, dialogue and some characters have been changed or invented for play.</p>
+    <p class="disc">&copy; 2026 Adrian Carter. Tales of Solaria and all related characters, story and artwork are the original work of Adrian Carter and the Tales of Solaria collaborators.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -25,7 +25,7 @@
     html { scroll-behavior: smooth; }
     body {
       background-color: #0d0b1a;
-      background-image: url('assets/Generated%20Image%20May%2019%2C%202026%20-%208_21PM.jpg');
+      background-image: url('assets/cathedral-bg.webp');
       background-size: cover;
       background-position: center top;
       background-attachment: fixed;
@@ -84,6 +84,7 @@
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+    @media (max-width: 768px), (hover: none) { body { background-attachment: scroll; } }
 
     #starfield-canvas {
       position: fixed; top: 0; left: 0;
@@ -121,7 +122,7 @@
     .nav-cta-hub:hover { background: var(--color-gold-hover); border-color: var(--color-gold-hover); color: #0d0b1a; }
     .nav-mobile-btn { display: none; background: none; border: none; cursor: pointer; padding: var(--space-2); }
     .nav-mobile-btn span { display: block; width: 22px; height: 2px; background: var(--color-text-muted); margin: 4px 0; transition: 0.3s; }
-    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13,11,26,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-8); }
+    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13,11,26,0.98); z-index: 1001; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-8); }
     .mobile-menu.open { display: flex; }
     .mobile-link { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-text-muted); transition: color 0.2s; }
     .mobile-link:hover { color: var(--color-gold); }
@@ -592,7 +593,7 @@
     </ul>
     <a href="#collabs" class="nav-cta nav-cta-collabs" aria-label="Go to collaborations section">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="nav-cta" target="_blank" rel="noopener" aria-label="Subscribe to the Solaria newsletter on Substack">Subscribe</a>
-    <a href="https://solarianearl0s.github.io" class="nav-cta nav-cta-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and contact page">Hub / Contact Me</a>
+    <a href="https://hub.talesofsolaria.co.uk/" class="nav-cta nav-cta-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and contact page">Hub / Contact Me</a>
     <button class="nav-mobile-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span></span><span></span><span></span>
     </button>
@@ -608,7 +609,7 @@
     <a href="/games/" class="mobile-link">Games</a>
     <a href="#collabs" class="mobile-link">Collabs</a>
     <a href="https://solarianearl.substack.com/" class="mobile-link" target="_blank" rel="noopener">Subscribe</a>
-    <a href="https://solarianearl0s.github.io" class="mobile-link mobile-link-hub" target="_blank" rel="noopener" aria-label="Creator Hub and contact">Hub / Contact Me &#8599;</a>
+    <a href="https://hub.talesofsolaria.co.uk/" class="mobile-link mobile-link-hub" target="_blank" rel="noopener" aria-label="Creator Hub and contact">Hub / Contact Me &#8599;</a>
   </div>
 
   <main id="main">
@@ -632,7 +633,7 @@
         <div class="hero-cta">
           <a href="#chronicles" class="btn-primary">Watch the Chronicles</a>
           <a href="#acts" class="btn-ghost">Explore the Saga</a>
-          <a href="https://solarianearl0s.github.io" class="btn-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and get in touch">Hub / Contact Me &#8599;</a>
+          <a href="https://hub.talesofsolaria.co.uk/" class="btn-hub" target="_blank" rel="noopener" aria-label="Visit the Creator Hub and get in touch">Hub / Contact Me &#8599;</a>
         </div>
       </div>
       <div class="scroll-indicator" aria-hidden="true">Scroll</div>
@@ -670,7 +671,7 @@
             <p>In the wake of a tyrant's fall, the world enters an uneasy silence. Across the seas, kingdoms and pirates race to claim refined artifacts once thought lost to history, relics capable of shifting the balance of power itself. Old rivalries resurface, new ambitions take root, and beneath the calm, the foundations of an age begin to crack.</p>
             <span class="act-status status-new">New</span>
             <span class="act-status status-wip" style="margin-left: 0.4rem;">In Development</span><br>
-            <a href="https://solarianearl0s.github.io/act2v/" class="act-explore-btn" target="_blank" rel="noopener" aria-label="Explore Act II.V — The Age of Pirates">Explore Act II.V &#8599;</a>
+            <a href="https://hub.talesofsolaria.co.uk/act2v/" class="act-explore-btn" target="_blank" rel="noopener" aria-label="Explore Act II.V — The Age of Pirates">Explore Act II.V &#8599;</a>
           </article>
 
           <article class="act-card reveal">
@@ -684,14 +685,18 @@
             <p class="act-number">Act III.V</p>
             <h3>Fated</h3>
             <p>Unity, Jack, and Rose face Juan Souls &mdash; the Dancing Death. The arc that sets Rose on the path no one could stop, and the Void makes its first claim.</p>
-            <span class="act-status status-planned">Coming Soon</span>
+            <span class="act-status status-planned">Book Coming Soon</span>
+            <span class="act-status status-available" style="margin-left: 0.4rem;">Videos Out</span><br>
+            <a href="#chronicles" class="act-wattpad-link">Watch the Videos &#8595;</a>
           </article>
 
           <article class="act-card reveal">
             <p class="act-number">Act IV</p>
             <h3>Unity's Choice</h3>
             <p>Rose has fallen. The artifact carries the energy of every hero who came before. Unity must make the choice no one else could &mdash; and carry them all when she does.</p>
-            <span class="act-status status-planned">Coming Soon</span>
+            <span class="act-status status-planned">Book Coming Soon</span>
+            <span class="act-status status-available" style="margin-left: 0.4rem;">Videos Out</span><br>
+            <a href="#chronicles" class="act-wattpad-link">Watch the Videos &#8595;</a>
           </article>
 
           <article class="act-card reveal">
@@ -704,7 +709,7 @@
           <article class="act-card reveal">
             <p class="act-number">Act VI</p>
             <h3>The Fabled Knight</h3>
-            <p>On one side of the world, Jaser mirrors Oodengard's atrocities. On the other, the Fabled Knight faces el Muerto &mdash; the reincarnation of Juan Souls. Two battles. One ending.</p>
+            <p>On one side of the world, Jaser mirrors Oōdengard's atrocities. On the other, the Fabled Knight faces El Muerto &mdash; the reincarnation of Juan Souls. Two battles. One ending.</p>
             <span class="act-status status-planned">Coming Soon</span>
           </article>
 
@@ -835,7 +840,7 @@
             <div class="chronicle-text">
               <p class="chronicle-label">Act III.V &middot; Now Streaming</p>
               <h3 class="chronicle-title">Fated</h3>
-              <p class="chronicle-body">Ancient mysteries are unearthed beneath the shifting sands as destiny begins to tighten its grip on those who dare seek the truth.</p>
+              <p class="chronicle-body">Unity, Jack and Rose face Juan Souls, the Dancing Death. The fight that sets Rose on her path, and the moment the Void makes its first claim.</p>
               <a href="https://youtu.be/Ni9qJ2ontI0" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
@@ -939,7 +944,7 @@
             <div class="chronicle-text">
               <p class="chronicle-label">Act I &middot; Phase Two</p>
               <h3 class="chronicle-title">Fully Realised</h3>
-              <p class="chronicle-body">This was the version I was most eager to bring to life as a fully realised scene. Unlike Act 3.5, Jack's Final Message, this was a project I genuinely invested in from the start. With the full book series on Wattpad, I knew the plot from beginning to end and had a clear vision of how I wanted it to play out. The main obstacle at this stage was <s>Sora 2</s>'s (unavailable since March 2026 &mdash; now using Seedance 2.0 via Dreamina &amp; Veo 3 via Gemini) unpredictable content moderation. Sourcing all the individual clips, particularly the battle sequences between characters, was a genuine challenge, but working through those limitations made the final result all the more rewarding.</p>
+              <p class="chronicle-body">This was the version I was most eager to bring to life as a fully realised scene. With Book 1 on Wattpad and the whole saga plotted from beginning to end, I had a clear vision of how I wanted it to play out. The main obstacle at this stage was the video tool's unpredictable content moderation. Sourcing all the individual clips, particularly the battle sequences between characters, was a genuine challenge, but working through those limitations made the final result all the more rewarding.</p>
               <a href="https://youtu.be/yzHbd7MOpC4" class="chronicle-link" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
             </div>
           </div>
@@ -965,11 +970,11 @@
                 <h3 class="char-name">Evin</h3>
                 <p class="char-tagline">"He's not the hero you think he is."</p>
                 <p class="char-role">The One Who Was Never Just a Hero</p>
-                <p class="char-bio">A farmer who fights for his people against those with power over them. On the surface, that sounds familiar. It isn't. Evin is easy to misread, and that's exactly the point.</p>
+                <p class="char-bio">A street thief turned palace servant, fighting for his people against those with power over them. On the surface, that sounds familiar. It isn't. Evin is easy to misread, and that's exactly the point.</p>
                 <button class="char-flip-btn" data-target="card-evin" aria-label="View Evin's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Evin.png" alt="Evin — character art" loading="lazy">
+                <img src="assets/characters/web/evin.webp" alt="Evin — character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-evin" aria-label="Return to Evin's character description">&#8592; Back</button>
               </div>
@@ -987,7 +992,7 @@
                 <button class="char-flip-btn" data-target="card-jack" aria-label="View Jack's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Jack.png" alt="Jack — character art" loading="lazy">
+                <img src="assets/characters/web/jack.webp" alt="Jack — character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-jack" aria-label="Return to Jack's character description">&#8592; Back</button>
               </div>
@@ -1005,7 +1010,7 @@
                 <button class="char-flip-btn" data-target="card-rose" aria-label="View Rose's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Rose O.png" alt="Rose — character art" loading="lazy">
+                <img src="assets/characters/web/rose-o.webp" alt="Rose — character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-rose" aria-label="Return to Rose's character description">&#8592; Back</button>
               </div>
@@ -1023,7 +1028,7 @@
                 <button class="char-flip-btn" data-target="card-unity" aria-label="View Unity's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/My Unity.png" alt="Unity — character art" loading="lazy">
+                <img src="assets/characters/web/my-unity.webp" alt="Unity — character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-unity" aria-label="Return to Unity's character description">&#8592; Back</button>
               </div>
@@ -1033,7 +1038,7 @@
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-juan">
               <div class="char-front">
-                <div class="char-avatar-img"><img src="assets/characters/Juan Souls.png" alt="Juan Souls — character portrait" loading="lazy"></div>
+                <div class="char-avatar-img"><img src="assets/characters/web/juan-souls.webp" alt="Juan Souls — character portrait" loading="lazy"></div>
                 <h3 class="char-name">Juan Souls</h3>
                 <p class="char-tagline">"He already knows how it ends."</p>
                 <p class="char-role">The Dancing Death</p>
@@ -1041,7 +1046,7 @@
                 <button class="char-flip-btn" data-target="card-juan" aria-label="View Juan Souls's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Juan Souls.png" alt="Juan Souls — full character art" loading="lazy">
+                <img src="assets/characters/web/juan-souls.webp" alt="Juan Souls — full character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-juan" aria-label="Return to Juan Souls's character description">&#8592; Back</button>
               </div>
@@ -1051,7 +1056,7 @@
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-alara">
               <div class="char-front">
-                <div class="char-avatar-img"><img src="assets/characters/Alara.png" alt="Alara — character portrait" loading="lazy"></div>
+                <div class="char-avatar-img"><img src="assets/characters/web/alara.webp" alt="Alara — character portrait" loading="lazy"></div>
                 <h3 class="char-name">Alara</h3>
                 <p class="char-tagline">"She was there... before and after."</p>
                 <p class="char-role">The Seer. The Mentor. The Sister.</p>
@@ -1059,7 +1064,7 @@
                 <button class="char-flip-btn" data-target="card-alara" aria-label="View Alara's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Alara.png" alt="Alara — full character art" loading="lazy">
+                <img src="assets/characters/web/alara.webp" alt="Alara — full character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-alara" aria-label="Return to Alara's character description">&#8592; Back</button>
               </div>
@@ -1077,7 +1082,7 @@
                 <button class="char-flip-btn" data-target="card-arvel" aria-label="View Arvel's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="assets/characters/Arvel Isen.png" alt="Arvel Isen — character art" loading="lazy">
+                <img src="assets/characters/web/arvel-isen.webp" alt="Arvel Isen — character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-arvel" aria-label="Return to Arvel's character description">&#8592; Back</button>
               </div>
@@ -1087,15 +1092,15 @@
           <div class="char-flip-wrapper reveal">
             <div class="char-flip" id="card-sepa">
               <div class="char-front">
-                <div class="char-avatar-img"><img src="Sepa.png" alt="Sepa — character portrait" loading="lazy"></div>
+                <div class="char-avatar-img"><img src="assets/characters/web/sepa.webp" alt="Sepa — character portrait" loading="lazy"></div>
                 <h3 class="char-name">Sepa</h3>
                 <p class="char-tagline">"The shield only holds if you believe in it."</p>
-                <p class="char-role">The Shieldbearer. Book III.</p>
+                <p class="char-role">The Shieldbearer. Act III.</p>
                 <p class="char-bio">Sepa carries the weight of his tribe and the doubt that weakens his shield. To contain the Rift, he must first believe in himself.</p>
                 <button class="char-flip-btn" data-target="card-sepa" aria-label="View Sepa's character art">View Profile &#8594;</button>
               </div>
               <div class="char-back">
-                <img src="Sepa.png" alt="Sepa — full character art" loading="lazy">
+                <img src="assets/characters/web/sepa.webp" alt="Sepa — full character art" loading="lazy">
                 <div class="char-back-overlay"></div>
                 <button class="char-back-btn" data-target="card-sepa" aria-label="Return to Sepa's character description">&#8592; Back</button>
               </div>
@@ -1162,7 +1167,7 @@
           <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
             <a href="https://ko-fi.com/solarianearl" class="btn-primary" target="_blank" rel="noopener noreferrer" aria-label="Support Tales of Solaria on Ko-fi">Support on Ko-fi</a>
             <a href="https://solarianearl.substack.com/" class="btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Follow Tales of Solaria on Substack">Follow on Substack</a>
-            <a href="https://solarianearl0s.github.io" class="btn-hub" target="_blank" rel="noopener noreferrer" aria-label="Visit the Creator Hub to get in touch or collaborate">Hub / Contact Me &#8599;</a>
+            <a href="https://hub.talesofsolaria.co.uk/" class="btn-hub" target="_blank" rel="noopener noreferrer" aria-label="Visit the Creator Hub to get in touch or collaborate">Hub / Contact Me &#8599;</a>
           </div>
         </div>
       </div>
@@ -1182,7 +1187,7 @@
             </div>
             <button type="submit">Subscribe</button>
           </form>
-          <p id="newsletter-success" role="status">&#10003; You're in the saga now.</p>
+          <p id="newsletter-success" role="status">Almost there. Finish signing up in the Substack tab that just opened.</p>
         </div>
       </div>
     </section>
@@ -1201,7 +1206,7 @@
           <a href="https://ko-fi.com/solarianearl" target="_blank" rel="noopener" aria-label="Support on Ko-fi">Ko-fi</a>
           <a href="https://www.wattpad.com/1512055057-solaria-evin%27s-tale-draft-the-mysterious-lady" target="_blank" rel="noopener" aria-label="Read the draft on Wattpad">Wattpad</a>
           <a href="/games/" aria-label="Play the Tales of Solaria games">Games</a>
-          <a href="https://solarianearl0s.github.io" target="_blank" rel="noopener" aria-label="Creator Hub">Creator Hub</a>
+          <a href="https://hub.talesofsolaria.co.uk/" target="_blank" rel="noopener" aria-label="Creator Hub">Creator Hub</a>
         </nav>
         <p class="footer-copy">&copy; 2026 Tales of Solaria. Produced by Adrian Carter.</p>
       </div>
@@ -1229,8 +1234,10 @@
           ctx.fillStyle = `rgba(201,168,76,${s.a * 0.5})`;
           ctx.fill();
         });
-        requestAnimationFrame(draw);
+        if (!document.hidden && !reduce) requestAnimationFrame(draw);
       }
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && !reduce) requestAnimationFrame(draw); });
       resize(); init(); draw();
       window.addEventListener('resize', () => { resize(); init(); });
     })();
@@ -1291,7 +1298,9 @@
         }
         input.setAttribute('aria-invalid', 'false');
         error.style.display = 'none';
-        window.open('https://solarianearl.substack.com/?email=' + encodeURIComponent(val), '_blank');
+        const subUrl = 'https://solarianearl.substack.com/?email=' + encodeURIComponent(val);
+        const tab = window.open(subUrl, '_blank', 'noopener');
+        if (!tab) { window.location.href = subUrl; return; }
         success.style.display = 'block';
       });
       input.addEventListener('input', () => {

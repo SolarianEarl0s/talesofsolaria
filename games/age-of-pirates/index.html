@@ -6958,7 +6958,7 @@ const NetBox={el:null,
    so character-locked conversations and actions still go to the right one.
    ========================================================= */
 const COARSE=!!(window.matchMedia&&matchMedia('(pointer: coarse)').matches)&&!(window.matchMedia&&matchMedia('(pointer: fine)').matches);
-const COOP={K1:{k:{},p:{}},K2:{k:{},p:{}},ctl:null,pDance:0,nPads:0,gprev:[],
+const COOP={K1:{k:{},p:{}},K2:{k:{},p:{}},ctl:null,pDance:0,ahp:null,adown:false,rev:0,inA:false,nPads:0,gprev:[],
   get on(){ if(NET.role==='guest') return false; if(NET.role==='host'&&NET.live) return true; return !COARSE&&!!OPT.coop; },
   get p1(){ return OPT.coop===2?'sc':'chili'; }};
 const heroBase=h=>(h||'').startsWith('sc')?'sc':'chili';
@@ -7009,7 +7009,7 @@ function coopRoute(){
     const own=pOwner(), oth=own===COOP.K1?COOP.K2:COOP.K1;
     const still=COOP.pDance>0;
     for(const k of ['up','down','left','right','a','b','c']){ Keys[k]=!still&&!!own.k[k]; if(own.p[k]&&!still) Pressed[k]=true; }
-    if(own.p.e||oth.p.e) Pressed.e=true;
+    if(own.p.e) Pressed.e=true;
     if(own.p.d||oth.p.d){ if(!R.coopSwapT||NOW-R.coopSwapT>4){ R.coopSwapT=NOW; toast('Two players: walk up to someone and press attack to talk as yourself.',2.6); } }
     Keys.d=false;
     COOP.ctl=oth; COOP.own=own;
@@ -7032,19 +7032,24 @@ function coopBody(){ if(!COOP.on||!R||!duo()) return null; const a=ent('partner'
 const PSWAP=['x','y','dir','hero','inv','veilT','kx','ky','roll','charm','atk','atkHit','vis','fall','guard','moving'];
 function asPlayer(a,fn){
   const s={}; for(const k of PSWAP) s[k]=P[k];
+  s.hp=P.hp; s.eatCD=P.eatCD; s.eatT=P.eatT; s.eatCol=P.eatCol; P.hp=coopAhp(); P.eatCD=a.eatCD||0; P.eatT=a.eatT||0; COOP.inA=true;
   P.x=a.x; P.y=a.y; P.dir=a.dir; P.hero=a.hk; P.inv=a.inv||0; P.veilT=0; P.kx=a.kx||0; P.ky=a.ky||0; P.roll=a.roll||0; P.charm=a.charm||0; P.atk=a.atk||0; P.atkHit=a.atkHit||new Set(); P.vis=true; P.fall=0; P.guard=false; P.moving=!!a.moving;
   try{ return fn(); }
   finally{
     a.x=P.x; a.y=P.y; a.dir=P.dir; a.inv=P.inv; a.kx=P.kx; a.ky=P.ky; a.charm=P.charm; a.atkHit=P.atkHit;
+    COOP.ahp=P.hp; a.eatCD=P.eatCD; a.eatT=P.eatT; a.eatCol=P.eatCol;
     for(const k of PSWAP) P[k]=s[k];
+    P.hp=s.hp; P.eatCD=s.eatCD; P.eatT=s.eatT; P.eatCol=s.eatCol; COOP.inA=false;
   }
 }
+function coopAhp(){ const m=mhp(); if(COOP.ahp==null||COOP.ahp>m) COOP.ahp=COOP.ahp==null?m:m; return COOP.ahp; }
+function coopHeal(){ COOP.ahp=mhp(); COOP.adown=false; COOP.rev=0; const a=R&&ent('partner'); if(a) a.down=false; }
 function findInteractAs(a){ return asPlayer(a,()=>findInteract()); }
 /* the partner's player wants to talk: they become P where they stand, nothing visibly moves */
 function coopTakeover(a){
   const nh=a.hk, oh=P.hero;
-  const px=P.x,py=P.y,pd=P.dir,pe=P.en,pi=P.inv;
-  P.x=a.x; P.y=a.y; P.dir=a.dir; P.en=a.en!=null?a.en:100; P.inv=a.inv||0;
+  const px=P.x,py=P.y,pd=P.dir,pe=P.en,pi=P.inv,ph=P.hp;
+  P.x=a.x; P.y=a.y; P.dir=a.dir; P.en=a.en!=null?a.en:100; P.inv=a.inv||0; P.hp=coopAhp(); COOP.ahp=ph;
   a.x=px; a.y=py; a.dir=pd; a.en=pe; a.inv=pi; a.atk=0; a.roll=0;
   a.hk=oh; a.ch=HERO[oh].ch; a.trail=HERO[oh].trail;
   setHero(nh); G.hero=nh; R.ptrail=null; P.moving=false; P.atk=0;
@@ -7069,6 +7074,7 @@ function coopAlly(a,dt){
     else if(hr.skill==='arrow'){ const cost=skill2()?7:10; if(a.en>=cost){ a.en-=cost; a.iceCD=0.28; asPlayer(a,fireArrow); } else SND.sfx('deny'); }
     else if(hr.skill==='veil'){ const cost=skill2()?16:22; if(a.en>=cost){ a.en-=cost; a.iceCD=0.4; asPlayer(a,veilStep); } else SND.sfx('deny'); }
   }
+  if(S.p.e){ S.p.e=false; asPlayer(a,()=>eatFood()); }
   if(a.atk>0) asPlayer(a,()=>attackTick());
   let dx=(S.k.right?1:0)-(S.k.left?1:0), dy=(S.k.down?1:0)-(S.k.up?1:0);
   if(a.charm>0){ dx=-dx; dy=-dy; }
@@ -7081,6 +7087,8 @@ function coopAlly(a,dt){
 { const _ua=updAlly;
   updAlly=function(e,dt){
     if(COOP.on&&e.id==='partner'&&duo()){
+      e.down=!!COOP.adown; coopAhp();
+      if(e.down){ e.moving=false; e.dance=false; return; }
       if(e.dance){ if(e.danceT!=null){ e.danceT-=dt; if(e.danceT<=0){ e.dance=false; e.danceT=null; bark(e,'...Done. DONE.',1.4); } } return _ua(e,dt); }
       if(e.down) return _ua(e,dt);
       return coopAlly(e,dt);
@@ -7128,7 +7136,7 @@ function coopPost(dt){
       if(Math.random()<dt*14) mote(b.x+(Math.random()-.5)*8,b.y,Math.random()<.5?'#ff8ad0':'#ffffff',(Math.random()-.5)*10,-10,0.6,1);
       const near=(x,y)=>Math.abs(b.x-x)<9&&Math.abs(b.y-(y-6))<9;
       if(near(P.x,P.y)&&P.roll<=0&&COOP.pDance<=0&&!(ent('partner')&&ent('partner').dance)){ b.life=0; COOP.pDance=4; danceHit(P); }
-      else { const q=ent('partner'); if(q&&!q.dance&&near(q.x,q.y)&&!(q.roll>0)&&COOP.pDance<=0){ b.life=0; q.dance=true; q.danceT=4; danceHit(q); } }
+      else { const q=ent('partner'); if(q&&!q.dance&&!q.down&&near(q.x,q.y)&&!(q.roll>0)&&COOP.pDance<=0){ b.life=0; q.dance=true; q.danceT=4; danceHit(q); } }
     }
     R.coopBeams=B.filter(b=>b.life>0);
   }
@@ -7148,7 +7156,7 @@ function danceHit(who){ SND.sfx('charm'); flash('#ff8ad0',0.35); for(let i=0;i<1
     if(e.st==='idle'){
       const an=NOW*1.2; toward(e,e.home.x+Math.cos(an)*100,e.home.y+Math.sin(an*1.7)*26,e.def.spd*S,dt); faceTo(e,P);
       if(e.tm<=0){
-        const canBeam=e.freed&&e.danceCD<=0&&COOP.pDance<=0&&a&&!a.dance&&duo();
+        const canBeam=e.freed&&e.danceCD<=0&&COOP.pDance<=0&&a&&!a.dance&&!a.down&&duo();
         if(canBeam){ e.st='beam'; e.tm=0.75; e.danceCD=6+Math.random()*2.5; bark(e,'Belly Dance Command!',1.2); SND.sfx('tension'); }
         else { e.st=Math.random()<0.55?'aim':'fan'; e.tm=0.4; }
       }
@@ -7237,6 +7245,96 @@ async function coopRamelBreak(e,a){
   };
 }
 { const _lr=loadRoom; loadRoom=function(...a){ COOP.pDance=0; return _lr(...a); }; }
+
+
+/* =========================================================
+   SEPARATE HEARTS: each player has their own. One down, the other carries on;
+   both down, game over. During a boss or mini-boss fight the downed one stays down
+   until the fight ends, then the other can stand next to them and hold attack.
+   ========================================================= */
+function coopBossOn(){ return !!(R&&R.boss&&!R.boss.dead); }
+function coopName(h){ return heroBase(h)==='sc'?'Shadow Cloak':'Chili'; }
+{ const _pd=playerDied;
+  playerDied=function(){
+    if(!COOP.on) return _pd();
+    const a=R&&duo()&&ent('partner');
+    if(COOP.inA){
+      /* the partner went down */
+      COOP.ahp=0; COOP.adown=true; COOP.rev=0;
+      if(a){ a.down=true; a.atk=0; a.roll=0; a.dance=false; puff(a.x,a.y-8,'#e8e0d0',12,50,0.5); }
+      SND.sfx('die'); shake(4);
+      toast(coopName(a?a.hk:'')+' is down! '+(coopBossOn()?'Finish the fight, then':'Stand next to them and')+' hold attack to revive.',3.4);
+      return;
+    }
+    /* whoever was P went down: if the partner is still standing, they take over and the fallen one lies where they were */
+    if(a&&!COOP.adown&&!a.auto&&!a.dance){
+      const oh=P.hero, nh=a.hk, px=P.x, py=P.y, pd=P.dir;
+      P.x=a.x; P.y=a.y; P.dir=a.dir; P.hp=coopAhp(); P.en=a.en!=null?a.en:100; P.inv=1.2; P.kx=P.ky=0; P.charm=0; P.atk=0; P.roll=0; P.fall=0; P.vis=true;
+      a.x=px; a.y=py; a.dir=pd; a.hk=oh; a.ch=HERO[oh].ch; a.trail=HERO[oh].trail; a.atk=0; a.roll=0; a.down=true;
+      COOP.ahp=0; COOP.adown=true; COOP.rev=0; COOP.pDance=0;
+      setHero(nh); G.hero=nh; R.ptrail=null;
+      SND.sfx('die'); shake(4); puff(a.x,a.y-8,'#e8e0d0',12,50,0.5);
+      toast(coopName(oh)+' is down! '+(coopBossOn()?'Finish the fight, then':'Stand next to them and')+' hold attack to revive.',3.4);
+      return;
+    }
+    return _pd();
+  };
+}
+/* a fresh start, a retry or a loaded save puts both back on their feet */
+{ const _ra=riseAgain; riseAgain=function(...a){ coopHeal(); return _ra(...a); }; }
+{ const _lrr=loadRoomResume; loadRoomResume=function(...a){ coopHeal(); return _lrr(...a); }; }
+{ const _bg=beginGame; beginGame=async function(...a){ coopHeal(); return _bg(...a); }; }
+/* reviving: stand beside the fallen one and hold attack for a moment */
+function coopRevive(dt){
+  if(!COOP.adown||frozenWorld()) { if(!COOP.adown) COOP.rev=0; return; }
+  const a=duo()&&ent('partner'); if(!a){ return; }
+  const near=Math.hypot(P.x-a.x,P.y-a.y)<22;
+  if(!near){ COOP.rev=Math.max(0,COOP.rev-dt*2); return; }
+  if(coopBossOn()){ COOP.rev=0; if(Keys.a&&(!R.revHintT||NOW-R.revHintT>3)){ R.revHintT=NOW; toast('Not yet. Finish the fight first.',1.8); } return; }
+  if(Keys.a){ COOP.rev+=dt; P.atk=0; if(Math.random()<dt*10) mote(a.x+(Math.random()-.5)*12,a.y-6,'#9af0b0',0,-16,0.7,1); }
+  else COOP.rev=Math.max(0,COOP.rev-dt);
+  if(COOP.rev>=1.5){
+    COOP.rev=0; COOP.adown=false; a.down=false; COOP.ahp=Math.max(2,Math.ceil(mhp()/2/2)*2); a.inv=1.5;
+    SND.sfx('heal'); puff(a.x,a.y-10,'#9af0b0',14,40,0.6); flash('#9af0b0',0.2);
+    bark(a,heroBase(a.hk)==='sc'?'...Thank you.':'I\'m up! I\'m up!',1.8);
+  }
+}
+{ const _cp=coopPost; coopPost=function(dt){ _cp(dt); if(COOP.on&&MODE==='play'&&R) coopRevive(dt); }; }
+/* the fallen one lies on the ground, with the revive ring filling */
+{ const _dent2=drawEnt;
+  drawEnt=function(e){
+    if(COOP.on&&e.id==='partner'&&e.down){
+      drawShadow(e.x,e.y,9);
+      const sp=charSprite(e.ch,2,0); g.save(); g.translate(e.x,e.y-4); g.rotate(-Math.PI/2); g.globalAlpha=0.85; g.drawImage(sp,-10,-8); g.restore();
+      if(Math.floor(NOW*2)%2===0&&!coopBossOn()){ g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(e.x-18,e.y-26,36,9); setFont(7,'700 ',DISP); g.textAlign='center'; g.fillStyle='#9af0b0'; g.fillText('REVIVE',e.x,e.y-19); g.textAlign='left'; }
+      if(COOP.rev>0){ g.strokeStyle='rgba(0,0,0,.5)'; g.lineWidth=3; g.beginPath(); g.arc(e.x,e.y-8,12,0,7); g.stroke(); g.strokeStyle='#9af0b0'; g.lineWidth=2; g.beginPath(); g.arc(e.x,e.y-8,12,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,COOP.rev/1.5)); g.stroke(); }
+      return;
+    }
+    return _dent2(e);
+  };
+}
+/* the HUD: two rows of hearts, one per player */
+{ const _hud=drawHUD;
+  drawHUD=function(){
+    _hud();
+    if(!COOP.on||!R) return;
+    const gr=g.createLinearGradient(0,8,0,VY-10); gr.addColorStop(0,'rgba(20,17,40,1)'); gr.addColorStop(1,'rgba(12,11,26,1)');
+    g.fillStyle=gr; g.fillRect(10,8,240,VY-18);
+    const a=duo()&&ent('partner');
+    const pBase=heroBase(P.hero), aBase=pBase==='sc'?'chili':'sc';
+    const rows=[[COOP.p1,1],[COOP.p1==='sc'?'chili':'sc',2]];
+    const m=mhp(), hearts=m/2;
+    rows.forEach(([base,n],i)=>{
+      const y=i?48:26, isP=base===pBase, hp=isP?P.hp:(a?coopAhp():null), down=!isP&&COOP.adown, away=!isP&&!a;
+      const bc=n===1?'#ff8ab8':'#7ac8ff';
+      g.fillStyle=bc; g.fillRect(16,y-8,11,11); g.fillStyle='#120f20'; setFont(9,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),21.5,y+1); g.textAlign='left';
+      flameIcon(38,y-2,13,base==='sc'?'#e2ae4a':'#ff8ab8');
+      if(away){ drawText(coopName(base)+' is elsewhere',50,y+3,C.dim,12,'left',true,'italic '); return; }
+      for(let k=0;k<hearts;k++){ const part=clamp(((hp||0)-k*2)/2,0,1); g.globalAlpha=down?0.35:1; heartShape(56+k*15,y-2,13,base==='sc'?'#e45a4a':'#ff6aa8',part); g.globalAlpha=1; }
+      if(down) capsText('Down',56+hearts*15+6,y+2,'#ff8a70',9,'left',2);
+    });
+  };
+}
 
 boot();
 </script>

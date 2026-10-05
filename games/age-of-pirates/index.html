@@ -6727,12 +6727,15 @@ function netHost(){
   NET.role='host'; NET.code=netCode(); NET.state='opening'; NET.msg='';
   try{ SND.unlock(); }catch(e){}
   const p=NET.peer=netPeer(netId(NET.code));
-  p.on('open',()=>{ if(NET.peer===p) NET.state='waiting'; });
+  p.on('open',()=>{ if(NET.peer!==p) return; p._rc=0; if(!NET.live) NET.state='waiting'; });
   p.on('error',e=>{ if(NET.peer!==p) return;
-    if(e.type==='unavailable-id'){ netHost(); return; }
+    if(e.type==='unavailable-id'){ if(NET.state==='opening'&&!NET.live) netHost(); return; }
     if(e.type==='peer-unavailable') return;
+    if(NET.live||(NET.conn&&NET.conn.open)) return;
+    if(['network','socket-error','socket-closed','server-error','disconnected'].includes(e.type)){ NET.state='retry'; return; }
     NET.state='err'; NET.msg=netErr(e); });
-  p.on('disconnected',()=>{ if(NET.peer===p&&!p.destroyed&&(p._rc=(p._rc||0)+1)<=3) setTimeout(()=>{ try{ if(!p.destroyed) p.reconnect(); }catch(e){} },1500*p._rc); });
+  p.on('disconnected',()=>{ if(NET.peer!==p||p.destroyed) return; const n=p._rc=(p._rc||0)+1; if(!NET.live) NET.state='retry';
+    setTimeout(()=>{ try{ if(NET.peer===p&&!p.destroyed&&p.disconnected) p.reconnect(); }catch(e){} },Math.min(10000,1000*n)); });
   p.on('connection',c=>{
     if(NET.conn&&NET.conn.open){ c.on('open',()=>{ try{ c.send({t:'full'}); }catch(e){} setTimeout(()=>c.close(),600); }); return; }
     NET.conn=c;
@@ -6741,8 +6744,9 @@ function netHost(){
       if(!OPT.coop){ OPT.coop=1; NET.setCoop=true; }
       SND.sfx('ok'); toast('Player 2 has joined! They are '+(COOP.p1==='chili'?'Shadow Cloak':'Chili')+'.',3);
       netStream(c.peer);
+      clearInterval(NET.hb); NET.hb=setInterval(()=>{ try{ if(c.open) c.send({t:'hb'}); }catch(e){} },2000);
     });
-    c.on('data',d=>netHostData(d));
+    c.on('data',d=>{ if(d&&d.t==='vid'){ if(NET.conn===c&&c.open) netStream(c.peer); return; } netHostData(d); });
     c.on('close',()=>{ if(NET.conn===c) netGuestLeft(); });
     c.on('error',()=>{ if(NET.conn===c) netGuestLeft(); });
   });
@@ -6752,7 +6756,11 @@ function netStream(gid){
   const st=NET.cv.captureStream(30);
   try{ if(SND.ctx&&SND.master){ if(!NET.ad){ NET.ad=SND.ctx.createMediaStreamDestination(); SND.master.connect(NET.ad); } for(const t of NET.ad.stream.getAudioTracks()) st.addTrack(t); } }catch(e){}
   for(const t of st.getVideoTracks()){ try{ t.contentHint='detail'; }catch(e){} }
-  try{ NET.call=NET.peer.call(gid,st); }catch(e){ console.error(e); return; }
+  try{ if(NET.call) NET.call.close(); }catch(e){}
+  let call; try{ call=NET.call=NET.peer.call(gid,st); }catch(e){ console.error(e); return; }
+  if(!call) return;
+  call.on('close',()=>{ if(NET.call===call) NET.call=null; });
+  try{ const pc=call.peerConnection; if(pc) pc.addEventListener('iceconnectionstatechange',()=>{ if(pc.iceConnectionState==='failed'&&NET.call===call&&NET.conn&&NET.conn.open) setTimeout(()=>{ if(NET.call===call) netStream(gid); },1000); }); }catch(e){}
   const tune=()=>{ try{ const pc=NET.call&&NET.call.peerConnection; if(!pc) return; for(const sd of pc.getSenders()){ if(!sd.track||sd.track.kind!=='video') continue; const pr=sd.getParameters(); if(!pr.encodings||!pr.encodings.length) pr.encodings=[{}]; pr.encodings[0].maxBitrate=3500000; pr.encodings[0].scaleResolutionDownBy=1; pr.degradationPreference='maintain-resolution'; sd.setParameters(pr).catch(()=>{}); } }catch(e){} };
   setTimeout(tune,800); setTimeout(tune,3000);
 }
@@ -6761,7 +6769,7 @@ function netHostData(d){
   const S=COOP.K2; S.k[d.k]=!!d.d; if(d.d) S.p[d.k]=true;
 }
 function netGuestLeft(){
-  NET.conn=null; NET.live=false; NET.state=NET.peer&&!NET.peer.destroyed?'waiting':'';
+  clearInterval(NET.hb); NET.conn=null; NET.live=false; NET.state=NET.peer&&!NET.peer.destroyed?'waiting':'';
   try{ if(NET.call) NET.call.close(); }catch(e){} NET.call=null;
   for(const k in COOP.K2.k) COOP.K2.k[k]=false;
   toast('Player 2 left. They can rejoin with code '+NET.code+'.',3.4); SND.sfx('deny');
@@ -6777,18 +6785,24 @@ function netJoin(code){
   netGuestQuiet(true);
   const p=NET.peer=netPeer();
   p.on('open',()=>{
-    if(NET.peer!==p) return;
+    if(NET.peer!==p||NET.conn) return;
     const c=NET.conn=p.connect(netId(code),{reliable:true});
-    c.on('open',()=>{ if(NET.state==='connecting') NET.state='video'; });
+    c.on('open',()=>{ if(NET.state==='connecting'){ NET.state='video'; NET.vt=NET.t; } });
     c.on('data',d=>{ if(d&&d.t==='full'){ netStop(); NET.state='err'; NET.msg='That game already has two players.'; } });
     c.on('close',()=>{ if(NET.conn===c&&NET.role==='guest') netHostLeft(); });
   });
   p.on('call',call=>{
     NET.call=call; call.answer();
     call.on('stream',s=>{ netShowVideo(s); NET.live=true; NET.state='live'; SND.sfx('ok'); });
-    call.on('close',()=>{ if(NET.call===call&&NET.role==='guest') netHostLeft(); });
+    call.on('close',()=>{ if(NET.call!==call||NET.role!=='guest') return; NET.call=null;
+      if(NET.conn&&NET.conn.open){ NET.live=false; NET.state='video'; NET.vt=NET.t; try{ NET.conn.send({t:'vid'}); }catch(e){} } else netHostLeft(); });
   });
-  p.on('error',e=>{ if(NET.peer!==p) return; netStop(); NET.state='err'; NET.msg=netErr(e); });
+  p.on('error',e=>{ if(NET.peer!==p) return;
+    if(NET.conn&&NET.conn.open) return;
+    if(e.type==='disconnected'||e.type==='socket-closed') return;
+    netStop(); NET.state='err'; NET.msg=netErr(e); });
+  p.on('disconnected',()=>{ if(NET.peer!==p||p.destroyed) return; const n=p._rc=(p._rc||0)+1; setTimeout(()=>{ try{ if(NET.peer===p&&!p.destroyed&&p.disconnected) p.reconnect(); }catch(e){} },Math.min(10000,1000*n)); });
+  p.on('open',()=>{ p._rc=0; });
 }
 function netShowVideo(s){
   const v=NET.video||(NET.video=document.createElement('video'));
@@ -6799,6 +6813,7 @@ function netHostLeft(){ netStop(); NET.state='err'; NET.msg='The host has left t
 function netGuestQuiet(on){ try{ if(SND.master) SND.master.gain.value=on?0:(SND.muted?0:0.5); }catch(e){} }
 function netStop(keepMsg){
   const wasGuest=NET.role==='guest';
+  clearInterval(NET.hb);
   try{ if(NET.call) NET.call.close(); }catch(e){}
   try{ if(NET.conn) NET.conn.close(); }catch(e){}
   try{ if(NET.peer) NET.peer.destroy(); }catch(e){}
@@ -6828,6 +6843,7 @@ function netGuestUpdate(dt){
     return;
   }
   if(hit('menu')){ if(NET.live){ NET.leaveAsk=true; for(const k of NKEYS) if(NET.prev[k]){ try{ NET.conn.send({t:'k',k,d:0}); }catch(e){} NET.prev[k]=false; } } else { netStop(); Title.mode='main'; } return; }
+  if(!NET.live&&NET.state==='video'&&NET.conn&&NET.conn.open&&NET.t-(NET.vt||0)>6){ NET.vt=NET.t; try{ NET.conn.send({t:'vid'}); }catch(e){} }
   if(!NET.live&&NET.state==='connecting'&&NET.t>20){ netStop(); NET.state='err'; NET.msg='Could not connect. Check the code and try again.'; return; }
   if(NET.live) netGuestSend();
 }
@@ -6844,7 +6860,7 @@ function netGuestDraw(){
   capsText('Online',W/2,150,UI.gold,12,'center',4);
   goldText(NET.code,W/2,212,44,'center');
   const dots='.'.repeat(1+Math.floor(NOW*2)%3);
-  drawText(NET.state==='video'?'Connected. Waiting for the picture'+dots:'Looking for the game'+dots,W/2,262,C.parch,18,'center',true,'italic ');
+  drawText(NET.state==='video'?'Connected! Waiting for the picture'+dots:'Looking for the game'+dots,W/2,262,C.parch,18,'center',true,'italic ');
   drawText('Esc to cancel',W/2,H-22,C.dim,14,'center',true,'italic ');
 }
 { const _u=update; update=function(dt){ if(NET.role==='guest'){ netGuestUpdate(dt); clearPressed(); Ptr.tap=false; return; } return _u(dt); }; }
@@ -6902,8 +6918,8 @@ const NetBox={el:null,
     }
     if(this.mode==='nethost'){
       this.t+=dt;
-      if(hit('a')){ SND.sfx('ok'); this.mode='main'; return; }
-      if(hit('b')||hit('menu')){ netStop(); this.mode='net'; SND.sfx('move'); return; }
+      if(hit('a')){ SND.sfx('ok'); this.mode='main'; this.sel=0; const L=this.items(); if(L[0]&&!L[0].disabled) L[0].fn(); return; }
+      if(hit('b')||hit('menu')){ if(NET.live){ this.mode='main'; SND.sfx('move'); return; } netStop(); this.mode='net'; SND.sfx('move'); return; }
       return;
     }
     return _up(dt);
@@ -6918,9 +6934,10 @@ const NetBox={el:null,
       if(NET.state==='err'){ let y=290; for(const s of wrapText(NET.msg,370,16,'italic ')){ drawText(s,W/2,y,'#ff8a70',16,'center',true,'italic '); y+=20; } drawText('X to go back',W/2,398,C.dim,13,'center',true,'italic '); return; }
       drawText('Send this code to your friend:',W/2,272,C.gray,15,'center',true,'italic ');
       if(NET.state==='opening') drawText('Opening a room...',W/2,322,C.parch,20,'center',true,'italic ');
+      else if(NET.state==='retry'&&!NET.live) { goldText(NET.code,W/2,330,46,'center'); drawText('Reconnecting to the matchmaking server...',W/2,362,'#ffb070',15,'center',true,'italic '); drawText('X to stop hosting',W/2,400,C.dim,12,'center',true,'italic '); return; }
       else goldText(NET.code,W/2,330,46,'center');
       drawText(NET.live?'Player 2 is here!':'Waiting for Player 2'+'.'.repeat(1+Math.floor(NOW*2)%3),W/2,362,NET.live?'#9af0b0':C.parch,16,'center',true,'italic ');
-      drawText('Z to start playing (they can join any time)  ·  X to stop hosting',W/2,400,C.dim,12,'center',true,'italic ');
+      drawText(NET.live?'Press Z (or Space / Enter) to start the story together':'Z to start the story now (they can join any time)  ·  X to stop hosting',W/2,400,NET.live?C.pale:C.dim,NET.live?14:12,'center',true,'italic ');
       drawText('You are Player 1. Use either set of keys. Player 2 plays from their own computer or phone.',W/2,H-22,C.dim,13,'center',true,'italic ');
       return;
     }

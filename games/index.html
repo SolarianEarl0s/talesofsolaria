@@ -448,7 +448,7 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
 <script>
 /* Player reviews, stored in Supabase. Only reviews you've approved are shown. */
 (()=>{
-  const SB_URL='', SB_KEY='';
+  const SB_URL='https://thijkwjwmdsqyvinzjdv.supabase.co', SB_KEY='sb_publishable_pfZO6LXfDzrELYELNjsuog_3yfH6MvV';
   const boxes=[...document.querySelectorAll('.reviews[data-game]')];
   if(!SB_URL||!SB_KEY||!boxes.length||!window.fetch) return;
   const H={apikey:SB_KEY,'Content-Type':'application/json'};
@@ -499,9 +499,10 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
       btn.disabled=false;
     });
   }
-  boxes.forEach(b=>{ b.hidden=false; setup(b); render(b); });
   fetch(API+'?select=game,rating,name,comment,created_at&order=created_at.desc&limit=1000',{headers:H})
-    .then(r=>r.ok?r.json():[]).then(rows=>{ all=Array.isArray(rows)?rows:[]; boxes.forEach(render); }).catch(()=>{});
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(rows=>{ all=Array.isArray(rows)?rows:[]; boxes.forEach(b=>{ b.hidden=false; setup(b); render(b); }); })
+    .catch(()=>{});
 })();
 </script>
 </body>

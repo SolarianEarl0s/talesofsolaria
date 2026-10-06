@@ -6120,7 +6120,7 @@ const MG_CHARS={
   sammy:   {name:'Sammy',        title:'The Innkeeper',           port:'sammy',   col:'#f0a050',acc:0.55,friend:()=>F('c3_sammy')||mgPost()},
   tarel:   {name:'Tarel',        title:'The Pirate Lord',         port:'tarel',   col:'#8ab0d8',acc:0.92,friend:()=>F('tarel_info')||F('c3_rules')||mgPost()},
   lysandra:{name:'Lysandra',     title:'Captain. Of things.',     port:'lysandra',col:'#d88ae0',acc:0.84,friend:()=>F('c9_field')||mgPost()},
-  jory:    {name:'Cadet Jory',   title:'Frontier cadet',          port:'cadet',   col:'#9af0b0',acc:0.68,friend:()=>typeof COOP!=='undefined'&&COOP.on&&COOP.n>=3},
+  jory:    {name:'Cadet Jory',   title:'Frontier cadet',          port:'jory',    col:'#9af0b0',acc:0.68,friend:()=>typeof COOP!=='undefined'&&COOP.on&&COOP.n>=3},
   ramel:   {name:'Ramel',        title:'The Mind-Turned Pirate',  port:'ramel',   col:'#4a8cff',acc:0.78,friend:()=>qState('round')==='done'||mgPost()},
 };
 const MG_ORDER_ALL=['chili','sc','sammy','tarel','lysandra','ramel','jory'];
@@ -6995,7 +6995,8 @@ const heroBase=h=>{ h=h||''; return h==='jory'?'jory':h.startsWith('sc')?'sc':'c
 function ownerOf(h){ const b=heroBase(h); return b==='jory'?3:b===COOP.p1?1:2; }
 function pOwnerN(){ return ownerOf(P.hero); }
 function pOwner(){ return COOP.K[pOwnerN()]; }
-HERO.jory={name:'Cadet Jory',ch:'cadet',fam:'team',spd:80,dmg:1,reach:14,skill:'mend',trail:'#9af0b0',flame:'#9af0b0',cd:0.3};
+if(!CHARS.jory) CHARS.jory={skin:'#7a4a30',hair:'#14100c',style:'short',eyes:'#2a1a10',top:'#e8e0d0',bottom:'#2a2a34',belt:'#5a3a1a',cape:'#2f5a3a',beard:'#14100c'};
+HERO.jory={name:'Cadet Jory',ch:'jory',fam:'team',spd:80,dmg:1,reach:14,skill:'mend',trail:'#9af0b0',flame:'#9af0b0',cd:0.3};
 
 /* ---------------- keys ---------------- */
 const CK1={KeyW:'up',KeyS:'down',KeyA:'left',KeyD:'right',KeyF:'a',Space:'a',KeyZ:'a',KeyG:'b',ShiftLeft:'b',KeyX:'b',KeyR:'c',KeyC:'c',KeyE:'e',KeyQ:'d',Tab:'d',KeyV:'d'};
@@ -7199,7 +7200,7 @@ function coopKeepParty(dt){
   if(together&&!ent('partner')) spawnComp();
   const want3=COOP.n>=3&&together;
   let j=ent('jory');
-  if(want3&&!j){ const [x,y]=freeSpotNear(P.x,P.y,null); j=addEnt(mkAlly('cadet',x,y,{id:'jory',hk:'jory',trail:HERO.jory.trail,dmg:1,rate:1})); }
+  if(want3&&!j){ const [x,y]=freeSpotNear(P.x,P.y,null); j=addEnt(mkAlly('jory',x,y,{id:'jory',hk:'jory',trail:HERO.jory.trail,dmg:1,rate:1})); }
   if(!want3&&j) j.dead=true;
   for(const a of coopBodies()){
     if(a.down) continue;

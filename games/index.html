@@ -130,6 +130,45 @@ kbd{font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.
 .note{margin:0;padding:12px 14px;border-left:2px solid var(--c);background:rgba(255,255,255,.025);font-size:1rem;line-height:1.5;color:var(--ink)}
 .note b{font-family:var(--display);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pale);margin-right:6px}
 
+
+/* REVIEWS: a full-width ledger under each game */
+.reviews{grid-column:1/-1;border-top:1px solid var(--line);padding-top:26px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:20px 56px}
+.reviews[hidden]{display:none}
+.rv-head{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px}
+.rv-head h3{margin:0;font-family:var(--display);font-weight:600;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.rv-score{display:flex;align-items:baseline;gap:10px;color:var(--dim);font-size:var(--step--1)}
+.rv-score b{font-family:var(--display);font-size:var(--step-2);color:var(--pale);line-height:1}
+.stars{display:inline-flex;gap:2px;color:var(--c);letter-spacing:0;font-size:1rem;line-height:1}
+.stars .off{color:rgba(255,255,255,.18)}
+.rv-list{list-style:none;margin:0;padding:0;display:grid;gap:14px;align-content:start;min-width:0}
+.rv-list li{padding:12px 14px;background:rgba(255,255,255,.025);border-left:2px solid color-mix(in srgb,var(--c) 70%,transparent)}
+.rv-list .who{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:var(--step--1);color:var(--dim)}
+.rv-list .who strong{font-family:var(--display);font-weight:600;font-size:.78rem;letter-spacing:.06em;color:var(--pale)}
+.rv-list p{margin:6px 0 0;line-height:1.5;overflow-wrap:anywhere;white-space:pre-line}
+.rv-empty{margin:0;color:var(--dim);font-style:italic}
+.rv-more{justify-self:start;background:none;border:0;padding:0;font:inherit;font-size:var(--step--1);color:var(--pale);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.rv-form{display:grid;gap:12px;align-content:start;min-width:0}
+.rv-form fieldset{border:0;margin:0;padding:0;min-width:0}
+.rv-form legend,.rv-form .lbl{font-family:var(--display);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding:0;margin-bottom:6px;display:block}
+.rv-pick{display:flex;gap:4px}
+.rv-pick input{position:absolute;opacity:0;width:1px;height:1px}
+.rv-pick label{font-size:1.9rem;line-height:1;color:rgba(255,255,255,.2);cursor:pointer;padding:2px 3px;transition:color .12s ease,transform .12s ease}
+.rv-pick label.on{color:var(--c)}
+.rv-pick input:focus-visible+label{outline:2px solid var(--pale);outline-offset:2px}
+.rv-pick label:hover{transform:translateY(-1px)}
+.rv-form input[type=text],.rv-form textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:rgba(7,7,15,.7);border:1px solid rgba(217,164,65,.35);border-radius:2px;padding:9px 11px}
+.rv-form textarea{min-height:96px;resize:vertical}
+.rv-form input[type=text]:focus,.rv-form textarea:focus{outline:none;border-color:var(--pale)}
+.rv-form .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.rv-form .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.rv-form button[type=submit]{cursor:pointer;font-family:var(--display);font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:2px;background:linear-gradient(180deg,var(--pale),var(--gold-deep));color:#1a1006;border:1px solid #fff0c2}
+.rv-form button[disabled]{opacity:.55;cursor:default}
+.rv-count{font-size:.85rem;color:var(--dim)}
+.rv-msg{margin:0;font-size:1rem;line-height:1.45}
+.rv-msg.ok{color:#9af0b0}.rv-msg.err{color:#ff9a80}
+.rv-fine{margin:0;font-size:.85rem;font-style:italic;color:var(--dim);line-height:1.45}
+@media (max-width:860px){ .reviews{grid-template-columns:minmax(0,1fr)} }
+
 /* FOOTER */
 footer{border-top:1px solid var(--line);margin-top:60px}
 footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;text-align:center}
@@ -272,6 +311,19 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
           <a class="btn ghost" href="https://www.wattpad.com/story/388548881-tales-of-solaria-evin%27s-tale" target="_blank" rel="noopener">Read Book 1 &#8599;</a>
         </div>
       </div>
+      <section class="reviews" data-game="evins-tale" aria-label="Player reviews of Evin's Tale" hidden>
+        <div class="rv-head"><h3>Player reviews</h3><div class="rv-score" aria-live="polite"></div></div>
+        <div class="rv-col"><ul class="rv-list"></ul></div>
+        <form class="rv-form" novalidate>
+          <fieldset><legend>Your rating</legend><div class="rv-pick"></div></fieldset>
+          <label><span class="lbl">Name (optional)</span><input type="text" name="name" maxlength="40" autocomplete="nickname" placeholder="A traveller"></label>
+          <label><span class="lbl">Comment (optional)</span><textarea name="comment" maxlength="600" placeholder="What did you think?"></textarea></label>
+          <label class="hp" aria-hidden="true">Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          <div class="row"><button type="submit">Send review</button><span class="rv-count">0 / 600</span></div>
+          <p class="rv-msg" role="status"></p>
+          <p class="rv-fine">Reviews appear once they have been read. Please don't include personal details.</p>
+        </form>
+      </section>
     </article>
 
     <!-- ACT II -->
@@ -308,6 +360,19 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
         </div>
         <p class="note"><b>Beta</b>Still being polished, so expect rough edges. The finished version will come to itch.io.</p>
       </div>
+      <section class="reviews" data-game="two-flames" aria-label="Player reviews of Two Flames" hidden>
+        <div class="rv-head"><h3>Player reviews</h3><div class="rv-score" aria-live="polite"></div></div>
+        <div class="rv-col"><ul class="rv-list"></ul></div>
+        <form class="rv-form" novalidate>
+          <fieldset><legend>Your rating</legend><div class="rv-pick"></div></fieldset>
+          <label><span class="lbl">Name (optional)</span><input type="text" name="name" maxlength="40" autocomplete="nickname" placeholder="A traveller"></label>
+          <label><span class="lbl">Comment (optional)</span><textarea name="comment" maxlength="600" placeholder="What did you think?"></textarea></label>
+          <label class="hp" aria-hidden="true">Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          <div class="row"><button type="submit">Send review</button><span class="rv-count">0 / 600</span></div>
+          <p class="rv-msg" role="status"></p>
+          <p class="rv-fine">Reviews appear once they have been read. Please don't include personal details.</p>
+        </form>
+      </section>
     </article>
 
     <!-- ACT II·V -->
@@ -348,6 +413,19 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
         </div>
         <p class="note"><b>Beta</b>The Pirate Captain mode, Sally's side of the story, arrives in a later update.</p>
       </div>
+      <section class="reviews" data-game="age-of-pirates" aria-label="Player reviews of The Age of Pirates" hidden>
+        <div class="rv-head"><h3>Player reviews</h3><div class="rv-score" aria-live="polite"></div></div>
+        <div class="rv-col"><ul class="rv-list"></ul></div>
+        <form class="rv-form" novalidate>
+          <fieldset><legend>Your rating</legend><div class="rv-pick"></div></fieldset>
+          <label><span class="lbl">Name (optional)</span><input type="text" name="name" maxlength="40" autocomplete="nickname" placeholder="A traveller"></label>
+          <label><span class="lbl">Comment (optional)</span><textarea name="comment" maxlength="600" placeholder="What did you think?"></textarea></label>
+          <label class="hp" aria-hidden="true">Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          <div class="row"><button type="submit">Send review</button><span class="rv-count">0 / 600</span></div>
+          <p class="rv-msg" role="status"></p>
+          <p class="rv-fine">Reviews appear once they have been read. Please don't include personal details.</p>
+        </form>
+      </section>
     </article>
 
   </div>
@@ -362,9 +440,69 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
       <a href="https://www.wattpad.com/story/388548881-tales-of-solaria-evin%27s-tale" target="_blank" rel="noopener">Wattpad</a>
       <a href="https://www.tiktok.com/@kentoclark" target="_blank" rel="noopener">TikTok</a>
     </nav>
+    <p class="disc">Reviews are stored with Supabase and show only the name, stars and comment you choose to give. Online two-player connects through PeerJS, which shares players' IP addresses with each other.</p>
     <p class="disc">Each game is a loose reinterpretation of its act. Events, dialogue and some characters have been changed or invented for play.</p>
     <p class="disc">&copy; 2026 Adrian Carter. Tales of Solaria and all related characters, story and artwork are the original work of Adrian Carter and the Tales of Solaria collaborators.</p>
   </div>
 </footer>
+<script>
+/* Player reviews, stored in Supabase. Only reviews you've approved are shown. */
+(()=>{
+  const SB_URL='', SB_KEY='';
+  const boxes=[...document.querySelectorAll('.reviews[data-game]')];
+  if(!SB_URL||!SB_KEY||!boxes.length||!window.fetch) return;
+  const H={apikey:SB_KEY,'Content-Type':'application/json'};
+  if(SB_KEY.startsWith('eyJ')) H.Authorization='Bearer '+SB_KEY;
+  const API=SB_URL.replace(/\/$/,'')+'/rest/v1/game_reviews';
+  const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const stars=(n,label)=>`<span class="stars" role="img" aria-label="${label||n+' out of 5 stars'}">${[1,2,3,4,5].map(i=>`<span class="${i<=Math.round(n)?'':'off'}" aria-hidden="true">★</span>`).join('')}</span>`;
+  const when=d=>{ try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } };
+  const seen=g=>{ try{ return localStorage.getItem('tos.reviewed.'+g); }catch(e){ return null; } };
+  const mark=g=>{ try{ localStorage.setItem('tos.reviewed.'+g,'1'); }catch(e){} };
+  let all=[];
+  function render(box){
+    const g=box.dataset.game, rows=all.filter(r=>r.game===g);
+    const score=box.querySelector('.rv-score'), list=box.querySelector('.rv-list');
+    if(rows.length){ const avg=rows.reduce((a,r)=>a+r.rating,0)/rows.length;
+      score.innerHTML=`<b>${avg.toFixed(1)}</b>${stars(avg,'Average '+avg.toFixed(1)+' out of 5')}<span>${rows.length} review${rows.length===1?'':'s'}</span>`; }
+    else score.innerHTML='<span>No reviews yet. Be the first.</span>';
+    const withText=rows.filter(r=>r.comment&&r.comment.trim());
+    const show=box.dataset.all?withText:withText.slice(0,3);
+    list.innerHTML=show.length?show.map(r=>`<li><div class="who"><strong>${esc(r.name||'A traveller')}</strong>${stars(r.rating)}<span>${when(r.created_at)}</span></div><p>${esc(r.comment)}</p></li>`).join(''):'<li style="border:0;background:none;padding:0"><p class="rv-empty">No comments yet.</p></li>';
+    const col=box.querySelector('.rv-col'); let more=col.querySelector('.rv-more');
+    if(withText.length>3&&!box.dataset.all){ if(!more){ more=document.createElement('button'); more.type='button'; more.className='rv-more'; more.onclick=()=>{ box.dataset.all='1'; render(box); }; col.appendChild(more); } more.textContent='Show all '+withText.length+' comments'; }
+    else if(more) more.remove();
+  }
+  function setup(box){
+    const g=box.dataset.game, f=box.querySelector('form'), pick=f.querySelector('.rv-pick'), msg=f.querySelector('.rv-msg'), btn=f.querySelector('button[type=submit]'), ta=f.querySelector('textarea'), cnt=f.querySelector('.rv-count');
+    let rating=0;
+    pick.innerHTML=[1,2,3,4,5].map(i=>`<input type="radio" name="rating-${g}" id="r-${g}-${i}" value="${i}"><label for="r-${g}-${i}" title="${i} star${i>1?'s':''}"><span aria-hidden="true">★</span><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${i} star${i>1?'s':''}</span></label>`).join('');
+    const paint=n=>pick.querySelectorAll('label').forEach((l,i)=>l.classList.toggle('on',i<n));
+    pick.addEventListener('change',e=>{ rating=+e.target.value; paint(rating); });
+    pick.querySelectorAll('label').forEach((l,i)=>{ l.addEventListener('mouseenter',()=>paint(i+1)); });
+    pick.addEventListener('mouseleave',()=>paint(rating));
+    ta.addEventListener('input',()=>{ cnt.textContent=ta.value.length+' / 600'; });
+    if(seen(g)){ msg.className='rv-msg ok'; msg.textContent='Thanks, you have already reviewed this game.'; }
+    f.addEventListener('submit',async e=>{
+      e.preventDefault();
+      if(f.website.value) return;
+      if(!rating){ msg.className='rv-msg err'; msg.textContent='Pick a star rating first.'; pick.querySelector('input').focus(); return; }
+      if(seen(g)){ msg.className='rv-msg ok'; msg.textContent='Thanks, you have already reviewed this game.'; return; }
+      const name=f.name.value.trim().slice(0,40)||'A traveller', comment=ta.value.trim().slice(0,600)||null;
+      btn.disabled=true; msg.className='rv-msg'; msg.textContent='Sending...';
+      try{
+        const r=await fetch(API,{method:'POST',headers:Object.assign({Prefer:'return=minimal'},H),body:JSON.stringify({game:g,rating,name,comment})});
+        if(!r.ok){ const t=await r.text(); throw new Error(/Too many/.test(t)?'Lots of reviews are coming in right now. Try again in a minute.':'Could not send your review. Please try again later.'); }
+        mark(g); f.reset(); rating=0; paint(0); cnt.textContent='0 / 600';
+        msg.className='rv-msg ok'; msg.textContent='Thank you! Your review will appear once it has been read.';
+      }catch(err){ msg.className='rv-msg err'; msg.textContent=err.message||'Could not send your review.'; }
+      btn.disabled=false;
+    });
+  }
+  boxes.forEach(b=>{ b.hidden=false; setup(b); render(b); });
+  fetch(API+'?select=game,rating,name,comment,created_at&order=created_at.desc&limit=1000',{headers:H})
+    .then(r=>r.ok?r.json():[]).then(rows=>{ all=Array.isArray(rows)?rows:[]; boxes.forEach(render); }).catch(()=>{});
+})();
+</script>
 </body>
 </html>

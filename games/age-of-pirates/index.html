@@ -152,8 +152,8 @@ body.port #pad .acts .btn.a{font-size:12px}
       <b>Esc / P</b><span>Journal and the evidence board</span>
       <b>M</b><span>Sound on or off</span>
     </div>
-    <h3>Two players</h3>
-    <p>Turn it on under Options on the title screen. Player 1: WASD to move, F attack and talk, G roll, R skill. Player 2: arrows, Enter attack and talk, right Shift roll, right Ctrl skill. With one controller plugged in, the controller is Player 2. Walk up to someone and press attack to talk as yourself.</p>
+    <h3>Two or three players</h3>
+    <p>Turn it on under Options on the title screen. Player 1 and Player 2 are Chili and Shadow Cloak. Player 1: WASD, F attack and talk, G roll, R skill. Player 2: arrows, Enter, right Shift, right Ctrl. Player 3 is Cadet Jory, the healer, who fights and plays the minigames but never talks: IJKL, U attack, O roll, Y Mending Light, N eat. Controllers take the last seats. Walk up to someone and press attack to talk as yourself; only you can move that conversation on. Hold swap (Q, backslash or B) to jump back beside the lead.</p>
     <h3>Online</h3>
     <p>Choose Online on the title screen. One player hosts and gets a five-letter code; the friend chooses Join and types it in. The host's game runs on their computer and the friend sees it live as Player 2, on a computer or a phone. Hosting needs a keyboard or controller.</p>
     <h3>At the Salt &amp; Sun</h3>
@@ -6120,16 +6120,18 @@ const MG_CHARS={
   sammy:   {name:'Sammy',        title:'The Innkeeper',           port:'sammy',   col:'#f0a050',acc:0.55,friend:()=>F('c3_sammy')||mgPost()},
   tarel:   {name:'Tarel',        title:'The Pirate Lord',         port:'tarel',   col:'#8ab0d8',acc:0.92,friend:()=>F('tarel_info')||F('c3_rules')||mgPost()},
   lysandra:{name:'Lysandra',     title:'Captain. Of things.',     port:'lysandra',col:'#d88ae0',acc:0.84,friend:()=>F('c9_field')||mgPost()},
+  jory:    {name:'Cadet Jory',   title:'Frontier cadet',          port:'cadet',   col:'#9af0b0',acc:0.68,friend:()=>typeof COOP!=='undefined'&&COOP.on&&COOP.n>=3},
   ramel:   {name:'Ramel',        title:'The Mind-Turned Pirate',  port:'ramel',   col:'#4a8cff',acc:0.78,friend:()=>qState('round')==='done'||mgPost()},
 };
-const MG_ORDER=['chili','sc','sammy','tarel','lysandra','ramel'];
+const MG_ORDER_ALL=['chili','sc','sammy','tarel','lysandra','ramel','jory'];
+function mgOrder(){ return MG_ORDER_ALL.filter(k=>k!=='jory'||MG_CHARS.jory.friend()); }
 function mgPost(){ return !!(G&&G.st&&G.st.fro==='post'); }
-function mgFriends(){ return MG_ORDER.filter(k=>MG_CHARS[k].friend()); }
+function mgFriends(){ return mgOrder().filter(k=>MG_CHARS[k].friend()); }
 const MG_QUIP={
   win:{chili:'Talking AND aiming. I\'m a package deal.',sc:'I measured the room before I sat down. Habit.',sammy:'The house always wins, sunshine. Especially when the house is me.',
-       tarel:'The wood remembers who won.',lysandra:'Was it close? I wasn\'t looking.',ramel:'HA! Total control. Somebody write it down!'},
+       tarel:'The wood remembers who won.',jory:'I practise with the cadets every night. Every. Night.',lysandra:'Was it close? I wasn\'t looking.',ramel:'HA! Total control. Somebody write it down!'},
   lose:{chili:'...Best of five?',sc:'An error in my count. One error.',sammy:'Next round\'s on me. Don\'t tell anyone.',
-        tarel:'Hm. Again.',lysandra:'I let you win, darling. Obviously.',ramel:'This isn\'t over! THIS ISN\'T OVER!'},
+        tarel:'Hm. Again.',jory:'...Please don\'t tell the Grand Elder.',lysandra:'I let you win, darling. Obviously.',ramel:'This isn\'t over! THIS ISN\'T OVER!'},
 };
 function gauss(){ let u=0,v=0; while(!u) u=Math.random(); while(!v) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
 function mgBack(){
@@ -6142,44 +6144,49 @@ function mgPort(k,mood){ return facePortrait(MG_CHARS[k].port,mood||'n'); }
 
 /* ---------------- choosing who sits down ---------------- */
 const CharSel={
-  pick(o){ return new Promise(r=>{ this.o=o; this.step=0; this.sel=0; this.picks=[]; this.res=r; this.t=0; OV=this; SND.sfx('page'); }); },
-  label(){ const o=this.o; if(o.two) return this.step===0?'Player 1, choose':'Player 2, choose'; return this.step===0?'Choose who plays':(o.vsLabel||'Choose your opponent'); },
-  free(i){ const k=MG_ORDER[i]; return MG_CHARS[k].friend()&&!this.picks.includes(k); },
+  /* o.seats: how many people are playing. One person picks themselves and a rival; more pick one each, in turn, with their own keys. */
+  pick(o){ return new Promise(r=>{ this.o=o; this.step=0; this.sel=0; this.picks=[]; this.res=r; this.t=0; this.list=mgOrder(); OV=this; SND.sfx('page'); }); },
+  need(){ return this.o.seats>1?this.o.seats:2; },
+  seat(){ return this.o.seats>1?this.step:0; },
+  label(){ const o=this.o; if(o.seats>1) return 'Player '+(this.step+1)+', choose'; return this.step===0?'Choose who plays':(o.vsLabel||'Choose your opponent'); },
+  free(i){ const k=this.list[i]; return k&&MG_CHARS[k].friend()&&!this.picks.includes(k); },
+  cols(){ return this.list.length>6?4:3; },
   update(dt){
-    this.t+=dt;
-    const mv=(d)=>{ let i=this.sel; for(let n=0;n<6;n++){ i=(i+d+6)%6; if(MG_CHARS[MG_ORDER[i]].friend()) break; } this.sel=i; SND.sfx('move'); };
-    if(hit('left')) mv(-1); if(hit('right')) mv(1);
-    if(hit('up')||hit('down')) mv(3);
-    if(Ptr.tap){ Ptr.tap=false; for(let i=0;i<6;i++){ const [x,y]=this.cell(i); if(inRect(x,y,150,176)){ if(this.sel===i) Pressed.a=true; else { this.sel=i; SND.sfx('move'); } } } }
-    if(hit('b')||hit('menu')){ SND.sfx('move'); if(this.step>0){ this.step--; this.picks.pop(); } else { this.done(null); } return; }
-    if(hit('a')){
+    this.t+=dt; const n=this.list.length, st=this.seat(), cols=this.cols();
+    const mv=(d)=>{ let i=this.sel; for(let k=0;k<n;k++){ i=(i+d+n*4)%n; if(MG_CHARS[this.list[i]].friend()) break; } this.sel=i; SND.sfx('move'); };
+    if(mgHit(st,'left')) mv(-1); if(mgHit(st,'right')) mv(1);
+    if(mgHit(st,'up')||mgHit(st,'down')) mv(cols);
+    if(Ptr.tap){ Ptr.tap=false; for(let i=0;i<n;i++){ const [x,y,w,h]=this.cell(i); if(inRect(x,y,w,h)){ if(this.sel===i) this.tapPick=true; else { this.sel=i; SND.sfx('move'); } } } }
+    if(mgHit(st,'b')||hit('menu')){ SND.sfx('move'); if(this.step>0){ this.step--; this.picks.pop(); } else { this.done(null); } return; }
+    if(mgHit(st,'a')||this.tapPick){ this.tapPick=false;
       if(!this.free(this.sel)){ SND.sfx('deny'); return; }
-      SND.sfx('ok'); this.picks.push(MG_ORDER[this.sel]); this.step++;
-      if(this.step>=2){ this.done(this.picks.slice()); return; }
-      const nx=MG_ORDER.findIndex((k,i)=>this.free(i)); if(nx>=0) this.sel=nx;
+      SND.sfx('ok'); this.picks.push(this.list[this.sel]); this.step++;
+      if(this.step>=this.need()){ this.done(this.picks.slice()); return; }
+      const nx=this.list.findIndex((k,i)=>this.free(i)); if(nx>=0) this.sel=nx;
     }
   },
   done(v){ if(OV===this) OV=null; const r=this.res; this.res=null; if(r) r(v); },
-  cell(i){ const c=i%3, rw=Math.floor(i/3); return [75+c*170,92+rw*188]; },
+  cell(i){ const cols=this.cols(), w=cols===4?136:150, gap=cols===4?14:20, x0=(W-cols*w-(cols-1)*gap)/2, c=i%cols, rw=Math.floor(i/cols); return [x0+c*(w+gap),92+rw*188,w,176]; },
   draw(){
     mgBack();
     capsText(this.o.game,W/2,38,UI.gold,12,'center',4);
     goldText(this.label(),W/2,72,24,'center');
-    for(let i=0;i<6;i++){
-      const k=MG_ORDER[i], c=MG_CHARS[k], [x,y]=this.cell(i), sel=i===this.sel, fr=c.friend(), taken=this.picks.indexOf(k);
-      frame(x,y,150,176,{edge:sel?c.col:'#5a4a30',line:sel?rgba(c.col,0.5):UI.line});
-      if(sel){ g.fillStyle=rgba(c.col,0.08); g.fillRect(x+2,y+2,146,172); }
-      if(fr){ archFrame(mgPort(k,sel?'smile':'n'),x+27,y+14,96,112,sel?rgba(c.col,0.35):'rgba(80,80,80,.2)');
-        drawText(c.name,x+75,y+146,sel?C.pale:C.parch,17,'center',true,'700 ',DISP);
-        drawText(c.title,x+75,y+164,C.gray,12,'center',true,'italic ');
-        if(taken>=0){ g.fillStyle='rgba(6,4,10,.55)'; g.fillRect(x+2,y+2,146,172); ribbon(x+40,y+60,this.o.two?(taken===0?'Player 1':'Player 2'):(taken===0?'You':'Rival'),taken===0?'#ff8ab8':'#7ac8ff',11); }
+    const tagCol=['#ff8ab8','#7ac8ff','#9af0b0'];
+    for(let i=0;i<this.list.length;i++){
+      const k=this.list[i], c=MG_CHARS[k], [x,y,w,h]=this.cell(i), sel=i===this.sel, fr=c.friend(), taken=this.picks.indexOf(k), aw=w===150?96:86;
+      frame(x,y,w,h,{edge:sel?c.col:'#5a4a30',line:sel?rgba(c.col,0.5):UI.line});
+      if(sel){ g.fillStyle=rgba(c.col,0.08); g.fillRect(x+2,y+2,w-4,h-4); }
+      if(fr){ archFrame(mgPort(k,sel?'smile':'n'),x+(w-aw)/2,y+14,aw,112,sel?rgba(c.col,0.35):'rgba(80,80,80,.2)');
+        drawText(c.name,x+w/2,y+146,sel?C.pale:C.parch,w===150?17:15,'center',true,'700 ',DISP);
+        drawText(c.title,x+w/2,y+164,C.gray,12,'center',true,'italic ');
+        if(taken>=0){ g.fillStyle='rgba(6,4,10,.55)'; g.fillRect(x+2,y+2,w-4,h-4); ribbon(x+w/2-35,y+60,this.o.seats>1?'Player '+(taken+1):(taken===0?'You':'Rival'),this.o.seats>1?tagCol[taken]:(taken===0?'#ff8ab8':'#7ac8ff'),11); }
       } else {
-        archFrame(null,x+27,y+14,96,112,'rgba(60,60,60,.2)');
-        drawText('?',x+75,y+92,C.dim,40,'center',true,'700 ',DISP);
-        drawText('Not friends yet',x+75,y+154,C.dim,13,'center',true,'italic ');
+        archFrame(null,x+(w-aw)/2,y+14,aw,112,'rgba(60,60,60,.2)');
+        drawText('?',x+w/2,y+92,C.dim,40,'center',true,'700 ',DISP);
+        drawText('Not friends yet',x+w/2,y+154,C.dim,13,'center',true,'italic ');
       }
     }
-    drawText('Arrows to choose  ·  Z to pick  ·  X to go back',W/2,H-10,C.dim,13,'center',true,'italic ');
+    drawText(this.o.seats>1?'Player '+(this.step+1)+': your own keys to choose and pick  ·  Esc to leave':'Arrows to choose  ·  Z to pick  ·  X to go back',W/2,H-10,C.dim,13,'center',true,'italic ');
   }
 };
 
@@ -6276,7 +6283,8 @@ function drawDart(tx,ty,s,spin,col,stuck,wob){
 const Darts={
   start(o){ return new Promise(r=>{
     this.o=o; this.res=r; OV=this;
-    this.pl=o.chars.map((k,i)=>({k,ai:!o.two&&i===1,rounds:[],total:0}));
+    this.pl=o.chars.map((k,i)=>({k,ai:o.seats<=1&&i===1,rounds:[],total:0}));
+    this.active=this.pl.map((p,i)=>i); this.ai_=0;
     this.round=0; this.cur=0; this.dart=0; this.stuck=[]; this.pop=null; this.st='aim'; this.t=0; this.breath=1;
     this.ax=DB.x; this.ay=DB.y-DB.r*0.3; this.bulloff=false; this.boff=[];
     SND.sfx('ok'); this.beginTurn(); }); },
@@ -6306,11 +6314,11 @@ const Darts={
         if(this.aiWait<=0){ const sg=this.acc()*0.16*DB.r; this.throwAt(tx+gauss()*sg,ty+gauss()*sg); }
         return;
       }
-      const sp=110*dt; if(Keys.left) this.ax-=sp; if(Keys.right) this.ax+=sp; if(Keys.up) this.ay-=sp; if(Keys.down) this.ay+=sp;
+      const st=this.o.seats>1?this.cur:0, sp=110*dt; if(mgHeld(st,'left')) this.ax-=sp; if(mgHeld(st,'right')) this.ax+=sp; if(mgHeld(st,'up')) this.ay-=sp; if(mgHeld(st,'down')) this.ay+=sp;
       const dx=this.ax-DB.x, dy=this.ay-DB.y, d=Math.hypot(dx,dy), mx=DB.r*1.15; if(d>mx){ this.ax=DB.x+dx/d*mx; this.ay=DB.y+dy/d*mx; }
-      this.steady=Keys.b&&this.breath>0; if(this.steady) this.breath=Math.max(0,this.breath-dt/1.6); else this.breath=Math.min(1,this.breath+dt*0.35);
+      this.steady=mgHeld(st,'b')&&this.breath>0; if(this.steady) this.breath=Math.max(0,this.breath-dt/1.6); else this.breath=Math.min(1,this.breath+dt*0.35);
       if(hit('menu')){ this.quit(); return; }
-      if(hit('a')){ const [sx,sy]=this.sway(), j=this.acc()*3; this.throwAt(this.ax+sx+(Math.random()-.5)*j,this.ay+sy+(Math.random()-.5)*j); }
+      if(mgHit(st,'a')){ const [sx,sy]=this.sway(), j=this.acc()*3; this.throwAt(this.ax+sx+(Math.random()-.5)*j,this.ay+sy+(Math.random()-.5)*j); }
     } else if(this.st==='fly'){
       if(this.t>=0.42){
         const sc=dartScore(this.fx,this.fy); SND.sfx(sc.pts?'thwack':'block'); shake(sc.pts>=50?4:1.5);
@@ -6327,21 +6335,27 @@ const Darts={
       }
     } else if(this.st==='turnEnd'){
       if(this.t>1.0){
-        this.cur++;
-        if(this.cur>=this.pl.length){ this.cur=0;
+        this.ai_++;
+        if(this.ai_>=this.active.length){ this.ai_=0;
           if(this.bulloff){ this.finish(); return; }
           this.round++;
-          if(this.round>=3){ if(this.pl[0].total===this.pl[1].total){ this.bulloff=true; this.boff=[]; toast('A tie! One dart each. Closest to the bull wins.',2.6); } else { this.finish(); return; } }
+          if(this.round>=3){
+            const top=Math.max(...this.pl.map(q=>q.total)), tied=this.pl.map((q,i)=>i).filter(i=>this.pl[i].total===top);
+            if(tied.length>1){ this.bulloff=true; this.boff=[]; this.active=tied; toast('A tie! One dart each. Closest to the bull wins.',2.6); } else { this.finish(); return; }
+          }
         }
+        this.cur=this.active[this.ai_];
         this.beginTurn();
       }
     }
   },
   finish(){
-    let w;
-    if(this.bulloff) w=this.boff[0]<=this.boff[1]?0:1; else w=this.pl[0].total>this.pl[1].total?0:1;
+    let w=0;
+    if(this.bulloff){ let bd=1e9; for(const i of this.active){ if(this.boff[i]<bd){ bd=this.boff[i]; w=i; } } }
+    else this.pl.forEach((q,i)=>{ if(q.total>this.pl[w].total) w=i; });
+    let l=w===0?1:0; this.pl.forEach((q,i)=>{ if(i!==w&&q.total<this.pl[l].total) l=i; });
     if(OV===this) OV=null;
-    const r=this.res; this.res=null; if(r) r({winner:this.pl[w].k,loser:this.pl[1-w].k,wi:w,board:()=>this.drawFinal(w)});
+    const r=this.res; this.res=null; if(r) r({winner:this.pl[w].k,loser:this.pl[l].k,wi:w,board:()=>this.drawFinal(w)});
   },
   quit(){ if(OV===this) OV=null; const r=this.res; this.res=null; SND.sfx('move'); if(r) r(null); },
   drawBoard(){
@@ -6352,21 +6366,22 @@ const Darts={
   },
   drawPanel(final,wi){
     const x=16,y=24,w=196;
-    frame(x,y,w,final?300:264);
+    const n=this.pl.length, rh=n>2?76:100; frame(x,y,w,Math.max(final?300:264,52+n*rh+(final?0:32)));
     capsText(this.bulloff&&!final?'Bull-off':final?'Final score':'Round '+(this.round+1)+' of 3',x+w/2,y+26,UI.gold,11,'center',3);
     this.pl.forEach((p,i)=>{
-      const c=MG_CHARS[p.k], yy=y+42+i*100, on=!final&&i===this.cur;
-      if(on){ g.fillStyle=rgba(c.col,0.10); g.fillRect(x+6,yy-4,w-12,94); g.strokeStyle=rgba(c.col,0.5); g.strokeRect(x+6.5,yy-3.5,w-13,93); }
-      if(final&&i===wi){ g.fillStyle='rgba(226,174,74,.12)'; g.fillRect(x+6,yy-4,w-12,94); }
+      const c=MG_CHARS[p.k], yy=y+42+i*rh, on=!final&&i===this.cur;
+      if(on){ g.fillStyle=rgba(c.col,0.10); g.fillRect(x+6,yy-4,w-12,rh-6); g.strokeStyle=rgba(c.col,0.5); g.strokeRect(x+6.5,yy-3.5,w-13,rh-7); }
+      if(final&&i===wi){ g.fillStyle='rgba(226,174,74,.12)'; g.fillRect(x+6,yy-4,w-12,rh-6); }
       archFrame(mgPort(p.k,final?(i===wi?'smile':'sad'):'n'),x+12,yy,52,62,rgba(c.col,0.3));
       drawText(c.name,x+72,yy+16,on?C.pale:C.parch,15,'left',true,'700 ',DISP);
-      if(final&&i===wi) capsText('Winner',x+72,yy+32,UI.gold,10,'left',2.5); else drawText(this.o.two?'Player '+(i+1):(p.ai?'Rival':'You'),x+72,yy+32,C.gray,12,'left',true,'italic ');
+      if(final&&i===wi) capsText('Winner',x+72,yy+32,UI.gold,10,'left',2.5); else drawText(this.o.seats>1?'Player '+(i+1):(p.ai?'Rival':'You'),x+72,yy+32,C.gray,12,'left',true,'italic ');
       goldText(String(p.total),x+w-16,yy+40,26,'right');
-      for(let r=0;r<3;r++){ const v=p.rounds[r]; drawText(v==null?'·':String(v),x+76+r*38,yy+80,r===this.round&&on?C.pale:C.gray,13,'center',true,'600 '); }
+      for(let r=0;r<3;r++){ const v=p.rounds[r]; drawText(v==null?'·':String(v),x+76+r*38,yy+rh-20,r===this.round&&on?C.pale:C.gray,13,'center',true,'600 '); }
     });
     if(!final){
-      g.fillStyle='rgba(255,255,255,.08)'; g.fillRect(x+12,y+240,w-24,1);
-      for(let d=0;d<(this.bulloff?1:3);d++){ const used=d<this.dart; g.fillStyle=used?'#4a4048':MG_CHARS[this.P().k].col; g.save(); g.translate(x+w/2-30+d*30,y+253); g.rotate(-0.5); g.fillRect(-8,-1,16,2); g.fillRect(-10,-3,4,6); g.restore(); }
+      const ly=Math.max(240,42+n*rh+4);
+      g.fillStyle='rgba(255,255,255,.08)'; g.fillRect(x+12,y+ly,w-24,1);
+      for(let d=0;d<(this.bulloff?1:3);d++){ const used=d<this.dart; g.fillStyle=used?'#4a4048':MG_CHARS[this.P().k].col; g.save(); g.translate(x+w/2-30+d*30,y+ly+13); g.rotate(-0.5); g.fillRect(-8,-1,16,2); g.fillRect(-10,-3,4,6); g.restore(); }
     }
   },
   drawFinal(wi){ this.drawBoard(); for(const d of this.stuck) drawDart(d.x,d.y,1,0.6,d.col,true,0); this.drawPanel(true,wi);
@@ -6391,10 +6406,11 @@ const Darts={
     }
     if(this.pop){ const a=Math.min(1,this.pop.t*2), yy=this.pop.y-24-(1.2-this.pop.t)*20; g.save(); g.globalAlpha=a; drawText(this.pop.s,this.pop.x,yy,'#fff0c2',18,'center',true,'700 ',DISP); g.restore(); }
     this.drawPanel(false);
-    const who=this.o.two?'Player '+(this.cur+1)+': '+MG_CHARS[p.k].name:(p.ai?MG_CHARS[p.k].name+' is aiming...':'Your throw');
-    drawText(who,114,310,C.pale,15,'center',true,'600 ',DISP);
-    const help=p.ai?'':'Arrows aim  ·  hold X to steady your breath  ·  Z to throw  ·  Esc to quit';
-    if(help){ let yy=336; for(const s of wrapText(help,190,13,'italic ')){ drawText(s,114,yy,C.dim,13,'center',true,'italic '); yy+=17; } }
+    const who=this.o.seats>1?'Player '+(this.cur+1)+': '+MG_CHARS[p.k].name:(p.ai?MG_CHARS[p.k].name+' is aiming...':'Your throw');
+    const ty=this.pl.length>2?372:310;
+    drawText(who,114,ty,C.pale,15,'center',true,'600 ',DISP);
+    const help=p.ai?'':this.o.seats>1?'Your own keys: move to aim, hold roll to steady, attack to throw':'Arrows aim  ·  hold X to steady your breath  ·  Z to throw  ·  Esc to quit';
+    if(help){ let yy=ty+26; for(const s of wrapText(help,190,13,'italic ')){ drawText(s,114,yy,C.dim,13,'center',true,'italic '); yy+=17; } }
     if(this.st==='turnEnd'&&!this.bulloff){ capsText(MG_CHARS[p.k].name+': '+(p.rounds[this.round]||0)+' this round',DB.x,DB.y+DB.r*1.2+26,UI.gold,11,'center',3); }
   }
 };
@@ -6421,6 +6437,7 @@ const BJ_LINES={
   lysandra:{bust:'Oh, darling. No.',bj:'Look at you. I might have to cheat now.',dbust:'Twenty-two. How embarrassing for me.',deal:'Shall we, darlings?'},
   ramel:{bust:'HA! Over! Over over over!',bj:'...Lucky. That was LUCK.',dbust:'That card was rigged. By me. Badly.',deal:'Sit. Lose. Leave. It\'s simple.'},
   chili:{bust:'Oh no. Oh, that\'s too many.',bj:'Hey! That\'s the good one!',dbust:'I went over? I went over.',deal:'Okay! I\'m the dealer now. This is so official.'},
+  jory:{bust:'Oh! Sorry. Sorry. That\'s over.',bj:'Blackjack! Is that good? That\'s good.',dbust:'I went over. The cadets are going to hear about this.',deal:'Right! Cards. I read the rules twice.'},
   sc:{bust:'Twenty-two. You knew.',bj:'Hm.',dbust:'An error in my count.',deal:'Five hands. I will be keeping score.'},
 };
 const BJ={
@@ -6456,15 +6473,17 @@ const BJ={
     if(hit('menu')&&this.st!=='dealer'&&this.st!=='settle'){ this.quit(); return; }
     if(this.st==='bet'){
       const L=this.bets(), p=this.pl[this.cur]; let i=Math.max(0,L.indexOf(p.bet));
-      if(hit('left')){ i=(i+L.length-1)%L.length; p.bet=L[i]; SND.sfx('move'); }
-      if(hit('right')){ i=(i+1)%L.length; p.bet=L[i]; SND.sfx('move'); }
-      if(hit('a')){ SND.sfx('coin'); let n=this.cur+1; while(n<this.pl.length&&this.pl[n].done) n++; if(n<this.pl.length) this.cur=n; else this.deal(); }
+      const st=this.o.seats>1?this.cur:0;
+      if(mgHit(st,'left')){ i=(i+L.length-1)%L.length; p.bet=L[i]; SND.sfx('move'); }
+      if(mgHit(st,'right')){ i=(i+1)%L.length; p.bet=L[i]; SND.sfx('move'); }
+      if(mgHit(st,'a')){ SND.sfx('coin'); let n=this.cur+1; while(n<this.pl.length&&this.pl[n].done) n++; if(n<this.pl.length) this.cur=n; else this.deal(); }
     } else if(this.st==='play'){
       const p=this.pl[this.cur], L=this.opts();
-      if(hit('left')){ this.opt=(this.opt+L.length-1)%L.length; SND.sfx('move'); }
-      if(hit('right')){ this.opt=(this.opt+1)%L.length; SND.sfx('move'); }
-      if(Ptr.tap){ Ptr.tap=false; L.forEach((s,i)=>{ if(inRect(W/2-L.length*60+i*120,H-58,110,30)){ if(this.opt===i) Pressed.a=true; else this.opt=i; } }); }
-      if(hit('a')){ const o=L[this.opt];
+      const st=this.o.seats>1?this.cur:0; let tapGo=false;
+      if(mgHit(st,'left')){ this.opt=(this.opt+L.length-1)%L.length; SND.sfx('move'); }
+      if(mgHit(st,'right')){ this.opt=(this.opt+1)%L.length; SND.sfx('move'); }
+      if(Ptr.tap){ Ptr.tap=false; L.forEach((s,i)=>{ if(inRect(W/2-L.length*60+i*120,H-58,110,30)){ if(this.opt===i) tapGo=true; else this.opt=i; } }); }
+      if(mgHit(st,'a')||tapGo){ const o=L[this.opt];
         if(o==='Hit'){ p.hand.push(this.draw1()); const v=bjVal(p.hand); if(v>21){ p.res='Bust'; p.done=true; this.say('bust'); SND.sfx('deny'); this.next(); } else if(v===21){ p.done=true; this.next(); } }
         else if(o==='Stand'){ SND.sfx('ok'); p.done=true; this.next(); }
         else if(o==='Double'){ p.bet*=2; p.hand.push(this.draw1()); SND.sfx('coin'); if(bjVal(p.hand)>21){ p.res='Bust'; this.say('bust'); } p.done=true; this.next(); }
@@ -6477,7 +6496,7 @@ const BJ={
         else { this.settle(); }
       }
     } else if(this.st==='settle'){
-      if(this.t>1.4&&(hit('a')||this.t>4)){ this.hand++; this.newHand(); }
+      if(this.t>1.4&&(mgAny('a')||this.t>4)){ this.hand++; this.newHand(); }
     }
   },
   settle(){
@@ -6497,7 +6516,8 @@ const BJ={
     if(OV===this) OV=null;
     const r=this.res; this.res=null; let out;
     if(this.pl.length===1){ const p=this.pl[0]; out=p.chips>100?{winner:p.k,loser:this.dealer}:p.chips<100?{winner:this.dealer,loser:p.k}:{draw:true,winner:p.k,loser:this.dealer}; }
-    else { const [a,b]=this.pl; out=a.chips>b.chips?{winner:a.k,loser:b.k}:b.chips>a.chips?{winner:b.k,loser:a.k}:{draw:true,winner:a.k,loser:b.k}; }
+    else { let w=0,l=0; this.pl.forEach((q,i)=>{ if(q.chips>this.pl[w].chips) w=i; if(q.chips<this.pl[l].chips) l=i; });
+      out=this.pl[w].chips===this.pl[l].chips?{draw:true,winner:this.pl[0].k,loser:this.pl[1].k}:{winner:this.pl[w].k,loser:this.pl[l].k}; }
     out.board=()=>this.drawFinal(out);
     if(r) r(out);
   },
@@ -6521,16 +6541,16 @@ const BJ={
   drawSeats(final){
     const n=this.pl.length;
     this.pl.forEach((p,i)=>{
-      const c=MG_CHARS[p.k], cx=n===1?W/2:(i===0?W/2-150:W/2+150), on=!final&&i===this.cur&&(this.st==='bet'||this.st==='play');
-      const hx=cx-p.hand.length*24;
-      p.hand.forEach((cd,j)=>drawCard(hx+j*48,226,cd,false));
+      const c=MG_CHARS[p.k], cx=n===1?W/2:n===2?(i===0?W/2-150:W/2+150):W/2+(i-1)*210, on=!final&&i===this.cur&&(this.st==='bet'||this.st==='play');
+      const csc=n>2?0.75:1, sp=n>2?34:48, hx=cx-p.hand.length*sp/2;
+      p.hand.forEach((cd,j)=>drawCard(hx+j*sp,n>2?236:226,cd,false,csc));
       if(p.hand.length) drawText(String(bjVal(p.hand))+(bjSoft(p.hand)&&bjVal(p.hand)<21?' (soft)':''),cx,306,C.pale,15,'center',true,'700 ',DISP);
       if(p.res) drawText(p.res,cx,210,p.res.startsWith('Win')||p.res.startsWith('Black')?'#9af0b0':p.res.startsWith('Push')?C.pale:'#ff8a70',16,'center',true,'700 ',DISP);
       const by=318;
       if(on){ g.fillStyle=rgba(c.col,0.12); g.fillRect(cx-104,by,208,72); g.strokeStyle=rgba(c.col,0.6); g.strokeRect(cx-103.5,by+0.5,207,71); }
       archFrame(mgPort(p.k,final?(final.winner===p.k&&!final.draw?'smile':final.loser===p.k&&!final.draw?'sad':'n'):'n'),cx-98,by+6,48,58,rgba(c.col,0.3));
-      drawText(c.name,cx-42,by+24,on?C.pale:C.parch,14,'left',true,'700 ',DISP);
-      drawText(this.o.two?'Player '+(i+1):'You',cx-42,by+40,C.gray,11,'left',true,'italic ');
+      drawText(c.name,cx-42,by+24,on?C.pale:C.parch,n>2?12:14,'left',true,'700 ',DISP);
+      drawText(this.o.seats>1?'Player '+(i+1):'You',cx-42,by+40,C.gray,11,'left',true,'italic ');
       goldText(String(p.chips),cx+96,by+40,22,'right'); capsText('chips',cx+96,by+56,C.gray,8,'right',2);
       if(!final&&(this.st==='bet'||p.hand.length)&&p.chips>=10){ drawText('Bet '+p.bet,cx-42,by+60,'#f2d58a',12,'left',true,'600 '); }
     });
@@ -6545,11 +6565,11 @@ const BJ={
   draw(){
     this.drawTable(); this.drawDealer(); this.drawSeats(false);
     capsText('Hand '+Math.min(5,this.hand+1)+' of 5',W/2,H-82,UI.gold,10,'center',3);
-    if(this.st==='bet'){ const p=this.pl[this.cur]; drawText((this.o.two?'Player '+(this.cur+1)+', p':'P')+'lace your bet:  ◀ '+p.bet+' ▶',W/2,H-44,C.pale,18,'center',true,'600 ',DISP); drawText('Left / Right to change  ·  Z to bet  ·  Esc to leave the table',W/2,H-14,C.dim,13,'center',true,'italic '); }
+    if(this.st==='bet'){ const p=this.pl[this.cur]; drawText((this.o.seats>1?'Player '+(this.cur+1)+', p':'P')+'lace your bet:  ◀ '+p.bet+' ▶',W/2,H-44,C.pale,18,'center',true,'600 ',DISP); drawText('Left / Right to change  ·  Z to bet  ·  Esc to leave the table',W/2,H-14,C.dim,13,'center',true,'italic '); }
     else if(this.st==='play'){
       const L=this.opts();
       L.forEach((s,i)=>{ const x=W/2-L.length*60+i*120, sel=i===this.opt; g.fillStyle=sel?'rgba(226,174,74,.22)':'rgba(10,8,20,.6)'; g.fillRect(x,H-58,110,30); g.strokeStyle=sel?UI.gold:UI.line; g.strokeRect(x+0.5,H-57.5,109,29); drawText(s,x+55,H-37,sel?C.pale:C.parch,16,'center',true,'600 ',DISP); });
-      drawText((this.o.two?'Player '+(this.cur+1)+'  ·  ':'')+'Left / Right to choose  ·  Z to confirm',W/2,H-12,C.dim,13,'center',true,'italic ');
+      drawText((this.o.seats>1?'Player '+(this.cur+1)+'  ·  ':'')+'Left / Right to choose  ·  Z to confirm',W/2,H-12,C.dim,13,'center',true,'italic ');
     }
     else if(this.st==='settle'&&this.t>1.4) drawText('Z for the next hand',W/2,H-14,C.dim,13,'center',true,'italic ');
   }
@@ -6557,32 +6577,30 @@ const BJ={
 
 /* ---------------- sitting down ---------------- */
 async function mgPlayers(game){
-  if(typeof COOP!=='undefined'&&COOP.on) return 2;
-  const c=await ask(null,game==='darts'?'The dartboard. Three rounds, three darts each, highest score wins.':'Blackjack. Five hands, a hundred chips each.',['One player','Two players (share the keyboard or pads)','Leave it']);
+  if(typeof COOP!=='undefined'&&COOP.on) return COOP.n;
+  const c=await ask(null,game==='darts'?'The dartboard. Three rounds, three darts each, highest score wins.':'Blackjack. Five hands, a hundred chips each, everyone against the dealer.',['One player','Two players (share the keyboard or pads)','Leave it']);
   return c===0?1:c===1?2:0;
 }
 async function playMinigame(game){
   if(MG.busy) return; MG.busy=true;
   try{
-    const n=await mgPlayers(game); if(!n) return;
-    const two=n===2;
-    const vs=game==='cards'?'Who deals?':'Choose your opponent';
+    const seats=await mgPlayers(game); if(!seats) return;
     if(mgFriends().length<2){ await N('Nobody to play with yet.'); return; }
-    const picks=await CharSel.pick({game:game==='darts'?'Darts':'Blackjack',two,vsLabel:vs});
+    const picks=await CharSel.pick({game:game==='darts'?'Darts':'Blackjack',seats,vsLabel:game==='cards'?'Who deals?':'Choose your opponent'});
     if(!picks) return;
     SND.play('tavern');
     let out;
-    if(game==='darts') out=await Darts.start({chars:picks,two});
+    if(game==='darts') out=await Darts.start({chars:picks,seats});
     else {
       let chars=picks, dealer;
-      if(two){ dealer=['sammy','tarel','lysandra','ramel','sc','chili'].find(k=>MG_CHARS[k].friend()&&!picks.includes(k))||'sammy'; }
+      if(seats>1){ dealer=['sammy','tarel','lysandra','ramel','sc','chili','jory'].find(k=>MG_CHARS[k].friend()&&!picks.includes(k))||'sammy'; }
       else { chars=[picks[0]]; dealer=picks[1]; }
-      out=await BJ.start({chars,dealer,two});
+      out=await BJ.start({chars,dealer,seats});
     }
     if(!out) return;
     await MGResult.show(out);
-    const mine=two?null:picks[0];
-    if(!two&&!out.draw&&out.winner===mine){
+    const mine=seats>1?null:picks[0];
+    if(seats===1&&!out.draw&&out.winner===mine){
       const key='mg_won_'+game;
       if(!F(key)){ setF(key); addFood('tonic',1); toast('First win at '+(game==='darts'?'darts':'the cards')+'! A tonic, on the house.',3); }
       else { P.hp=mhp(); toast('Hearts restored. Winning is good for you.',2.2); }
@@ -6653,7 +6671,7 @@ async function barFightEnd(){
   old.name=()=>mgPost()?'The Salt & Sun':'The Lantern & Anchor';
   old.sub=()=>mgPost()?'Tavern, port of Alterah':'Inn, port of Alterah';
   old.ents=function(){
-    if(!mgPost()) return oldEnts();
+    if(!mgPost()){ const L=oldEnts(); if(F('a1_arrive')) L.push(dartboardProp(18,1),cardTableProp(6,7)); return L; }
     const L=[
       npc('sammy','sammy',8,1,{dir:0,solid:true}),
       counterTalk('sammyc',8,2,sammyNewTalk),
@@ -6705,7 +6723,7 @@ async function wickRetiredTalk(){
    ONLINE: one browser hosts and runs the game. The friend's browser joins with a room code,
    watches the host's screen as live video, and sends its keys back as Player 2.
    ========================================================= */
-const NET={role:null,peer:null,conn:null,call:null,code:'',state:'',msg:'',opts:null,video:null,live:false,prev:{},cv:null,cx:null,ad:null,setCoop:false,leaveAsk:false,needTap:false,t:0};
+const NET={role:null,peer:null,conn:null,call:null,slots:{2:null,3:null},slot:2,code:'',state:'',msg:'',opts:null,video:null,live:false,prev:{},cv:null,cx:null,ad:null,setCoop:false,leaveAsk:false,needTap:false,t:0};
 const NET_ALPHA='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const NKEYS=['up','down','left','right','a','b','c','d','e'];
 function netId(code){ return 'ageofpirates-'+String(code).toLowerCase(); }
@@ -6731,48 +6749,54 @@ function netHost(){
   p.on('error',e=>{ if(NET.peer!==p) return;
     if(e.type==='unavailable-id'){ if(NET.state==='opening'&&!NET.live) netHost(); return; }
     if(e.type==='peer-unavailable') return;
-    if(NET.live||(NET.conn&&NET.conn.open)) return;
+    if(NET.live||netGuests()) return;
     if(['network','socket-error','socket-closed','server-error','disconnected'].includes(e.type)){ NET.state='retry'; return; }
     NET.state='err'; NET.msg=netErr(e); });
   p.on('disconnected',()=>{ if(NET.peer!==p||p.destroyed) return; const n=p._rc=(p._rc||0)+1; if(!NET.live) NET.state='retry';
     setTimeout(()=>{ try{ if(NET.peer===p&&!p.destroyed&&p.disconnected) p.reconnect(); }catch(e){} },Math.min(10000,1000*n)); });
   p.on('connection',c=>{
-    if(NET.conn&&NET.conn.open){ c.on('open',()=>{ try{ c.send({t:'full'}); }catch(e){} setTimeout(()=>c.close(),600); }); return; }
-    NET.conn=c;
+    const max=(OPT.coop||0)>=3?[2,3]:[2];
+    const slot=max.find(n=>!NET.slots[n]);
+    if(!slot){ c.on('open',()=>{ try{ c.send({t:'full'}); }catch(e){} setTimeout(()=>c.close(),600); }); return; }
+    const S=NET.slots[slot]={conn:c,call:null,hb:null};
     c.on('open',()=>{
       NET.live=true; NET.state='live';
       if(!OPT.coop){ OPT.coop=1; NET.setCoop=true; }
-      SND.sfx('ok'); toast('Player 2 has joined! They are '+(COOP.p1==='chili'?'Shadow Cloak':'Chili')+'.',3);
-      netStream(c.peer);
-      clearInterval(NET.hb); NET.hb=setInterval(()=>{ try{ if(c.open) c.send({t:'hb'}); }catch(e){} },2000);
+      try{ c.send({t:'slot',n:slot}); }catch(e){}
+      SND.sfx('ok'); toast('Player '+slot+' has joined! They are '+(slot===3?'Cadet Jory':(COOP.p1==='chili'?'Shadow Cloak':'Chili'))+'.',3);
+      netStream(slot);
+      clearInterval(S.hb); S.hb=setInterval(()=>{ try{ if(c.open) c.send({t:'hb'}); }catch(e){} },2000);
     });
-    c.on('data',d=>{ if(d&&d.t==='vid'){ if(NET.conn===c&&c.open) netStream(c.peer); return; } netHostData(d); });
-    c.on('close',()=>{ if(NET.conn===c) netGuestLeft(); });
-    c.on('error',()=>{ if(NET.conn===c) netGuestLeft(); });
+    c.on('data',d=>{ if(NET.slots[slot]!==S) return; if(d&&d.t==='vid'){ if(c.open) netStream(slot); return; } netHostData(d,slot); });
+    c.on('close',()=>{ if(NET.slots[slot]===S) netGuestLeft(slot); });
+    c.on('error',()=>{ if(NET.slots[slot]===S) netGuestLeft(slot); });
   });
 }
-function netStream(gid){
+function netGuests(){ return [2,3].filter(n=>NET.slots[n]&&NET.slots[n].conn.open).length; }
+function netStream(slot){
+  const S=NET.slots[slot]; if(!S||!S.conn) return; const gid=S.conn.peer;
   if(!NET.cv){ NET.cv=document.createElement('canvas'); NET.cv.width=960; NET.cv.height=720; NET.cx=NET.cv.getContext('2d'); NET.cx.fillRect(0,0,960,720); }
   const st=NET.cv.captureStream(30);
   try{ if(SND.ctx&&SND.master){ if(!NET.ad){ NET.ad=SND.ctx.createMediaStreamDestination(); SND.master.connect(NET.ad); } for(const t of NET.ad.stream.getAudioTracks()) st.addTrack(t); } }catch(e){}
   for(const t of st.getVideoTracks()){ try{ t.contentHint='detail'; }catch(e){} }
-  try{ if(NET.call) NET.call.close(); }catch(e){}
-  let call; try{ call=NET.call=NET.peer.call(gid,st); }catch(e){ console.error(e); return; }
+  try{ if(S.call) S.call.close(); }catch(e){}
+  let call; try{ call=S.call=NET.peer.call(gid,st); }catch(e){ console.error(e); return; }
   if(!call) return;
-  call.on('close',()=>{ if(NET.call===call) NET.call=null; });
-  try{ const pc=call.peerConnection; if(pc) pc.addEventListener('iceconnectionstatechange',()=>{ if(pc.iceConnectionState==='failed'&&NET.call===call&&NET.conn&&NET.conn.open) setTimeout(()=>{ if(NET.call===call) netStream(gid); },1000); }); }catch(e){}
-  const tune=()=>{ try{ const pc=NET.call&&NET.call.peerConnection; if(!pc) return; for(const sd of pc.getSenders()){ if(!sd.track||sd.track.kind!=='video') continue; const pr=sd.getParameters(); if(!pr.encodings||!pr.encodings.length) pr.encodings=[{}]; pr.encodings[0].maxBitrate=3500000; pr.encodings[0].scaleResolutionDownBy=1; pr.degradationPreference='maintain-resolution'; sd.setParameters(pr).catch(()=>{}); } }catch(e){} };
+  call.on('close',()=>{ if(S.call===call) S.call=null; });
+  try{ const pc=call.peerConnection; if(pc) pc.addEventListener('iceconnectionstatechange',()=>{ if(pc.iceConnectionState==='failed'&&S.call===call&&S.conn.open) setTimeout(()=>{ if(S.call===call) netStream(slot); },1000); }); }catch(e){}
+  const tune=()=>{ try{ const pc=S.call&&S.call.peerConnection; if(!pc) return; for(const sd of pc.getSenders()){ if(!sd.track||sd.track.kind!=='video') continue; const pr=sd.getParameters(); if(!pr.encodings||!pr.encodings.length) pr.encodings=[{}]; pr.encodings[0].maxBitrate=3500000; pr.encodings[0].scaleResolutionDownBy=1; pr.degradationPreference='maintain-resolution'; sd.setParameters(pr).catch(()=>{}); } }catch(e){} };
   setTimeout(tune,800); setTimeout(tune,3000);
 }
-function netHostData(d){
+function netHostData(d,slot){
   if(!d||d.t!=='k'||!NKEYS.includes(d.k)) return;
-  const S=COOP.K2; S.k[d.k]=!!d.d; if(d.d) S.p[d.k]=true;
+  const S=COOP.K[slot]; if(!S) return; S.k[d.k]=!!d.d; if(d.d) S.p[d.k]=true;
 }
-function netGuestLeft(){
-  clearInterval(NET.hb); NET.conn=null; NET.live=false; NET.state=NET.peer&&!NET.peer.destroyed?'waiting':'';
-  try{ if(NET.call) NET.call.close(); }catch(e){} NET.call=null;
-  for(const k in COOP.K2.k) COOP.K2.k[k]=false;
-  toast('Player 2 left. They can rejoin with code '+NET.code+'.',3.4); SND.sfx('deny');
+function netGuestLeft(slot){
+  const S=NET.slots[slot]; if(!S) return;
+  clearInterval(S.hb); try{ if(S.call) S.call.close(); }catch(e){} NET.slots[slot]=null;
+  for(const k in COOP.K[slot].k) COOP.K[slot].k[k]=false;
+  NET.live=netGuests()>0; if(!NET.live) NET.state=NET.peer&&!NET.peer.destroyed?'waiting':'';
+  toast('Player '+slot+' left. They can rejoin with code '+NET.code+'.',3.4); SND.sfx('deny');
 }
 
 /* ---------------- joining ---------------- */
@@ -6788,7 +6812,7 @@ function netJoin(code){
     if(NET.peer!==p||NET.conn) return;
     const c=NET.conn=p.connect(netId(code),{reliable:true});
     c.on('open',()=>{ if(NET.state==='connecting'){ NET.state='video'; NET.vt=NET.t; } });
-    c.on('data',d=>{ if(d&&d.t==='full'){ netStop(); NET.state='err'; NET.msg='That game already has two players.'; } });
+    c.on('data',d=>{ if(d&&d.t==='full'){ netStop(); NET.state='err'; NET.msg='That game is full.'; } else if(d&&d.t==='slot') NET.slot=d.n; });
     c.on('close',()=>{ if(NET.conn===c&&NET.role==='guest') netHostLeft(); });
   });
   p.on('call',call=>{
@@ -6814,13 +6838,14 @@ function netGuestQuiet(on){ try{ if(SND.master) SND.master.gain.value=on?0:(SND.
 function netStop(keepMsg){
   const wasGuest=NET.role==='guest';
   clearInterval(NET.hb);
+  for(const n of [2,3]){ const S=NET.slots[n]; if(S){ clearInterval(S.hb); try{ if(S.call) S.call.close(); }catch(e){} try{ S.conn.close(); }catch(e){} } NET.slots[n]=null; }
   try{ if(NET.call) NET.call.close(); }catch(e){}
   try{ if(NET.conn) NET.conn.close(); }catch(e){}
   try{ if(NET.peer) NET.peer.destroy(); }catch(e){}
   NET.peer=NET.conn=NET.call=null; NET.live=false; NET.role=null; NET.leaveAsk=false; NET.needTap=false;
   if(NET.video){ try{ NET.video.pause(); NET.video.srcObject=null; }catch(e){} }
   if(NET.setCoop){ OPT.coop=0; NET.setCoop=false; }
-  for(const k in COOP.K2.k) COOP.K2.k[k]=false;
+  for(const n of [2,3]) for(const k in COOP.K[n].k) COOP.K[n].k[k]=false;
   if(wasGuest) netGuestQuiet(false);
   if(!keepMsg){ NET.state=''; }
 }
@@ -6852,7 +6877,7 @@ function netGuestDraw(){
   const v=NET.video;
   if(NET.live&&v&&v.readyState>=2){
     const sm=g.imageSmoothingEnabled; g.imageSmoothingEnabled=true; g.drawImage(v,0,0,W,H); g.imageSmoothingEnabled=sm;
-    if(NET.t<6||NET.leaveAsk){ g.globalAlpha=NET.leaveAsk?1:Math.min(1,(6-NET.t)/1.5); g.fillStyle='rgba(8,8,22,.8)'; g.fillRect(8,H-30,250,22); capsText('Online  ·  you are Player 2',18,H-14,UI.gold,9,'left',2); g.globalAlpha=1; }
+    if(NET.t<6||NET.leaveAsk){ g.globalAlpha=NET.leaveAsk?1:Math.min(1,(6-NET.t)/1.5); g.fillStyle='rgba(8,8,22,.8)'; g.fillRect(8,H-30,250,22); capsText('Online  ·  you are Player '+(NET.slot||2)+(NET.slot===3?' (Jory)':''),18,H-14,UI.gold,9,'left',2); g.globalAlpha=1; }
     if(NET.needTap){ g.fillStyle='rgba(8,8,22,.85)'; g.fillRect(W/2-120,10,240,26); drawText('Tap or press Z for sound',W/2,28,C.pale,14,'center',true,'italic '); }
     if(NET.leaveAsk){ frame(170,180,300,120); drawText('Leave the game?',W/2,224,C.pale,20,'center',true,'600 ',DISP); drawText('Z to leave  ·  X to stay',W/2,262,C.gray,15,'center',true,'italic '); }
     return;
@@ -6867,7 +6892,7 @@ function netGuestDraw(){
 { const _d=draw; draw=function(){
     if(NET.role==='guest'){ applyScale(); netGuestDraw(); drawToast(); return; }
     _d();
-    if(NET.role==='host'&&NET.live&&NET.cx){ try{ NET.cx.imageSmoothingEnabled=false; NET.cx.drawImage(cv,0,0,960,720); }catch(e){} }
+    if(NET.role==='host'&&netGuests()&&NET.cx){ try{ NET.cx.imageSmoothingEnabled=false; NET.cx.drawImage(cv,0,0,960,720); }catch(e){} }
   }; }
 { const _tm=SND.toggleMute.bind(SND); SND.toggleMute=function(){ if(NET.role==='guest'&&NET.video){ NET.video.muted=!NET.video.muted; toast(NET.video.muted?'Sound off':'Sound on'); return; } return _tm(); }; }
 addEventListener('beforeunload',()=>{ try{ if(NET.peer) NET.peer.destroy(); }catch(e){} });
@@ -6936,7 +6961,7 @@ const NetBox={el:null,
       if(NET.state==='opening') drawText('Opening a room...',W/2,322,C.parch,20,'center',true,'italic ');
       else if(NET.state==='retry'&&!NET.live) { goldText(NET.code,W/2,330,46,'center'); drawText('Reconnecting to the matchmaking server...',W/2,362,'#ffb070',15,'center',true,'italic '); drawText('X to stop hosting',W/2,400,C.dim,12,'center',true,'italic '); return; }
       else goldText(NET.code,W/2,330,46,'center');
-      drawText(NET.live?'Player 2 is here!':'Waiting for Player 2'+'.'.repeat(1+Math.floor(NOW*2)%3),W/2,362,NET.live?'#9af0b0':C.parch,16,'center',true,'italic ');
+      drawText(NET.live?(netGuests()>=2?'Players 2 and 3 are here!':(OPT.coop||0)>=3?'Player 2 is here. Room for Player 3 (Jory).':'Player 2 is here!'):'Waiting for Player 2'+((OPT.coop||0)>=3?' and 3':'')+'.'.repeat(1+Math.floor(NOW*2)%3),W/2,362,NET.live?'#9af0b0':C.parch,16,'center',true,'italic ');
       drawText(NET.live?'Press Z (or Space / Enter) to start the story together':'Z to start the story now (they can join any time)  ·  X to stop hosting',W/2,400,NET.live?C.pale:C.dim,NET.live?14:12,'center',true,'italic ');
       drawText('You are Player 1. Use either set of keys. Player 2 plays from their own computer or phone.',W/2,H-22,C.dim,13,'center',true,'italic ');
       return;
@@ -6952,23 +6977,38 @@ const NetBox={el:null,
 }
 
 /* =========================================================
-   TWO PLAYERS, ONE KEYBOARD (or two pads)
-   Player 1 and Player 2 each own a hero. Whoever owns the hero that is "P" right now
-   drives P; the other drives the partner. Talking as the partner swaps bodies quietly,
-   so character-locked conversations and actions still go to the right one.
+   MULTIPLAYER: up to three players.
+   Player 1 and Player 2 own Chili and Shadow Cloak (the Rookie and the Expert).
+   Player 3 is Cadet Jory, the Active Spectator: fights, heals, plays the minigames,
+   but never talks to anyone or makes story choices.
+   Every player only ever drives their own character.
    ========================================================= */
 const COARSE=!!(window.matchMedia&&matchMedia('(pointer: coarse)').matches)&&!(window.matchMedia&&matchMedia('(pointer: fine)').matches);
-const COOP={K1:{k:{},p:{}},K2:{k:{},p:{}},ctl:null,pDance:0,ahp:null,adown:false,rev:0,inA:false,nPads:0,gprev:[],
+const COOP={K:[null,{k:{},p:{}},{k:{},p:{}},{k:{},p:{}}],pDance:0,hp:{},down:{},rev:{},inBody:null,nPads:0,gprev:[],regroup:{},
   get on(){ if(NET.role==='guest') return false; if(NET.role==='host'&&NET.live) return true; return !COARSE&&!!OPT.coop; },
-  get p1(){ return OPT.coop===2?'sc':'chili'; }};
-const heroBase=h=>(h||'').startsWith('sc')?'sc':'chili';
-function pOwner(){ return heroBase(P.hero)===COOP.p1?COOP.K1:COOP.K2; }
+  get n(){ if(NET.role==='host'&&NET.live) return NET.slots&&NET.slots[3]?3:2; return (OPT.coop||0)>=3?3:2; },
+  get p1(){ return (OPT.coop===2||OPT.coop===4)?'sc':'chili'; }};
+Object.defineProperty(COOP,'K1',{get(){ return COOP.K[1]; }});
+Object.defineProperty(COOP,'K2',{get(){ return COOP.K[2]; }});
+Object.defineProperty(COOP,'K3',{get(){ return COOP.K[3]; }});
+const heroBase=h=>{ h=h||''; return h==='jory'?'jory':h.startsWith('sc')?'sc':'chili'; };
+function ownerOf(h){ const b=heroBase(h); return b==='jory'?3:b===COOP.p1?1:2; }
+function pOwnerN(){ return ownerOf(P.hero); }
+function pOwner(){ return COOP.K[pOwnerN()]; }
+HERO.jory={name:'Cadet Jory',ch:'cadet',fam:'team',spd:80,dmg:1,reach:14,skill:'mend',trail:'#9af0b0',flame:'#9af0b0',cd:0.3};
+
+/* ---------------- keys ---------------- */
 const CK1={KeyW:'up',KeyS:'down',KeyA:'left',KeyD:'right',KeyF:'a',Space:'a',KeyZ:'a',KeyG:'b',ShiftLeft:'b',KeyX:'b',KeyR:'c',KeyC:'c',KeyE:'e',KeyQ:'d',Tab:'d',KeyV:'d'};
 const CK2={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',Enter:'a',NumpadEnter:'a',Slash:'a',Numpad0:'a',Numpad1:'a',
   ShiftRight:'b',Period:'b',Numpad2:'b',ControlRight:'c',Comma:'c',Numpad3:'c',Quote:'e',NumpadAdd:'e',Backslash:'d'};
+const CK3={KeyI:'up',KeyK:'down',KeyJ:'left',KeyL:'right',KeyU:'a',KeyO:'b',KeyY:'c',KeyN:'e',KeyB:'d'};
+/* how many players the keyboard covers: online, everyone else is remote; otherwise pads take the last seats */
+function kbSeats(){ if(NET.role==='host') return 1; return Math.max(1,COOP.n-Math.min(COOP.nPads,COOP.n)); }
 function coopKey(code){
-  if(CK1[code]) return [COOP.K1,CK1[code]];
-  if(CK2[code]) return [(COOP.nPads===1||NET.role==='host')?COOP.K1:COOP.K2,CK2[code]];
+  const ks=kbSeats();
+  if(CK1[code]) return [COOP.K[1],CK1[code]];
+  if(CK2[code]) return [COOP.K[ks>=2?2:1],CK2[code]];
+  if(CK3[code]) return COOP.n>=3?[COOP.K[ks>=3?3:1],CK3[code]]:null;
   return null;
 }
 document.addEventListener('keydown',e=>{
@@ -6982,15 +7022,14 @@ document.addEventListener('keyup',e=>{
   const m=coopKey(e.code); if(!m) return;
   e.stopImmediatePropagation(); m[0].k[m[1]]=false;
 },true);
-addEventListener('blur',()=>{ for(const S of [COOP.K1,COOP.K2]) for(const k in S.k) S.k[k]=false; });
-
-/* pads: two pads are Player 1 and Player 2; one pad is Player 2 and the keyboard is Player 1 */
+addEventListener('blur',()=>{ for(let i=1;i<=3;i++) for(const k in COOP.K[i].k) COOP.K[i].k[k]=false; });
 function coopPads(){
   if(!navigator.getGamepads) return;
   let pads; try{ pads=[...navigator.getGamepads()].filter(x=>x&&x.connected); }catch(e){ return; }
   COOP.nPads=pads.length;
-  pads.slice(0,2).forEach((p,i)=>{
-    const S=NET.role==='host'||(pads.length>=2&&i===0)?COOP.K1:COOP.K2, prev=COOP.gprev[i]||{}, now={};
+  const first=NET.role==='host'?1:Math.max(1,COOP.n-pads.length+1);
+  pads.slice(0,3).forEach((p,i)=>{
+    const seat=NET.role==='host'?1:Math.min(COOP.n,first+i), S=COOP.K[seat], prev=COOP.gprev[i]||{}, now={};
     for(const b in GPMAP){ const bt=p.buttons[b]; if(bt&&(bt.pressed||bt.value>0.5)) now[GPMAP[b]]=true; }
     const ax=p.axes[0]||0, ay=p.axes[1]||0, dz=0.35;
     if(ax<-dz) now.left=true; if(ax>dz) now.right=true; if(ay<-dz) now.up=true; if(ay>dz) now.down=true;
@@ -7001,21 +7040,35 @@ function coopPads(){
 }
 { const _pp=pollPad; pollPad=function(){ if(COOP.on) return coopPads(); return _pp(); }; }
 
+/* minigames read each seat's own keys (seat 0 is Player 1) */
+function mgHit(seat,k){ if(!COOP.on) return hit(k); const S=COOP.K[seat+1]; if(S&&S.p[k]){ S.p[k]=false; return true; } return false; }
+function mgHeld(seat,k){ if(!COOP.on) return !!Keys[k]; const S=COOP.K[seat+1]; return !!(S&&S.k[k]); }
+function mgAny(k){ if(!COOP.on) return hit(k); for(let i=1;i<=3;i++) if(COOP.K[i].p[k]){ COOP.K[i].p[k]=false; return true; } return false; }
+
+/* ---------------- who drives what this frame ---------------- */
 const ACT=['up','down','left','right','a','b','c','d','e'];
+function dlgOwner(){
+  if(Dlg.on&&Dlg.opts){ const s=Dlg.spk||''; if(s==='chili'||s==='chilie') return ownerOf('chili'); if(s==='sc'||s==='scf') return ownerOf('sc'); }
+  return pOwnerN();
+}
+function seatOverlay(){ return OV&&(OV===CharSel||OV===Darts||OV===BJ); }
+function feed(S){ for(const k of ACT){ Keys[k]=!!S.k[k]; if(S.p[k]) Pressed[k]=true; } }
 function coopRoute(){
-  const free=MODE==='play'&&R&&canControl();
-  COOP.ctl=null;
-  if(free){
-    const own=pOwner(), oth=own===COOP.K1?COOP.K2:COOP.K1;
-    const still=COOP.pDance>0;
-    for(const k of ['up','down','left','right','a','b','c']){ Keys[k]=!still&&!!own.k[k]; if(own.p[k]&&!still) Pressed[k]=true; }
-    if(own.p.e) Pressed.e=true;
-    if(own.p.d||oth.p.d){ if(!R.coopSwapT||NOW-R.coopSwapT>4){ R.coopSwapT=NOW; toast('Two players: walk up to someone and press attack to talk as yourself.',2.6); } }
+  COOP.ctl={};
+  if(MODE!=='play'||!R){ for(const k of ACT){ Keys[k]=!!(COOP.K[1].k[k]||COOP.K[2].k[k]||COOP.K[3].k[k]); if(COOP.K[1].p[k]||COOP.K[2].p[k]||COOP.K[3].p[k]) Pressed[k]=true; } return; }
+  if(seatOverlay()){ for(const k of ACT){ Keys[k]=false; } return; }
+  if(canControl()){
+    const own=pOwnerN(), still=COOP.pDance>0, S=COOP.K[own];
+    for(const k of ['up','down','left','right','a','b','c']){ Keys[k]=!still&&!!S.k[k]; if(S.p[k]&&!still) Pressed[k]=true; }
+    if(S.p.e) Pressed.e=true;
     Keys.d=false;
-    COOP.ctl=oth; COOP.own=own;
-  } else {
-    for(const k of ACT){ Keys[k]=!!(COOP.K1.k[k]||COOP.K2.k[k]); if(COOP.K1.p[k]||COOP.K2.p[k]) Pressed[k]=true; }
+    const a=ent('partner'); if(a) COOP.ctl.partner=COOP.K[ownerOf(a.hk)];
+    COOP.ctl.jory=COOP.K[3];
+    return;
   }
+  if(Dlg.on){ feed(COOP.K[dlgOwner()]); return; }
+  if(OV&&!(typeof Parley!=='undefined'&&OV===Parley)){ for(const k of ACT){ Keys[k]=!!(COOP.K[1].k[k]||COOP.K[2].k[k]||COOP.K[3].k[k]); if(COOP.K[1].p[k]||COOP.K[2].p[k]||COOP.K[3].p[k]) Pressed[k]=true; } return; }
+  feed(COOP.K[pOwnerN()]);
 }
 { const _u=update;
   update=function(dt){
@@ -7023,102 +7076,155 @@ function coopRoute(){
     coopRoute();
     _u(dt);
     try{ coopPost(dt); }catch(e){ console.error(e&&e.stack||e); }
-    for(const S of [COOP.K1,COOP.K2]) for(const k in S.p) S.p[k]=false;
+    for(let i=1;i<=3;i++) for(const k in COOP.K[i].p) COOP.K[i].p[k]=false;
   };
 }
 
-/* the partner, played by a person */
-function coopBody(){ if(!COOP.on||!R||!duo()) return null; const a=ent('partner'); return a&&!a.dead&&!a.dance&&!a.down&&!a.auto?a:null; }
+/* ---------------- the other bodies ---------------- */
+function coopBodies(){ if(!R) return []; return ['partner','jory'].map(id=>ent(id)).filter(Boolean); }
+function bodyActive(a){ return a&&!a.dead&&!a.dance&&!a.down&&!a.auto&&(a.id==='jory'||duo()); }
+function coopBody(){ if(!COOP.on||!R||!duo()) return null; const a=ent('partner'); return bodyActive(a)?a:null; }
+function bodyHp(a){ const m=mhp(); let v=COOP.hp[a.id]; if(v==null||v>m) v=COOP.hp[a.id]=m; return v; }
 const PSWAP=['x','y','dir','hero','inv','veilT','kx','ky','roll','charm','atk','atkHit','vis','fall','guard','moving'];
 function asPlayer(a,fn){
   const s={}; for(const k of PSWAP) s[k]=P[k];
-  s.hp=P.hp; s.eatCD=P.eatCD; s.eatT=P.eatT; s.eatCol=P.eatCol; P.hp=coopAhp(); P.eatCD=a.eatCD||0; P.eatT=a.eatT||0; COOP.inA=true;
+  s.hp=P.hp; s.eatCD=P.eatCD; s.eatT=P.eatT; s.eatCol=P.eatCol; s.en=P.en;
+  P.hp=bodyHp(a); P.eatCD=a.eatCD||0; P.eatT=a.eatT||0; P.en=a.en!=null?a.en:100; const prevBody=COOP.inBody; COOP.inBody=a;
   P.x=a.x; P.y=a.y; P.dir=a.dir; P.hero=a.hk; P.inv=a.inv||0; P.veilT=0; P.kx=a.kx||0; P.ky=a.ky||0; P.roll=a.roll||0; P.charm=a.charm||0; P.atk=a.atk||0; P.atkHit=a.atkHit||new Set(); P.vis=true; P.fall=0; P.guard=false; P.moving=!!a.moving;
   try{ return fn(); }
   finally{
     a.x=P.x; a.y=P.y; a.dir=P.dir; a.inv=P.inv; a.kx=P.kx; a.ky=P.ky; a.charm=P.charm; a.atkHit=P.atkHit;
-    COOP.ahp=P.hp; a.eatCD=P.eatCD; a.eatT=P.eatT; a.eatCol=P.eatCol;
+    if(!a.down) COOP.hp[a.id]=P.hp; a.eatCD=P.eatCD; a.eatT=P.eatT; a.eatCol=P.eatCol; a.en=P.en;
     for(const k of PSWAP) P[k]=s[k];
-    P.hp=s.hp; P.eatCD=s.eatCD; P.eatT=s.eatT; P.eatCol=s.eatCol; COOP.inA=false;
+    P.hp=s.hp; P.eatCD=s.eatCD; P.eatT=s.eatT; P.eatCol=s.eatCol; P.en=s.en; COOP.inBody=prevBody;
   }
 }
-function coopAhp(){ const m=mhp(); if(COOP.ahp==null||COOP.ahp>m) COOP.ahp=COOP.ahp==null?m:m; return COOP.ahp; }
-function coopHeal(){ COOP.ahp=mhp(); COOP.adown=false; COOP.rev=0; const a=R&&ent('partner'); if(a) a.down=false; }
+function coopHeal(){ COOP.hp={}; COOP.down={}; COOP.rev={}; for(const a of coopBodies()) a.down=false; }
 function findInteractAs(a){ return asPlayer(a,()=>findInteract()); }
-/* the partner's player wants to talk: they become P where they stand, nothing visibly moves */
+/* a free spot next to the lead hero */
+function freeSpotNear(x,y,self){
+  for(const r of [16,22,30,40,54,70]) for(let i=0;i<12;i++){ const an=i*Math.PI/6+(r%2)*0.3, nx=clamp(x+Math.cos(an)*r,10,RW*TS-10), ny=clamp(y+Math.sin(an)*r*0.8,14,RH*TS-4);
+    if(rectFree(nx-5,ny-7,nx+5,ny,self)&&!isPitAt(Math.floor(nx/TS),Math.floor((ny-3)/TS))) return [nx,ny]; }
+  return [x,y];
+}
+/* talking as the partner: they quietly become the lead where they stand */
 function coopTakeover(a){
   const nh=a.hk, oh=P.hero;
   const px=P.x,py=P.y,pd=P.dir,pe=P.en,pi=P.inv,ph=P.hp;
-  P.x=a.x; P.y=a.y; P.dir=a.dir; P.en=a.en!=null?a.en:100; P.inv=a.inv||0; P.hp=coopAhp(); COOP.ahp=ph;
+  P.x=a.x; P.y=a.y; P.dir=a.dir; P.en=a.en!=null?a.en:100; P.inv=a.inv||0; P.hp=bodyHp(a); COOP.hp.partner=ph;
   a.x=px; a.y=py; a.dir=pd; a.en=pe; a.inv=pi; a.atk=0; a.roll=0;
   a.hk=oh; a.ch=HERO[oh].ch; a.trail=HERO[oh].trail;
   setHero(nh); G.hero=nh; R.ptrail=null; P.moving=false; P.atk=0;
-  const it=findInteract(); if(it) run(()=>it.interact.call(it));
 }
-function coopAlly(a,dt){
-  const S=COOP.ctl||{k:{},p:{}}, hr=HERO[a.hk]||HERO.chili;
+/* stepping into a doorway takes the whole party through */
+function exitSide(x,y){ const ex=R.def.exits||{}; if(x<5&&ex.w) return 'w'; if(x>RW*TS-5&&ex.e) return 'e'; if(y-4<4&&ex.n) return 'n'; if(y>RH*TS-3&&ex.s) return 's'; return null; }
+function allyMove(a,dx,dy){
+  moveEnt(a,dx,dy);
+  const side=exitSide(a.x,a.y);
+  if(side&&canControl()){ const px=P.x,py=P.y,rid=R.id; P.x=side==='w'?1:side==='e'?RW*TS-1:a.x; P.y=side==='n'?4:side==='s'?RH*TS+1:a.y; checkExits(); if(R&&R.id===rid&&!Trans.on){ P.x=px; P.y=py; } }
+  a.x=clamp(a.x,6,RW*TS-6); a.y=clamp(a.y,10,RH*TS-2);
+}
+function coopAlly(a,dt,S,moveOnly){
+  S=S||{k:{},p:{}}; const hr=HERO[a.hk]||HERO.chili, jory=a.id==='jory';
   a.inv=Math.max(0,(a.inv||0)-dt); a.atkCD=Math.max(0,(a.atkCD||0)-dt); a.rollCD=Math.max(0,(a.rollCD||0)-dt); a.iceCD=Math.max(0,(a.iceCD||0)-dt);
-  a.en=Math.min(100,(a.en!=null?a.en:100)+15*dt);
+  a.en=Math.min(100,(a.en!=null?a.en:100)+(jory?13:15)*dt);
   if(a.charm>0) a.charm=Math.max(0,a.charm-dt);
   if(a.atk>0) a.atk-=dt;
   if(a.kx||a.ky){ moveEnt(a,a.kx*dt,a.ky*dt); a.kx*=Math.pow(0.001,dt); a.ky*=Math.pow(0.001,dt); if(Math.abs(a.kx)<4) a.kx=0; if(Math.abs(a.ky)<4) a.ky=0; }
-  if(a.roll>0){ a.roll-=dt; const v=DIRV[a.dir]; moveEnt(a,v[0]*170*dt,v[1]*170*dt); a.moving=true; a.anim+=dt*9; return; }
-  if(S.p.a){ S.p.a=false;
-    const it=findInteractAs(a);
-    if(it&&canControl()){ coopTakeover(a); return; }
-    if(!hr.kid&&a.atkCD<=0){ a.atk=0.2; a.atkCD=hr.cd||0.3; a.atkHit=new Set(); SND.sfx('swing'); }
+  if(a.roll>0){ a.roll-=dt; const v=DIRV[a.dir]; allyMove(a,v[0]*170*dt,v[1]*170*dt); a.moving=true; a.anim+=dt*9; return; }
+  if(!moveOnly){
+    if(S.p.a){ S.p.a=false;
+      if(!jory&&canControl()&&findInteractAs(a)){ coopTakeover(a); const it=findInteract(); if(it) run(()=>it.interact.call(it)); return; }
+      if(a.atkCD<=0){ a.atk=0.2; a.atkCD=hr.cd||0.3; a.atkHit=new Set(); SND.sfx('swing'); }
+    }
+    if(S.p.b){ S.p.b=false; if(a.rollCD<=0&&a.atk<=0){ a.roll=0.26; a.rollCD=0.5; a.inv=Math.max(a.inv,0.26); SND.sfx('roll'); return; } }
+    if(S.p.c){ S.p.c=false;
+      if(a.iceCD>0||a.roll>0){}
+      else if(hr.skill==='mend'){ if(a.en>=30){ a.en-=30; a.iceCD=1.0; joryMend(a); } else SND.sfx('deny'); }
+      else if(hr.skill==='arrow'){ const cost=skill2()?7:10; if(a.en>=cost){ a.en-=cost; a.iceCD=0.28; asPlayer(a,fireArrow); } else SND.sfx('deny'); }
+      else if(hr.skill==='veil'){ const cost=skill2()?16:22; if(a.en>=cost){ a.en-=cost; a.iceCD=0.4; asPlayer(a,veilStep); } else SND.sfx('deny'); }
+    }
+    if(S.p.e){ S.p.e=false; asPlayer(a,()=>eatFood()); }
+    if(a.atk>0) asPlayer(a,()=>attackTick());
   }
-  if(S.p.b){ S.p.b=false; if(a.rollCD<=0&&a.atk<=0){ a.roll=0.26; a.rollCD=0.5; a.inv=Math.max(a.inv,0.26); SND.sfx('roll'); return; } }
-  if(S.p.c){ S.p.c=false;
-    if(a.iceCD>0||a.roll>0){}
-    else if(hr.skill==='arrow'){ const cost=skill2()?7:10; if(a.en>=cost){ a.en-=cost; a.iceCD=0.28; asPlayer(a,fireArrow); } else SND.sfx('deny'); }
-    else if(hr.skill==='veil'){ const cost=skill2()?16:22; if(a.en>=cost){ a.en-=cost; a.iceCD=0.4; asPlayer(a,veilStep); } else SND.sfx('deny'); }
-  }
-  if(S.p.e){ S.p.e=false; asPlayer(a,()=>eatFood()); }
-  if(a.atk>0) asPlayer(a,()=>attackTick());
   let dx=(S.k.right?1:0)-(S.k.left?1:0), dy=(S.k.down?1:0)-(S.k.up?1:0);
   if(a.charm>0){ dx=-dx; dy=-dy; }
   if(a.atk>0){ dx*=0.25; dy*=0.25; }
   if(dx&&dy){ if(a.lastdx) dy=0; else dx=0; }
   a.moving=!!(dx||dy);
-  if(a.moving){ const nd=dx?(dx<0?2:3):(dy<0?1:0); if(a.atk<=0) a.dir=nd; moveEnt(a,dx*hr.spd*dt,dy*hr.spd*dt); a.anim+=dt*9; a.lastdx=dx; }
-  for(const e of R.ents){ if(e.t==='item'&&!e.dead&&!e.picking&&Math.hypot(e.x-a.x,e.y-a.y)<11){ e.picking=1; run(()=>e.pick()); } }
+  if(a.moving){ const nd=dx?(dx<0?2:3):(dy<0?1:0); if(a.atk<=0) a.dir=nd; allyMove(a,dx*hr.spd*dt,dy*hr.spd*dt); a.anim+=dt*9; a.lastdx=dx; }
+  if(!moveOnly) for(const e of R.ents){ if(e.t==='item'&&!e.dead&&!e.picking&&Math.hypot(e.x-a.x,e.y-a.y)<11){ e.picking=1; run(()=>e.pick()); } }
+}
+/* Jory's skill: Mending Light heals everyone standing close by */
+function joryMend(a){
+  SND.sfx('heal'); R.mends=(R.mends||[]); R.mends.push({x:a.x,y:a.y-6,t:0});
+  const heal=(x,y,get,set)=>{ if(Math.hypot(x-a.x,y-a.y)>60) return; const m=mhp(), v=get(); if(v<m){ set(Math.min(m,v+2)); puff(x,y-10,'#9af0b0',8,30,0.5); } };
+  heal(P.x,P.y,()=>P.hp,v=>{ P.hp=v; });
+  for(const b of coopBodies()) if(!b.down) heal(b.x,b.y,()=>bodyHp(b),v=>{ COOP.hp[b.id]=v; });
 }
 { const _ua=updAlly;
   updAlly=function(e,dt){
-    if(COOP.on&&e.id==='partner'&&duo()){
-      e.down=!!COOP.adown; coopAhp();
+    if(COOP.on&&(e.id==='partner'&&duo()||e.id==='jory')){
+      e.down=!!COOP.down[e.id]; bodyHp(e);
       if(e.down){ e.moving=false; e.dance=false; return; }
       if(e.dance){ if(e.danceT!=null){ e.danceT-=dt; if(e.danceT<=0){ e.dance=false; e.danceT=null; bark(e,'...Done. DONE.',1.4); } } return _ua(e,dt); }
-      if(e.down) return _ua(e,dt);
-      return coopAlly(e,dt);
+      return coopAlly(e,dt,COOP.ctl&&COOP.ctl[e.id]);
     }
     return _ua(e,dt);
   };
 }
-/* enemies go for whoever is closer */
+/* the story sometimes sends the partner away for a moment; in multiplayer they stay unless the scene is truly solo */
+{ const _re=removeEnt; removeEnt=function(id){ if(COOP.on&&id==='partner'&&!G.f.solo&&R&&!R.def.solo) return; return _re(id); }; }
+
+/* enemies go for whoever is closest */
 { const _ue=updEnemy;
   updEnemy=function(e,dt){
-    const a=coopBody(); if(!a) return _ue(e,dt);
-    const dp=Math.hypot(P.x-e.x,P.y-e.y), da=Math.hypot(a.x-e.x,a.y-e.y);
-    if(!e.coopT||Math.abs(dp-da)>24) e.coopT=da<dp?'a':'p';
-    if(e.coopT==='p') return _ue(e,dt);
-    return asPlayer(a,()=>_ue(e,dt));
+    if(!COOP.on) return _ue(e,dt);
+    const list=coopBodies().filter(bodyActive); if(!list.length) return _ue(e,dt);
+    let best=null, bd=Math.hypot(P.x-e.x,P.y-e.y);
+    for(const a of list){ const d=Math.hypot(a.x-e.x,a.y-e.y); if(d<bd-24||(e.coopT===a.id&&d<bd+24)){ bd=d; best=a; } }
+    e.coopT=best?best.id:'p';
+    if(!best) return _ue(e,dt);
+    return asPlayer(best,()=>_ue(e,dt));
   };
 }
-/* bosses are tougher with two of you. Ramel's first round gets his own plan below. */
 { const _mk=mkEnemy;
-  mkEnemy=function(k,x,y,s={}){ const e=_mk(k,x,y,s); if(COOP.on&&e.def.boss&&e.max<9000){ e.max=e.hp=Math.round(e.max*1.4); } return e; };
+  mkEnemy=function(k,x,y,s={}){ const e=_mk(k,x,y,s); if(COOP.on&&e.def.boss&&e.max<9000){ e.max=e.hp=Math.round(e.max*(COOP.n>=3?1.7:1.4)); } return e; };
 }
 
-/* after the frame: shots that hit the partner, Ramel's dance waves, the dance timers */
+/* ---------------- keeping everyone together and unstuck ---------------- */
+function coopKeepParty(dt){
+  if(!canControl()) { for(const a of coopBodies()) if(a.auto&&CUT===0){ a.autoT=(a.autoT||0)+dt; if(a.autoT>2){ a.auto=null; a.autoT=0; } } return; }
+  const together=duo()&&!R.def.solo&&!G.f.solo;
+  if(together&&!ent('partner')) spawnComp();
+  const want3=COOP.n>=3&&together;
+  let j=ent('jory');
+  if(want3&&!j){ const [x,y]=freeSpotNear(P.x,P.y,null); j=addEnt(mkAlly('cadet',x,y,{id:'jory',hk:'jory',trail:HERO.jory.trail,dmg:1,rate:1})); }
+  if(!want3&&j) j.dead=true;
+  for(const a of coopBodies()){
+    if(a.down) continue;
+    const box=[a.x-a.w/2,a.y-a.h,a.x+a.w/2,a.y];
+    const stuckIn=!rectFree(box[0],box[1],box[2],box[3],a), outside=a.x<2||a.x>RW*TS-2||a.y<4||a.y>RH*TS;
+    if(stuckIn||outside){ const [x,y]=freeSpotNear(P.x,P.y,a); a.x=x; a.y=y; a.kx=a.ky=0; }
+    /* hold swap to regroup beside the lead */
+    const S=a.id==='jory'?COOP.K[3]:COOP.K[ownerOf(a.hk)];
+    if(S&&S.k.d){ COOP.regroup[a.id]=(COOP.regroup[a.id]||0)+dt; if(COOP.regroup[a.id]>0.7){ COOP.regroup[a.id]=0; const [x,y]=freeSpotNear(P.x,P.y,a); a.x=x; a.y=y; puff(x,y-8,'#e8e0d0',8,30,0.4); SND.sfx('veil'); } }
+    else COOP.regroup[a.id]=0;
+  }
+}
+
+/* ---------------- after each frame ---------------- */
 function coopPost(dt){
   if(MODE!=='play'||!R) return;
+  coopKeepParty(dt);
+  /* while someone chats with a townsperson, everyone else can still walk about */
+  if(Dlg.on&&CUT===0&&!OV&&!Card.on&&!Cine.on){ for(const a of coopBodies()) if(bodyActive(a)) coopAlly(a,dt,a.id==='jory'?COOP.K[3]:COOP.K[ownerOf(a.hk)],true); }
   if(COOP.pDance>0&&!frozenWorld()){ COOP.pDance-=dt; P.dir=Math.floor(NOW*4)%4; P.moving=false; if(Math.random()<dt*3) mote(P.x+(Math.random()-.5)*12,P.y-18,Math.random()<.5?'#b88af0':'#ffffff',(Math.random()-.5)*10,-14,1,1);
     if(COOP.pDance<=0){ COOP.pDance=0; bark({x:P.x,y:P.y,id:'_p'},'...I can move again!',1.4); } }
+  if(R.mends){ for(const m of R.mends) m.t+=dt; R.mends=R.mends.filter(m=>m.t<0.6); }
   if(frozenWorld()) return;
-  const a=coopBody();
-  if(a&&R.eshots){
+  for(const a of coopBodies()){
+    if(!bodyActive(a)||!R.eshots) continue;
     for(const s of R.eshots){
       if(s.life<=0) continue;
       if(Math.abs(s.x-a.x)<5+s.r&&Math.abs(s.y-(a.y-6))<5+s.r){
@@ -7140,12 +7246,12 @@ function coopPost(dt){
     }
     R.coopBeams=B.filter(b=>b.life>0);
   }
+  coopRevive(dt);
 }
 function danceHit(who){ SND.sfx('charm'); flash('#ff8ad0',0.35); for(let i=0;i<12;i++) mote(who.x+(Math.random()-.5)*14,who.y-10,i%2?'#ff8ad0':'#ffffff',(Math.random()-.5)*24,-20,0.9,1);
-  const nm=heroBase(who===P?P.hero:who.hk)==='sc'?'Shadow Cloak':'Chili';
-  toast(nm+' is dancing! Hold the line for a few seconds.',2); }
+  toast(coopName(who===P?P.hero:who.hk)+' is dancing! Hold the line for a few seconds.',2); }
 
-/* Ramel, round one, against two of you: quicker, meaner, and he takes one of you out of the fight for a while */
+/* ---------------- Ramel, round one, against two or three of you ---------------- */
 { const _r1=BOSS_AI.ramel1;
   BOSS_AI.ramel1=function(e,dt){
     if(!COOP.on) return _r1(e,dt);
@@ -7181,45 +7287,140 @@ async function coopRamelBreak(e,a){
     await say('sc.angry','...I can stop. I can STOP.');
     if(ART.ok(ART.img.co_standoff)) await still('co_standoff',{dur:3000,pan:[0,0.5,1,0.5]});
     await say('ramel.smile','So you broke out of my power? No matter. I\'ll have you both dancing till Hades asks for an encore.');
-    if(ART.ok(ART.img.co_trio)) await still('co_trio',{top:'TWO AGAINST ONE',dur:3000,sfx:'boom',pan:[0,0.5,1,0.5]});
+    if(ART.ok(ART.img.co_trio)) await still('co_trio',{top:COOP.n>=3?'THREE AGAINST ONE':'TWO AGAINST ONE',dur:3000,sfx:'boom',pan:[0,0.5,1,0.5]});
     e.hold=false; e.tm=0.6; e.danceCD=3;
   });
-  obj('Two against one. Roll through his blue shots, and through the pink ones too.');
+  obj((COOP.n>=3?'Three':'Two')+' against one. Roll through his blue shots, and through the pink ones too.');
 }
-/* he blocks too, now: one in three hits gets parried instead of dodged */
 { const _rd=ramelDodge;
   ramelDodge=function(e,src){
-    if(COOP.on&&Math.random()<0.33&&!(e.dodgeT&&NOW-e.dodgeT<0.25)){ e.dodgeT=NOW; SND.sfx('block'); puff(e.x,e.y-12,'#8ad0ff',8,40,0.3); bark(e,['Blocked!','Two of you and still nothing!','Cute.'][Math.floor(Math.random()*3)],1.1); e.dodges=(e.dodges||0)+0.5; return; }
+    if(COOP.on&&Math.random()<0.33&&!(e.dodgeT&&NOW-e.dodgeT<0.25)){ e.dodgeT=NOW; SND.sfx('block'); puff(e.x,e.y-12,'#8ad0ff',8,40,0.3); bark(e,['Blocked!','All of you and still nothing!','Cute.'][Math.floor(Math.random()*3)],1.1); e.dodges=(e.dodges||0)+0.5; return; }
     return _rd(e,src);
   };
 }
 
-/* drawing: who is who, the dance waves, the partner blinking when hit */
+/* ---------------- hearts, going down, reviving ---------------- */
+function coopBossOn(){ return !!(R&&R.boss&&!R.boss.dead); }
+function coopName(h){ const b=heroBase(h); return b==='jory'?'Jory':b==='sc'?'Shadow Cloak':'Chili'; }
+function downNote(nm){ toast(nm+' is down! '+(coopBossOn()?'Finish the fight, then':'Stand next to them and')+' hold attack to revive.',3.4); }
+{ const _pd=playerDied;
+  playerDied=function(){
+    if(!COOP.on) return _pd();
+    const body=COOP.inBody;
+    if(body){
+      COOP.hp[body.id]=0; COOP.down[body.id]=true; COOP.rev[body.id]=0;
+      body.down=true; body.atk=0; body.roll=0; body.dance=false; puff(body.x,body.y-8,'#e8e0d0',12,50,0.5);
+      SND.sfx('die'); shake(4); downNote(coopName(body.hk)); return;
+    }
+    const a=R&&duo()&&ent('partner');
+    if(a&&!COOP.down.partner&&!a.auto&&!a.dance){
+      const oh=P.hero, nh=a.hk, px=P.x, py=P.y, pd=P.dir;
+      P.x=a.x; P.y=a.y; P.dir=a.dir; P.hp=bodyHp(a); P.en=a.en!=null?a.en:100; P.inv=1.2; P.kx=P.ky=0; P.charm=0; P.atk=0; P.roll=0; P.fall=0; P.vis=true;
+      a.x=px; a.y=py; a.dir=pd; a.hk=oh; a.ch=HERO[oh].ch; a.trail=HERO[oh].trail; a.atk=0; a.roll=0; a.down=true;
+      COOP.hp.partner=0; COOP.down.partner=true; COOP.rev.partner=0; COOP.pDance=0;
+      setHero(nh); G.hero=nh; R.ptrail=null;
+      SND.sfx('die'); shake(4); puff(a.x,a.y-8,'#e8e0d0',12,50,0.5); downNote(coopName(oh));
+      return;
+    }
+    return _pd();
+  };
+}
+{ const _ra=riseAgain; riseAgain=function(...a){ coopHeal(); if(COOP.on){ const p=pouch(); p.berry=Math.max(p.berry||0,2); p.bread=Math.max(p.bread||0,1); } return _ra(...a); }; }
+{ const _lrr=loadRoomResume; loadRoomResume=function(...a){ coopHeal(); return _lrr(...a); }; }
+{ const _bg=beginGame; beginGame=async function(...a){ coopHeal(); return _bg(...a); }; }
+function coopRevive(dt){
+  for(const a of coopBodies()){
+    if(!COOP.down[a.id]){ COOP.rev[a.id]=0; continue; }
+    /* any standing teammate beside them, holding their own attack button */
+    const helpers=[[P,COOP.K[pOwnerN()],P.hero]].concat(coopBodies().filter(b=>b!==a&&bodyActive(b)).map(b=>[b,COOP.K[b.id==='jory'?3:ownerOf(b.hk)],b.hk]));
+    let rate=0;
+    for(const [h,S,hk] of helpers){ if(Math.hypot(h.x-a.x,h.y-a.y)<22&&S&&S.k.a) rate=Math.max(rate,hk==='jory'?2:1); }
+    if(!rate){ COOP.rev[a.id]=Math.max(0,(COOP.rev[a.id]||0)-dt); continue; }
+    if(coopBossOn()){ COOP.rev[a.id]=0; if(!R.revHintT||NOW-R.revHintT>3){ R.revHintT=NOW; toast('Not yet. Finish the fight first.',1.8); } continue; }
+    COOP.rev[a.id]=(COOP.rev[a.id]||0)+dt*rate; P.atk=0;
+    if(Math.random()<dt*10) mote(a.x+(Math.random()-.5)*12,a.y-6,'#9af0b0',0,-16,0.7,1);
+    if(COOP.rev[a.id]>=1.5){
+      COOP.rev[a.id]=0; COOP.down[a.id]=false; a.down=false; COOP.hp[a.id]=Math.max(2,Math.ceil(mhp()/2/2)*2); a.inv=1.5;
+      SND.sfx('heal'); puff(a.x,a.y-10,'#9af0b0',14,40,0.6); flash('#9af0b0',0.2);
+      bark(a,a.id==='jory'?'Cadet Jory, back on duty!':heroBase(a.hk)==='sc'?'...Thank you.':'I\'m up! I\'m up!',1.8);
+    }
+  }
+}
+
+/* ---------------- drawing ---------------- */
+const PCOL=[null,'#ff8ab8','#7ac8ff','#9af0b0'];
 { const _de=drawEShots;
   drawEShots=function(){
     _de();
     if(!COOP.on||!R) return;
     for(const b of R.coopBeams||[]){ const p=1+Math.sin(NOW*12)*0.2; g.fillStyle='rgba(255,138,208,.3)'; g.beginPath(); g.arc(b.x,b.y,8*p,0,7); g.fill(); heartShape(b.x,b.y-4,9,'#ff8ad0'); }
+    for(const m of R.mends||[]){ const k=m.t/0.6; g.strokeStyle=`rgba(154,240,176,${1-k})`; g.lineWidth=2; g.beginPath(); g.ellipse(m.x,m.y+6,10+k*50,(10+k*50)*0.55,0,0,7); g.stroke(); }
     if(MODE!=='play'||CUT>0) return;
-    const tag=(x,y,n,col)=>{ g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(x-6,y-9,12,8); g.fillStyle=col; g.fillRect(x-5,y-8,10,6); g.fillStyle='#120f20'; setFont(7,'700 ',DISP); g.textAlign='center'; g.fillText(n,x,y-3); g.textAlign='left'; g.fillStyle=col; g.beginPath(); g.moveTo(x-2,y-1); g.lineTo(x+2,y-1); g.lineTo(x,y+1); g.fill(); };
-    const pn=pOwner()===COOP.K1?'1':'2';
-    if(P.vis) tag(P.x,P.y-24,pn,pn==='1'?'#ff8ab8':'#7ac8ff');
-    const a=duo()&&ent('partner'); if(a&&a.vis){ const an=pn==='1'?'2':'1'; tag(a.x,a.y-24,an,an==='1'?'#ff8ab8':'#7ac8ff');
-      if(a.en!=null&&a.en<99){ g.fillStyle='rgba(0,0,0,.5)'; g.fillRect(a.x-7,a.y+2,14,2); g.fillStyle='#8ad0ff'; g.fillRect(a.x-7,a.y+2,14*a.en/100,2); } }
+    const tag=(x,y,n)=>{ const col=PCOL[n]; g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(x-6,y-9,12,8); g.fillStyle=col; g.fillRect(x-5,y-8,10,6); g.fillStyle='#120f20'; setFont(7,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),x,y-3); g.textAlign='left'; g.fillStyle=col; g.beginPath(); g.moveTo(x-2,y-1); g.lineTo(x+2,y-1); g.lineTo(x,y+1); g.fill(); };
+    if(P.vis) tag(P.x,P.y-24,pOwnerN());
+    for(const a of coopBodies()){ if(!a.vis||a.down) continue; tag(a.x,a.y-24,a.id==='jory'?3:ownerOf(a.hk));
+      if(a.en!=null&&a.en<99){ g.fillStyle='rgba(0,0,0,.5)'; g.fillRect(a.x-7,a.y+2,14,2); g.fillStyle=a.id==='jory'?'#9af0b0':'#8ad0ff'; g.fillRect(a.x-7,a.y+2,14*a.en/100,2); } }
   };
 }
 { const _dent=drawEnt;
-  drawEnt=function(e){ if(COOP.on&&e.id==='partner'&&e.inv>0&&!(e.roll>0)&&Math.floor(NOW*20)%2===0) return; return _dent(e); };
+  drawEnt=function(e){
+    if(COOP.on&&(e.id==='partner'||e.id==='jory')){
+      if(e.down){
+        drawShadow(e.x,e.y,9);
+        const sp=charSprite(e.ch,2,0); g.save(); g.translate(e.x,e.y-4); g.rotate(-Math.PI/2); g.globalAlpha=0.85; g.drawImage(sp,-10,-8); g.restore();
+        if(Math.floor(NOW*2)%2===0&&!coopBossOn()){ g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(e.x-18,e.y-26,36,9); setFont(7,'700 ',DISP); g.textAlign='center'; g.fillStyle='#9af0b0'; g.fillText('REVIVE',e.x,e.y-19); g.textAlign='left'; }
+        const r=COOP.rev[e.id]||0; if(r>0){ g.strokeStyle='rgba(0,0,0,.5)'; g.lineWidth=3; g.beginPath(); g.arc(e.x,e.y-8,12,0,7); g.stroke(); g.strokeStyle='#9af0b0'; g.lineWidth=2; g.beginPath(); g.arc(e.x,e.y-8,12,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,r/1.5)); g.stroke(); }
+        return;
+      }
+      if(e.inv>0&&!(e.roll>0)&&Math.floor(NOW*20)%2===0) return;
+    }
+    return _dent(e);
+  };
 }
+/* the HUD: one row of hearts per player */
+{ const _hud=drawHUD;
+  drawHUD=function(){
+    _hud();
+    if(!COOP.on||!R) return;
+    const gr=g.createLinearGradient(0,8,0,VY-10); gr.addColorStop(0,'rgba(20,17,40,1)'); gr.addColorStop(1,'rgba(12,11,26,1)');
+    g.fillStyle=gr; g.fillRect(10,8,240,VY-18);
+    const three=COOP.n>=3, hearts=mhp()/2, sz=three?11:13, step=three?12:15;
+    const bases=[COOP.p1,COOP.p1==='sc'?'chili':'sc'].concat(three?['jory']:[]);
+    bases.forEach((base,i)=>{
+      const n=i+1, y=three?18+i*16:(i?48:26);
+      let hp=null, down=false, away=false;
+      if(heroBase(P.hero)===base) hp=P.hp;
+      else { const a=base==='jory'?ent('jory'):ent('partner'); if(a&&(base==='jory'||duo())){ hp=bodyHp(a); down=!!COOP.down[a.id]; } else away=true; }
+      g.fillStyle=PCOL[n]; g.fillRect(16,y-8,11,11); g.fillStyle='#120f20'; setFont(9,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),21.5,y+1); g.textAlign='left';
+      flameIcon(38,y-2,three?11:13,base==='jory'?'#9af0b0':base==='sc'?'#e2ae4a':'#ff8ab8');
+      if(away){ drawText(coopName(base)+(base==='jory'?' is waiting':' is elsewhere'),50,y+3,C.dim,11,'left',true,'italic '); return; }
+      for(let k=0;k<hearts;k++){ const part=clamp(((hp||0)-k*2)/2,0,1); g.globalAlpha=down?0.35:1; heartShape(56+k*step,y-2,sz,base==='jory'?'#6fd88a':base==='sc'?'#e45a4a':'#ff6aa8',part); g.globalAlpha=1; }
+      if(down) capsText('Down',56+hearts*step+6,y+2,'#ff8a70',9,'left',2);
+    });
+  };
+}
+/* when a scene belongs to one hero, the others are told why they are waiting */
+{ const _dw=drawWorld;
+  drawWorld=function(){
+    _dw();
+    if(!COOP.on||!R||MODE!=='play'||CUT>0||Dlg.on) return;
+    if(!duo()||G.f.solo){ const who=coopName(P.hero), other=heroBase(P.hero)==='sc'?'Chili':'Shadow Cloak';
+      const msg=who+'\'s scene. '+other+(COOP.n>=3?' and Jory rejoin':' rejoins')+' when it ends.';
+      g.fillStyle='rgba(8,8,22,.82)'; g.fillRect(W/2-170,H-30,340,22); drawText(msg,W/2,H-14,C.pale,13,'center',true,'italic '); }
+  };
+}
+{ const _lr=loadRoom; loadRoom=function(...a){ COOP.pDance=0; return _lr(...a); }; }
 
-/* the title: one Options entry holds screen effects and players, so the menu still fits */
+/* ---------------- the title: Options holds screen effects and players ---------------- */
+const PLAYER_OPTS=['Players: One','Players: Two (P1 is Chili)','Players: Two (P1 is Shadow Cloak)','Players: Three (P1 is Chili)','Players: Three (P1 is Shadow Cloak)'];
 { const _items=Title.items.bind(Title);
   Title.items=function(){ const L=_items(); const i=L.findIndex(x=>x.label&&x.label.startsWith('Screen effects')); if(i<0) return L;
-    const pl=COARSE?'':(OPT.coop?'  ·  Two players':'  ·  One player');
+    const pl=COARSE?'':'  ·  '+['One player','Two players','Two players','Three players','Three players'][OPT.coop||0];
     L.splice(i,1,{label:'Options',sub:(OPT.calm?'Calm screen':'Full screen effects')+pl,fn:()=>{ this.mode='opts'; this.osel=0; }});
     return L; };
   Title.optItems=function(){ const L=[{label:'Screen effects: '+(OPT.calm?'Calm':'Full'),sub:OPT.calm?'Flashes and shakes are softened.':'Full flashes and screen shake.',fn:()=>{ OPT.calm=OPT.calm?0:1; saveOpts(); }}];
-    if(!COARSE) L.push({label:['Players: One','Players: Two (P1 is Chili)','Players: Two (P1 is Shadow Cloak)'][OPT.coop||0],sub:OPT.coop?'P1: WASD, F attack, G roll, R skill.  P2: arrows, Enter, right Shift, right Ctrl.':'Two players can share the keyboard, or plug in pads.',fn:()=>{ OPT.coop=((OPT.coop||0)+1)%3; saveOpts(); }});
+    const c=OPT.coop||0;
+    if(!COARSE) L.push({label:PLAYER_OPTS[c],sub:c===0?'Two or three players can share the keyboard, or plug in pads.':c<3?'P1: WASD, F attack, G roll, R skill.  P2: arrows, Enter, right Shift, right Ctrl.':'P3 is Cadet Jory, the healer: IJKL, U attack, O roll, Y Mending Light. Pads take the last seats.',fn:()=>{ OPT.coop=((OPT.coop||0)+1)%5; saveOpts(); }});
     return L; };
   const _up=Title.update.bind(Title);
   Title.update=function(dt){
@@ -7242,97 +7443,6 @@ async function coopRamelBreak(e,a){
       drawText(o.label,150,y-4,sel?C.pale:C.parch,18,'left',true,'600 ',DISP);
       let yy=y+14; for(const s of wrapText(o.sub,350,12,'italic ')){ drawText(s,150,yy,C.gray,12,'left',true,'italic '); yy+=13; } });
     drawText('Up / Down to choose  ·  Z to change  ·  X to go back',W/2,H-22,C.dim,13,'center',true,'italic ');
-  };
-}
-{ const _lr=loadRoom; loadRoom=function(...a){ COOP.pDance=0; return _lr(...a); }; }
-
-
-/* =========================================================
-   SEPARATE HEARTS: each player has their own. One down, the other carries on;
-   both down, game over. During a boss or mini-boss fight the downed one stays down
-   until the fight ends, then the other can stand next to them and hold attack.
-   ========================================================= */
-function coopBossOn(){ return !!(R&&R.boss&&!R.boss.dead); }
-function coopName(h){ return heroBase(h)==='sc'?'Shadow Cloak':'Chili'; }
-{ const _pd=playerDied;
-  playerDied=function(){
-    if(!COOP.on) return _pd();
-    const a=R&&duo()&&ent('partner');
-    if(COOP.inA){
-      /* the partner went down */
-      COOP.ahp=0; COOP.adown=true; COOP.rev=0;
-      if(a){ a.down=true; a.atk=0; a.roll=0; a.dance=false; puff(a.x,a.y-8,'#e8e0d0',12,50,0.5); }
-      SND.sfx('die'); shake(4);
-      toast(coopName(a?a.hk:'')+' is down! '+(coopBossOn()?'Finish the fight, then':'Stand next to them and')+' hold attack to revive.',3.4);
-      return;
-    }
-    /* whoever was P went down: if the partner is still standing, they take over and the fallen one lies where they were */
-    if(a&&!COOP.adown&&!a.auto&&!a.dance){
-      const oh=P.hero, nh=a.hk, px=P.x, py=P.y, pd=P.dir;
-      P.x=a.x; P.y=a.y; P.dir=a.dir; P.hp=coopAhp(); P.en=a.en!=null?a.en:100; P.inv=1.2; P.kx=P.ky=0; P.charm=0; P.atk=0; P.roll=0; P.fall=0; P.vis=true;
-      a.x=px; a.y=py; a.dir=pd; a.hk=oh; a.ch=HERO[oh].ch; a.trail=HERO[oh].trail; a.atk=0; a.roll=0; a.down=true;
-      COOP.ahp=0; COOP.adown=true; COOP.rev=0; COOP.pDance=0;
-      setHero(nh); G.hero=nh; R.ptrail=null;
-      SND.sfx('die'); shake(4); puff(a.x,a.y-8,'#e8e0d0',12,50,0.5);
-      toast(coopName(oh)+' is down! '+(coopBossOn()?'Finish the fight, then':'Stand next to them and')+' hold attack to revive.',3.4);
-      return;
-    }
-    return _pd();
-  };
-}
-/* a fresh start, a retry or a loaded save puts both back on their feet */
-{ const _ra=riseAgain; riseAgain=function(...a){ coopHeal(); return _ra(...a); }; }
-{ const _lrr=loadRoomResume; loadRoomResume=function(...a){ coopHeal(); return _lrr(...a); }; }
-{ const _bg=beginGame; beginGame=async function(...a){ coopHeal(); return _bg(...a); }; }
-/* reviving: stand beside the fallen one and hold attack for a moment */
-function coopRevive(dt){
-  if(!COOP.adown||frozenWorld()) { if(!COOP.adown) COOP.rev=0; return; }
-  const a=duo()&&ent('partner'); if(!a){ return; }
-  const near=Math.hypot(P.x-a.x,P.y-a.y)<22;
-  if(!near){ COOP.rev=Math.max(0,COOP.rev-dt*2); return; }
-  if(coopBossOn()){ COOP.rev=0; if(Keys.a&&(!R.revHintT||NOW-R.revHintT>3)){ R.revHintT=NOW; toast('Not yet. Finish the fight first.',1.8); } return; }
-  if(Keys.a){ COOP.rev+=dt; P.atk=0; if(Math.random()<dt*10) mote(a.x+(Math.random()-.5)*12,a.y-6,'#9af0b0',0,-16,0.7,1); }
-  else COOP.rev=Math.max(0,COOP.rev-dt);
-  if(COOP.rev>=1.5){
-    COOP.rev=0; COOP.adown=false; a.down=false; COOP.ahp=Math.max(2,Math.ceil(mhp()/2/2)*2); a.inv=1.5;
-    SND.sfx('heal'); puff(a.x,a.y-10,'#9af0b0',14,40,0.6); flash('#9af0b0',0.2);
-    bark(a,heroBase(a.hk)==='sc'?'...Thank you.':'I\'m up! I\'m up!',1.8);
-  }
-}
-{ const _cp=coopPost; coopPost=function(dt){ _cp(dt); if(COOP.on&&MODE==='play'&&R) coopRevive(dt); }; }
-/* the fallen one lies on the ground, with the revive ring filling */
-{ const _dent2=drawEnt;
-  drawEnt=function(e){
-    if(COOP.on&&e.id==='partner'&&e.down){
-      drawShadow(e.x,e.y,9);
-      const sp=charSprite(e.ch,2,0); g.save(); g.translate(e.x,e.y-4); g.rotate(-Math.PI/2); g.globalAlpha=0.85; g.drawImage(sp,-10,-8); g.restore();
-      if(Math.floor(NOW*2)%2===0&&!coopBossOn()){ g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(e.x-18,e.y-26,36,9); setFont(7,'700 ',DISP); g.textAlign='center'; g.fillStyle='#9af0b0'; g.fillText('REVIVE',e.x,e.y-19); g.textAlign='left'; }
-      if(COOP.rev>0){ g.strokeStyle='rgba(0,0,0,.5)'; g.lineWidth=3; g.beginPath(); g.arc(e.x,e.y-8,12,0,7); g.stroke(); g.strokeStyle='#9af0b0'; g.lineWidth=2; g.beginPath(); g.arc(e.x,e.y-8,12,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,COOP.rev/1.5)); g.stroke(); }
-      return;
-    }
-    return _dent2(e);
-  };
-}
-/* the HUD: two rows of hearts, one per player */
-{ const _hud=drawHUD;
-  drawHUD=function(){
-    _hud();
-    if(!COOP.on||!R) return;
-    const gr=g.createLinearGradient(0,8,0,VY-10); gr.addColorStop(0,'rgba(20,17,40,1)'); gr.addColorStop(1,'rgba(12,11,26,1)');
-    g.fillStyle=gr; g.fillRect(10,8,240,VY-18);
-    const a=duo()&&ent('partner');
-    const pBase=heroBase(P.hero), aBase=pBase==='sc'?'chili':'sc';
-    const rows=[[COOP.p1,1],[COOP.p1==='sc'?'chili':'sc',2]];
-    const m=mhp(), hearts=m/2;
-    rows.forEach(([base,n],i)=>{
-      const y=i?48:26, isP=base===pBase, hp=isP?P.hp:(a?coopAhp():null), down=!isP&&COOP.adown, away=!isP&&!a;
-      const bc=n===1?'#ff8ab8':'#7ac8ff';
-      g.fillStyle=bc; g.fillRect(16,y-8,11,11); g.fillStyle='#120f20'; setFont(9,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),21.5,y+1); g.textAlign='left';
-      flameIcon(38,y-2,13,base==='sc'?'#e2ae4a':'#ff8ab8');
-      if(away){ drawText(coopName(base)+' is elsewhere',50,y+3,C.dim,12,'left',true,'italic '); return; }
-      for(let k=0;k<hearts;k++){ const part=clamp(((hp||0)-k*2)/2,0,1); g.globalAlpha=down?0.35:1; heartShape(56+k*15,y-2,13,base==='sc'?'#e45a4a':'#ff6aa8',part); g.globalAlpha=1; }
-      if(down) capsText('Down',56+hearts*15+6,y+2,'#ff8a70',9,'left',2);
-    });
   };
 }
 

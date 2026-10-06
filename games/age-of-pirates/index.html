@@ -7137,7 +7137,7 @@ function coopAlly(a,dt,S,moveOnly){
   if(a.roll>0){ a.roll-=dt; const v=DIRV[a.dir]; allyMove(a,v[0]*170*dt,v[1]*170*dt); a.moving=true; a.anim+=dt*9; return; }
   if(!moveOnly){
     if(S.p.a){ S.p.a=false;
-      if(!jory&&canControl()&&findInteractAs(a)){ coopTakeover(a); const it=findInteract(); if(it) run(()=>it.interact.call(it)); return; }
+      if(!jory&&canControl()&&!(typeof coopDecim==='function'&&coopDecim())&&findInteractAs(a)){ coopTakeover(a); const it=findInteract(); if(it) run(()=>it.interact.call(it)); return; }
       if(a.atkCD<=0){ a.atk=0.2; a.atkCD=hr.cd||0.3; a.atkHit=new Set(); SND.sfx('swing'); }
     }
     if(S.p.b){ S.p.b=false; if(a.rollCD<=0&&a.atk<=0){ a.roll=0.26; a.rollCD=0.5; a.inv=Math.max(a.inv,0.26); SND.sfx('roll'); return; } }
@@ -7446,6 +7446,122 @@ const PLAYER_OPTS=['Players: One','Players: Two (P1 is Chili)','Players: Two (P1
       drawText(o.label,150,y-4,sel?C.pale:C.parch,18,'left',true,'600 ',DISP);
       let yy=y+14; for(const s of wrapText(o.sub,350,12,'italic ')){ drawText(s,150,yy,C.gray,12,'left',true,'italic '); yy+=13; } });
     drawText('Up / Down to choose  ·  Z to change  ·  X to go back',W/2,H-22,C.dim,13,'center',true,'italic ');
+  };
+}
+
+/* =========================================================
+   THE DECIMATION, TOGETHER: in multiplayer nobody chooses a route.
+   Shadow Cloak opens portals under the stranded crews, Chili holds the docks and faces Ramel,
+   and Jory keeps Chili on her feet. Same docks, same night, everyone at once.
+   ========================================================= */
+function coopDecim(){ return COOP.on&&G&&G.f&&G.f.coopDecim&&R&&R.id==='p2'; }
+{ const _cr=chooseRoute;
+  chooseRoute=async function(){
+    if(!COOP.on) return _cr();
+    try{ takeDecimSnap(); }catch(e){}
+    G.f.route='chi'; G.f.coopDecim=1; saveGame();
+    await fadeOut(400);
+    chap('The Decimation: Together');
+    G.f.solo=0; G.f.duo=1; asHero(G.f.chiliE?'chilie':'chili');
+    loadRoom('p2',tcx(9),tcy(9),1);
+    await fadeIn(500);
+  };
+}
+{ const _ents=ROOMS.p2.ents;
+  ROOMS.p2.ents=function(){ const L=_ents(); return G.f.coopDecim&&COOP.on?L.filter(e=>e.id!=='scN'):L; }; }
+{ const _enter=ROOMS.p2.enter;
+  ROOMS.p2.enter=async function(){
+    if(!(G.f.coopDecim&&COOP.on)) return _enter();
+    const a=ent('partner'); if(a){ a.x=tcx(10); a.y=tcy(10); a.dir=1; }
+    await _enter();
+    if(!F('p2_waves')){
+      await cut(async()=>{
+        await say('sc','Chili. I\'ll open the portals. You keep them off the crews.');
+        await say('chili','Go! I\'ve got the docks.');
+        if(COOP.n>=3) await N('[d]Cadet Jory runs up beside Chili, hands already glowing green.[/]');
+      });
+      toast('Shadow Cloak: stand by a stranded crew and press attack to open a portal under them.',4);
+      setTimeout(()=>{ if(coopDecim()) toast('Chili: hold the docks, then face Ramel.'+(COOP.n>=3?'  Jory: keep Chili standing.':''),4); },4200);
+      obj('Together: Shadow Cloak saves the crews, Chili holds the docks'+(COOP.n>=3?', Jory keeps Chili standing.':'.'));
+    }
+  };
+}
+/* stranded crews appear around the docks */
+function crewSpot(){
+  for(let k=0;k<40;k++){ const tx=2+Math.floor(Math.random()*16), ty=2+Math.floor(Math.random()*5), x=tcx(tx), y=tcy(ty);
+    if(!tileSolid(tx,ty)&&rectFree(x-11,y-8,x+11,y,null)&&!(R.crews||[]).some(c=>Math.hypot(c.x-x,c.y-y)<40)) return [x,y]; }
+  return null;
+}
+function coopCrews(dt){
+  R.crews=R.crews||[];
+  R.crewT=(R.crewT==null?1:R.crewT)-dt;
+  const live=R.crews.filter(c=>!c.saving).length;
+  if(R.crewT<=0&&live<4&&G.f.evac<EVAC_TOTAL){ R.crewT=3.5+Math.random()*2; const s=crewSpot(); if(s) R.crews.push({x:s[0],y:s[1],n:3+Math.floor(Math.random()*3),saving:0,t:0}); }
+  for(const c of R.crews){ c.t+=dt; if(c.saving>0){ c.saving-=dt; if(c.saving<=0) c.gone=true; } }
+  R.crews=R.crews.filter(c=>!c.gone);
+}
+/* Shadow Cloak's player: attack beside a crew opens a portal under them (checked before anything else reads the key) */
+function coopPortalPress(){
+  if(!coopDecim()||!canControl()) return;
+  const S=COOP.K[ownerOf('sc')]; if(!S||!S.p.a) return;
+  let body=null, isP=false;
+  if(heroBase(P.hero)==='sc'){ body=P; isP=true; } else { const a=ent('partner'); if(a&&heroBase(a.hk)==='sc'&&bodyActive(a)) body=a; }
+  if(!body) return;
+  const c=(R.crews||[]).find(c=>!c.saving&&Math.hypot(c.x-body.x,c.y-body.y)<24); if(!c) return;
+  S.p.a=false;
+  const en=body.en!=null?body.en:100;
+  if(en<25){ SND.sfx('deny'); if(!R.spiritT||NOW-R.spiritT>2){ R.spiritT=NOW; toast('Not enough Spirit. Breathe. Let it come back.',1.6); } return; }
+  body.en=en-25; c.saving=1.1;
+  G.f.evac=Math.min(EVAC_TOTAL,(G.f.evac||evacStart())+c.n*9);
+  if(G.f.evac>=EVAC_TOTAL&&!F('all_saved')) setF('all_saved');
+  SND.sfx('portal'); puff(c.x,c.y-6,'#1a1a22',14,40,0.5);
+  toast(c.n+' more through the portal. '+Math.round(G.f.evac)+' saved.',1.6);
+}
+{ const _cr2=coopRoute; coopRoute=function(){ try{ coopPortalPress(); }catch(e){ console.error(e); } return _cr2(); }; }
+{ const _up=ROOMS.p2.update;
+  ROOMS.p2.update=function(dt){
+    if(!(G.f.coopDecim&&COOP.on)) return _up(dt);
+    if(!G.f.evac) G.f.evac=evacStart();
+    const before=G.f.evac; updEvac(dt);
+    /* the boats only trickle out on their own; the portals are what save people tonight */
+    G.f.evac=before+(G.f.evac-before)*0.25;
+    coopCrews(dt);
+  };
+}
+{ const _dov=ROOMS.p2.drawOver;
+  ROOMS.p2.drawOver=function(){
+    if(G.f.coopDecim&&COOP.on){
+      for(const c of R.crews||[]){
+        if(c.saving>0){ const a=clamp(c.saving/1.1,0,1); drawBlackPortal(c.x,c.y,16,1); g.save(); g.globalAlpha=a; for(let i=0;i<Math.min(5,c.n);i++) spr(['pir1','pir2','pir3','kid','vill2'][i%5],0,0,c.x-12+i*6,c.y+(1-a)*10,0.8); g.restore(); continue; }
+        for(let i=0;i<Math.min(5,c.n);i++){ const sh=Math.sin(NOW*14+i)*0.6; spr(['pir1','pir2','pir3','kid','vill2'][i%5],i%2?2:3,0,c.x-12+i*6+sh,c.y,0.8); }
+        if(Math.floor(NOW*2)%2===0){ g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(c.x-16,c.y-30,32,9); setFont(7,'700 ',DISP); g.textAlign='center'; g.fillStyle='#e2ae4a'; g.fillText('PORTAL',c.x,c.y-23); g.textAlign='left'; }
+      }
+    }
+    return _dov();
+  };
+}
+/* the count of everyone saved, along the top of the docks */
+{ const _hud2=drawHUD;
+  drawHUD=function(){
+    _hud2();
+    if(!coopDecim()) return;
+    const f=clamp((G.f.evac||0)/EVAC_TOTAL,0,1), x=W/2-120, y=VY+56;
+    g.fillStyle='rgba(8,8,22,.82)'; g.fillRect(x-6,y-2,252,24);
+    capsText('Saved',x,y+14,UI.gold,9,'left',2); progBar(x+52,y+6,140,7,f,'#e2ae4a'); drawText(Math.round(G.f.evac||0)+' / '+EVAC_TOTAL,x+240,y+15,C.pale,12,'right',true,'600 ');
+  };
+}
+/* the enchantment is Chili's moment: only her player can hold it */
+{ const _cr3=coopRoute;
+  coopRoute=function(){
+    if(MODE==='play'&&R&&typeof Commit!=='undefined'&&OV===Commit){ COOP.ctl={}; feed(COOP.K[ownerOf('chili')]); return; }
+    return _cr3();
+  };
+}
+/* on the docks Chili is the one holding the line: if she falls, the docks fall */
+{ const _pd2=playerDied;
+  playerDied=function(){
+    if(coopDecim()&&!COOP.inBody&&heroBase(P.hero)==='chili') return (R.def.onDeath?run(R.def.onDeath):gameOver());
+    return _pd2();
   };
 }
 

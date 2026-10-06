@@ -157,7 +157,9 @@ body.port #pad .acts .btn.a{font-size:12px}
     <h3>Online</h3>
     <p>Choose Online on the title screen. One player hosts and gets a five-letter code; the friend chooses Join and types it in. The host's game runs on their computer and the friend sees it live as Player 2, on a computer or a phone. Hosting needs a keyboard or controller.</p>
     <h3>At the Salt &amp; Sun</h3>
-    <p>Darts and blackjack, against any friend you have made. Darts: arrows aim, hold X to steady your breath, Z to throw.</p>
+    <p>Darts, blackjack, dice and the mug slide, against any friend you have made. Darts: arrows aim, hold X to steady your breath, Z to throw.</p>
+    <p>Ship, Captain &amp; Crew: Z rolls. Find a 6, then a 5, then a 4. The last two dice are your cargo; X keeps them, Z rolls them again. Three rolls a turn.</p>
+    <p>Mug Slide: Z stops the power bar. Stop the mug close to the edge of the bar. Over the edge scores nothing. Esc leaves any table.</p>
     <h3>Follow the creator</h3>
     <div class="links">
       <a class="row" href="https://talesofsolaria.co.uk/" target="_blank" rel="noopener"><b>talesofsolaria.co.uk</b><span>The official Tales of Solaria website</span><i>&#8599;</i></a>
@@ -3099,7 +3101,7 @@ function update(dt){
   if(MODE==='gameover'){ GO.update(dt); clearPressed(); return; }
   if(MODE==='play'&&R){
     if(Dlg.on) Dlg.update(dt);
-    else if(hit('menu')&&canControl()){ Journal.open(false); clearPressed(); return; }
+    else if(canControl()&&hit('menu')){ Journal.open(false); clearPressed(); return; }
     if(OV&&OV.update) OV.update(dt);
     updatePlayer(dt);
     updEnts(dt);
@@ -6580,7 +6582,8 @@ const BJ={
 /* ---------------- sitting down ---------------- */
 async function mgPlayers(game){
   if(typeof COOP!=='undefined'&&COOP.on) return COOP.n;
-  const c=await ask(null,game==='darts'?'The dartboard. Three rounds, three darts each, highest score wins.':'Blackjack. Five hands, a hundred chips each, everyone against the dealer.',['One player','Two players (share the keyboard or pads)','Leave it']);
+  const q={darts:'The dartboard. Three rounds, three darts each, highest score wins.',cards:'Blackjack. Five hands, a hundred chips each, everyone against the dealer.',dice:'Ship, Captain & Crew. Three rolls to find a ship, a captain and a crew. Whatever is left is cargo.',slide:'Mug Slide. Send a full mug down the bar. Closest to the edge wins. Over the edge wins nothing.'}[game];
+  const c=await ask(null,q,['One player','Two players (share the keyboard or pads)','Leave it']);
   return c===0?1:c===1?2:0;
 }
 async function playMinigame(game){
@@ -6588,11 +6591,13 @@ async function playMinigame(game){
   try{
     const seats=await mgPlayers(game); if(!seats) return;
     if(mgFriends().length<2){ await N('Nobody to play with yet.'); return; }
-    const picks=await CharSel.pick({game:game==='darts'?'Darts':'Blackjack',seats,vsLabel:game==='cards'?'Who deals?':'Choose your opponent'});
+    const picks=await CharSel.pick({game:MG_NAMES[game],seats,vsLabel:game==='cards'?'Who deals?':'Choose your opponent'});
     if(!picks) return;
     SND.play('tavern');
     let out;
     if(game==='darts') out=await Darts.start({chars:picks,seats});
+    else if(game==='dice') out=await Dice.start({chars:picks,seats});
+    else if(game==='slide') out=await Slide.start({chars:picks,seats});
     else {
       let chars=picks, dealer;
       if(seats>1){ dealer=['sammy','tarel','lysandra','ramel','sc','chili','jory'].find(k=>MG_CHARS[k].friend()&&!picks.includes(k))||'sammy'; }
@@ -6604,11 +6609,11 @@ async function playMinigame(game){
     const mine=seats>1?null:picks[0];
     if(seats===1&&!out.draw&&out.winner===mine){
       const key='mg_won_'+game;
-      if(!F(key)){ setF(key); addFood('tonic',1); toast('First win at '+(game==='darts'?'darts':'the cards')+'! A tonic, on the house.',3); }
+      if(!F(key)){ setF(key); addFood('tonic',1); toast('First win at '+({darts:'darts',cards:'the cards',dice:'the dice',slide:'the mug slide'}[game])+'! A tonic, on the house.',3); }
       else { P.hp=mhp(); toast('Hearts restored. Winning is good for you.',2.2); }
     }
     saveGame();
-  } finally { MG.busy=false; if(OV===CharSel||OV===Darts||OV===BJ||OV===MGResult) OV=null; }
+  } finally { MG.busy=false; if(OV===CharSel||OV===Darts||OV===BJ||OV===MGResult||OV===Dice||OV===Slide) OV=null; }
 }
 const MG={busy:false};
 
@@ -6673,7 +6678,7 @@ async function barFightEnd(){
   old.name=()=>mgPost()?'The Salt & Sun':'The Lantern & Anchor';
   old.sub=()=>mgPost()?'Tavern, port of Alterah':'Inn, port of Alterah';
   old.ents=function(){
-    if(!mgPost()){ const L=oldEnts(); if(F('a1_arrive')) L.push(dartboardProp(18,1),cardTableProp(6,7)); return L; }
+    if(!mgPost()){ const L=oldEnts(); if(F('a1_arrive')) L.push(dartboardProp(18,1),cardTableProp(6,7),diceProp(13,4),slideProp(3,2)); return L; }
     const L=[
       npc('sammy','sammy',8,1,{dir:0,solid:true}),
       counterTalk('sammyc',8,2,sammyNewTalk),
@@ -6681,7 +6686,7 @@ async function barFightEnd(){
       npc('pa','pir1',2,5,{dir:3,bark:['To Sammy!','Another round!','She waters nothing. NOTHING.']}),
       npc('pb','pir4',4,5,{dir:2,talk:async()=>{ await say('pirate','Lost the ship. Lost the bay. Didn\'t lose my seat at the Salt & Sun. Priorities.'); }}),
       npc('pd','pir3',16,4,{dir:2,bark:['Same name, new walls.','The darts are crooked here too.']}),
-      dartboardProp(18,1), cardTableProp(6,7),
+      dartboardProp(18,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2),
     ];
     if(MG_CHARS.ramel.friend()) L.push(npc('ramel','ramel',12,3,{dir:1,solid:true,talk:async()=>{ await say('ramel','Darts? You and me. Loser buys. And I\'m not losing to a flower twice.'); await playMinigame('darts'); }}));
     if(MG_CHARS.lysandra.friend()) L.push(npc('lys','lysandra',13,5,{dir:2,solid:true,talk:async()=>{ await say('lysandra','Cards, darling? I deal. I don\'t cheat. Much.'); await playMinigame('cards'); }}));
@@ -6718,8 +6723,201 @@ async function wickRetiredTalk(){
 {
   const pt=ROOMS.pt, _e=pt.ents;
   if(!('noDeath' in pt)) Object.defineProperty(pt,'noDeath',{get(){ return !!(R&&R.def===pt&&R.brawl&&!R.fightOver); },configurable:true});
-  pt.ents=function(){ const L=_e(); if(F('c3_sammy')&&!F('c8_decim')) L.push(dartboardProp(18,1), cardTableProp(6,7)); return L; };
+  pt.ents=function(){ const L=_e(); if(F('c3_sammy')&&!F('c8_decim')) L.push(dartboardProp(18,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2)); return L; };
 }
+
+/* =========================================================
+   TWO MORE TAVERN GAMES: Ship, Captain & Crew (dice) and Mug Slide (the bar)
+   Everything is on the table for everyone to see, so they work on one shared screen.
+   ========================================================= */
+const MG_NAMES={darts:'Darts',cards:'Blackjack',dice:'Ship, Captain & Crew',slide:'Mug Slide'};
+/* the score panel both games share: one row per player, three rounds, a running total */
+function mgPanel(o){
+  const x=16,y=24,w=196, n=o.pl.length, rh=n>2?76:100;
+  frame(x,y,w,52+n*rh+8);
+  capsText(o.title,x+w/2,y+26,UI.gold,11,'center',3);
+  o.pl.forEach((p,i)=>{
+    const c=MG_CHARS[p.k], yy=y+42+i*rh, on=o.cur===i&&!o.final;
+    if(on){ g.fillStyle=rgba(c.col,0.10); g.fillRect(x+6,yy-4,w-12,rh-6); g.strokeStyle=rgba(c.col,0.5); g.strokeRect(x+6.5,yy-3.5,w-13,rh-7); }
+    if(o.final&&i===o.wi){ g.fillStyle='rgba(226,174,74,.12)'; g.fillRect(x+6,yy-4,w-12,rh-6); }
+    archFrame(mgPort(p.k,o.final?(i===o.wi?'smile':'sad'):'n'),x+12,yy,52,62,rgba(c.col,0.3));
+    drawText(c.name,x+72,yy+16,on?C.pale:C.parch,c.name.length>10?13:15,'left',true,'700 ',DISP);
+    if(o.final&&i===o.wi) capsText('Winner',x+72,yy+32,UI.gold,10,'left',2.5); else drawText(o.seats>1?'Player '+(i+1):(p.ai?'Rival':'You'),x+72,yy+32,C.gray,12,'left',true,'italic ');
+    goldText(String(p.total),x+w-16,yy+40,26,'right');
+    for(let r=0;r<3;r++){ const v=p.rounds[r]; drawText(v==null?'·':String(v),x+76+r*38,yy+rh-20,on&&r===o.round?C.pale:C.gray,13,'center',true,'600 '); }
+  });
+}
+function mgWinner(pl){
+  let w=0,l=0; pl.forEach((q,i)=>{ if(q.total>pl[w].total) w=i; if(q.total<pl[l].total) l=i; });
+  if(pl[w].total===pl[l].total) return {draw:true,w:0,l:1};
+  return {w,l};
+}
+
+/* ---------------- Ship, Captain & Crew ---------------- */
+function drawDie(x,y,s,v,col,ghost){
+  g.fillStyle='rgba(0,0,0,.35)'; g.fillRect(x+3,y+4,s,s);
+  g.fillStyle=ghost?'rgba(246,239,220,.35)':'#f6efdc'; g.fillRect(x,y,s,s);
+  g.strokeStyle=col||'#8a7a5a'; g.lineWidth=col?2:1; g.strokeRect(x+0.5,y+0.5,s-1,s-1);
+  const P=[[],[[.5,.5]],[[.25,.25],[.75,.75]],[[.25,.25],[.5,.5],[.75,.75]],[[.25,.25],[.75,.25],[.25,.75],[.75,.75]],[[.25,.25],[.75,.25],[.5,.5],[.25,.75],[.75,.75]],[[.25,.22],[.75,.22],[.25,.5],[.75,.5],[.25,.78],[.75,.78]]][v]||[];
+  g.fillStyle=v===1?'#b8302a':'#1a1a22'; for(const [a,b] of P){ g.beginPath(); g.arc(x+a*s,y+b*s,s*0.09,0,7); g.fill(); }
+}
+const Dice={
+  start(o){ return new Promise(r=>{ this.o=o; this.res=r; OV=this;
+    this.pl=o.chars.map((k,i)=>({k,ai:o.seats<=1&&i===1,rounds:[],total:0}));
+    this.round=0; this.cur=0; this.beginTurn(); SND.sfx('ok'); }); },
+  P(){ return this.pl[this.cur]; },
+  beginTurn(){ this.dice=[1,1,1,1,1]; this.kept=[null,null,null,null,null]; this.ship=this.cap=this.crew=false; this.rolls=0; this.st='ready'; this.t=0; this.msg=''; this.aiT=0.8; },
+  scc(){ return this.ship&&this.cap&&this.crew; },
+  cargo(){ let s=0; for(let i=0;i<5;i++) if(!this.kept[i]) s+=this.dice[i]; return s; },
+  roll(){ this.rolls++; this.st='rolling'; this.t=0; SND.sfx('push'); for(let i=0;i<5;i++) if(!this.kept[i]) this.dice[i]=1+Math.floor(Math.random()*6); },
+  settle(){
+    const take=(v,slot)=>{ const i=this.dice.findIndex((d,j)=>d===v&&!this.kept[j]); if(i>=0){ this.kept[i]=slot; return true; } return false; };
+    if(!this.ship&&take(6,'Ship')){ this.ship=true; SND.sfx('coin'); }
+    if(this.ship&&!this.cap&&take(5,'Captain')){ this.cap=true; SND.sfx('coin'); }
+    if(this.cap&&!this.crew&&take(4,'Crew')){ this.crew=true; SND.sfx('coin'); }
+    this.st='decide'; this.t=0;
+    if(this.rolls>=3) this.endTurn();
+  },
+  endTurn(){ const p=this.P(), v=this.scc()?this.cargo():0; p.rounds[this.round]=v; p.total+=v;
+    this.msg=this.scc()?MG_CHARS[p.k].name+' ships '+v+' cargo.':MG_CHARS[p.k].name+' never found a full crew. Nothing this round.'; SND.sfx(v>=10?'heart':v?'ok':'deny');
+    this.st='turnEnd'; this.t=0; },
+  update(dt){
+    this.t+=dt; const p=this.P(), st=this.o.seats>1?this.cur:0;
+    if(hit('menu')){ this.quit(); return; }
+    if(this.st==='rolling'){ if(this.t>0.65) this.settle(); return; }
+    if(this.st==='ready'||this.st==='decide'){
+      if(p.ai){ this.aiT-=dt; if(this.aiT>0) return; this.aiT=0.9;
+        if(this.st==='decide'&&this.scc()&&(this.cargo()>=8||this.rolls>=3)) { this.endTurn(); return; }
+        this.roll(); return; }
+      if(mgHit(st,'a')){ if(this.rolls<3) this.roll(); }
+      else if(this.st==='decide'&&mgHit(st,'b')&&this.scc()){ this.endTurn(); }
+      return;
+    }
+    if(this.st==='turnEnd'&&this.t>1.6){
+      this.cur++;
+      if(this.cur>=this.pl.length){ this.cur=0; this.round++; if(this.round>=3){ this.finish(); return; } }
+      this.beginTurn();
+    }
+  },
+  finish(){ if(OV===this) OV=null; const R0=mgWinner(this.pl), r=this.res; this.res=null;
+    if(r) r({draw:!!R0.draw,winner:this.pl[R0.w].k,loser:this.pl[R0.l].k,board:()=>this.drawFinal(R0.w)}); },
+  quit(){ if(OV===this) OV=null; const r=this.res; this.res=null; SND.sfx('move'); if(r) r(null); },
+  drawTable(){ mgBack(); g.fillStyle='#3a2412'; g.beginPath(); g.ellipse(430,262,200,150,0,0,7); g.fill(); const fg=g.createRadialGradient(430,250,20,430,262,190); fg.addColorStop(0,'#2e6a44'); fg.addColorStop(1,'#163a26'); g.fillStyle=fg; g.beginPath(); g.ellipse(430,262,188,138,0,0,7); g.fill(); },
+  drawDice(){
+    const p=this.P(), col=MG_CHARS[p.k].col;
+    ['Ship','Captain','Crew'].forEach((nm,i)=>{ const x=318+i*80, y=150, on=[this.ship,this.cap,this.crew][i];
+      g.fillStyle=on?'rgba(226,174,74,.18)':'rgba(0,0,0,.25)'; g.fillRect(x,y,64,64); g.strokeStyle=on?UI.gold:UI.line; g.strokeRect(x+0.5,y+0.5,63,63);
+      capsText(nm,x+32,y-6,on?UI.gold:C.gray,9,'center',2); if(!on) drawText(String(6-i),x+32,y+42,'rgba(255,255,255,.18)',28,'center',false,'700 ',DISP); });
+    let fi=0;
+    for(let i=0;i<5;i++){
+      const slot=this.kept[i]; let x,y;
+      if(slot){ const si=['Ship','Captain','Crew'].indexOf(slot); x=318+si*80+10; y=160; }
+      else { x=314+fi*48; y=260; fi++; }
+      const v=this.st==='rolling'&&!slot?1+Math.floor(Math.random()*6):this.dice[i];
+      const jig=this.st==='rolling'&&!slot?Math.sin(NOW*40+i)*3:0;
+      drawDie(x+jig,y-jig,44,v,slot?UI.gold:(this.scc()?col:null));
+    }
+    if(this.scc()){ capsText('Cargo',430,338,col,10,'center',3); goldText(String(this.cargo()),430,368,26,'center'); }
+  },
+  drawFinal(wi){ this.drawTable(); mgPanel({pl:this.pl,title:'Final cargo',final:true,wi,seats:this.o.seats,round:3}); capsText(MG_CHARS[this.pl[wi].k].name+' wins',430,H-34,UI.gold,13,'center',3); },
+  draw(){
+    this.drawTable(); this.drawDice();
+    mgPanel({pl:this.pl,cur:this.cur,title:'Round '+(this.round+1)+' of 3',seats:this.o.seats,round:this.round});
+    const p=this.P(); const who=this.o.seats>1?'Player '+(this.cur+1)+': '+MG_CHARS[p.k].name:(p.ai?MG_CHARS[p.k].name+' is rolling...':'Your roll');
+    const ty=this.pl.length>2?372:320; drawText(who,114,ty,C.pale,15,'center',true,'600 ',DISP);
+    drawText('Rolls left: '+(3-this.rolls),114,ty+22,C.gray,13,'center',true,'italic ');
+    if(this.st==='turnEnd') drawText(this.msg,430,430,C.pale,15,'center',true,'italic ');
+    else if(!p.ai){ const h=this.st==='decide'&&this.scc()?(this.rolls<3?'Attack (Z) rolls the cargo again  ·  Dodge (X) keeps it':'Out of rolls'):'Attack (Z) to roll  ·  Esc to leave'; drawText(h,430,430,C.dim,13,'center',true,'italic '); }
+    drawText('Find a 6, then a 5, then a 4. The other two dice are your cargo.',430,H-12,C.dim,12,'center',true,'italic ');
+  }
+};
+
+/* ---------------- Mug Slide ---------------- */
+const SLB={x0:262,edge:600,y:300,left:232};
+const SLZONES=[[480,540,10],[540,572,25],[572,588,50],[588,600,100]];
+const SLV0=264, SLV1=214, SLF=260;
+function slidePow(x){ return (Math.sqrt(2*SLF*(x-SLB.x0))-SLV0)/SLV1; }
+function slideScore(x){ if(x>SLB.edge) return 0; for(const [a,b,v] of SLZONES) if(x>=a&&x<b) return v; return 0; }
+function drawMug(x,y,s,tilt){
+  g.save(); g.translate(x,y); g.rotate(tilt||0);
+  g.fillStyle='rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(0,1,10*s,3*s,0,0,7); g.fill();
+  g.fillStyle='#6a4428'; g.fillRect(-8*s,-20*s,16*s,20*s); g.fillStyle='#8a5a34'; g.fillRect(-8*s,-20*s,5*s,20*s);
+  g.fillStyle='#c8a868'; g.fillRect(-9*s,-14*s,18*s,2*s); g.fillRect(-9*s,-5*s,18*s,2*s);
+  g.strokeStyle='#6a4428'; g.lineWidth=3*s; g.beginPath(); g.arc(9*s,-10*s,5*s,-1.2,1.2); g.stroke();
+  g.fillStyle='#f6efdc'; g.beginPath(); g.ellipse(0,-21*s,9*s,3.5*s,0,0,7); g.fill(); g.fillStyle='#e8d8b0'; g.beginPath(); g.arc(-4*s,-23*s,3*s,0,7); g.arc(3*s,-23*s,3.5*s,0,7); g.fill();
+  g.restore();
+}
+const Slide={
+  start(o){ return new Promise(r=>{ this.o=o; this.res=r; OV=this;
+    this.pl=o.chars.map((k,i)=>({k,ai:o.seats<=1&&i===1,rounds:[],total:0}));
+    this.round=0; this.cur=0; this.mugs=[]; this.beginTurn(); SND.sfx('ok'); }); },
+  P(){ return this.pl[this.cur]; },
+  acc(){ return MG_CHARS[this.P().k].acc; },
+  beginTurn(){ this.st='aim'; this.t=0; this.ph=Math.random(); this.mx=SLB.x0; this.v=0; this.fall=0; this.aiT=0.9+Math.random()*0.6; this.aiP=slidePow(578+Math.random()*18)+gauss()*this.acc()*0.06; },
+  meter(){ const sp=0.4+this.acc()*0.45, u=(this.ph+this.t*sp)%2; return u<1?u:2-u; },
+  launch(pw){ this.v=SLV0+clamp(pw,0,1)*SLV1; this.st='slide'; this.t=0; SND.sfx('whoosh'); },
+  update(dt){
+    this.t+=dt; const p=this.P(), st=this.o.seats>1?this.cur:0;
+    if(hit('menu')){ this.quit(); return; }
+    if(this.st==='aim'){
+      if(p.ai){ this.aiT-=dt; if(this.aiT<=0) this.launch(this.aiP); return; }
+      if(mgHit(st,'a')) this.launch(this.meter()+(Math.random()-.5)*this.acc()*0.02);
+      return;
+    }
+    if(this.st==='slide'){
+      this.mx+=this.v*dt; this.v=Math.max(0,this.v-SLF*dt);
+      if(this.mx>SLB.edge){ this.st='fall'; this.t=0; this.fall=0; SND.sfx('whoosh'); return; }
+      if(this.v<=0){ const sc=slideScore(this.mx); this.score(sc); }
+      return;
+    }
+    if(this.st==='fall'){ this.fall+=dt; this.mx+=60*dt; if(this.fall>0.55){ SND.sfx('shatter'); shake(3); this.score(0); } return; }
+    if(this.st==='turnEnd'&&this.t>1.5){
+      this.cur++;
+      if(this.cur>=this.pl.length){ this.cur=0; this.round++; this.mugs=[]; if(this.round>=3){ this.finish(); return; } }
+      this.beginTurn();
+    }
+  },
+  score(sc){ const p=this.P(); p.rounds[this.round]=sc; p.total+=sc; if(this.st!=='fall'||sc) this.mugs.push({x:this.mx,col:MG_CHARS[p.k].col});
+    this.msg=sc===100?'Right on the edge! 100':sc?sc+' points':this.st==='fall'?'Over the edge. That mug is not coming back.':'Too short. Nothing.';
+    if(sc===100){ SND.sfx('heart'); flash('#ffe8a0',0.3); } else SND.sfx(sc?'ok':'deny');
+    this.st='turnEnd'; this.t=0; },
+  finish(){ if(OV===this) OV=null; const R0=mgWinner(this.pl), r=this.res; this.res=null;
+    if(r) r({draw:!!R0.draw,winner:this.pl[R0.w].k,loser:this.pl[R0.l].k,board:()=>this.drawFinal(R0.w)}); },
+  quit(){ if(OV===this) OV=null; const r=this.res; this.res=null; SND.sfx('move'); if(r) r(null); },
+  drawBar(){
+    mgBack();
+    const y=SLB.y;
+    g.fillStyle='#2a1a0e'; g.fillRect(SLB.left,y+4,SLB.edge-SLB.left,90);
+    const tg=g.createLinearGradient(0,y-26,0,y+8); tg.addColorStop(0,'#8a5a34'); tg.addColorStop(1,'#5a3a20'); g.fillStyle=tg; g.fillRect(SLB.left,y-26,SLB.edge-SLB.left,32);
+    g.fillStyle='rgba(255,230,180,.12)'; g.fillRect(SLB.left,y-26,SLB.edge-SLB.left,3);
+    for(const [a,b,v] of SLZONES){ g.fillStyle=v===100?'rgba(255,208,80,.45)':v===50?'rgba(255,138,184,.32)':v===25?'rgba(122,200,255,.25)':'rgba(255,255,255,.10)'; g.fillRect(a,y-26,b-a,32); capsText(String(v),(a+b)/2,v===100?y-44:y-32,v===100?UI.gold:C.gray,9,'center',1); if(v===100){ g.fillStyle=UI.gold; g.fillRect((a+b)/2,y-40,1,12); } }
+    g.fillStyle='#c0392b'; g.fillRect(SLB.edge-1,y-26,2,32);
+    g.fillStyle='#1a1a22'; g.fillRect(SLB.edge,y-26,W-SLB.edge,140);
+    capsText('Edge',SLB.edge+20,y+22,'#ff8a70',9,'center',1);
+  },
+  drawFinal(wi){ this.drawBar(); mgPanel({pl:this.pl,title:'Final score',final:true,wi,seats:this.o.seats,round:3}); capsText(MG_CHARS[this.pl[wi].k].name+' wins',420,H-34,UI.gold,13,'center',3); },
+  draw(){
+    this.drawBar(); const p=this.P(), col=MG_CHARS[p.k].col, y=SLB.y;
+    for(const m of this.mugs) { drawMug(m.x,y-2,1.2,0); g.fillStyle=m.col; g.fillRect(m.x-3,y+6,6,3); }
+    if(this.st==='fall'){ const t=this.fall; drawMug(this.mx,y-2+t*t*400,1.2,t*5); }
+    else if(this.st==='aim'||this.st==='slide') drawMug(this.mx,y-2,1.2,this.st==='slide'?Math.sin(NOW*30)*0.04:0);
+    if(this.st==='aim'){
+      const m=p.ai?clamp(this.aiP,0,1):this.meter(), x=270, w=300, yy=y+50;
+      g.fillStyle='rgba(8,8,22,.8)'; g.fillRect(x-4,yy-4,w+8,20); g.fillStyle='#e45a4a'; g.fillRect(x,yy,w,12);
+      const pz=a=>clamp(slidePow(a),0,1); for(const [a,b,v] of SLZONES){ g.fillStyle=v===100?'#9af0b0':v===50?'#e2ae4a':v===25?'#c89a50':'#a86a40'; g.fillRect(x+w*pz(a),yy,Math.max(2,w*(pz(b)-pz(a))),12); }
+      g.fillStyle='#fff'; g.fillRect(x+w*m-1,yy-4,3,20); capsText('Power',x-10,yy+10,C.gray,9,'right',2);
+    }
+    mgPanel({pl:this.pl,cur:this.cur,title:'Round '+(this.round+1)+' of 3',seats:this.o.seats,round:this.round});
+    const who=this.o.seats>1?'Player '+(this.cur+1)+': '+MG_CHARS[p.k].name:(p.ai?MG_CHARS[p.k].name+' is sliding...':'Your slide');
+    const ty=this.pl.length>2?372:320; drawText(who,114,ty,C.pale,15,'center',true,'600 ',DISP);
+    if(this.st==='turnEnd') drawText(this.msg,420,y+80,C.pale,16,'center',true,'italic ');
+    else if(!p.ai&&this.st==='aim') drawText('Press attack when the power is right. Close to the edge, not over it.',420,y+90,C.dim,13,'center',true,'italic ');
+  }
+};
+function diceProp(x,y){ return {t:'prop',k:'dice',id:'dice',x,y,w:14,h:8,solid:false,fn:async()=>{ if(await barFight()) return; await playMinigame('dice'); },
+  draw(){ const X=this.x,Y=this.y-12; g.fillStyle='#6a4428'; g.fillRect(X-4,Y-2,7,9); g.fillStyle='#8a5a34'; g.fillRect(X-4,Y-2,2,9); g.fillStyle='#f6efdc'; g.fillRect(X+4,Y+4,4,4); g.fillRect(X-8,Y+5,4,4); g.fillStyle='#1a1a22'; g.fillRect(X+5,Y+5,1,1); g.fillRect(X+6,Y+6,1,1); g.fillRect(X-7,Y+6,1,1); }}; }
+function slideProp(x,y){ return {t:'prop',k:'slide',id:'slide',x,y,w:14,h:8,solid:false,fn:async()=>{ if(await barFight()) return; await playMinigame('slide'); },
+  draw(){ drawMug(this.x,this.y-6,0.45,0); }}; }
 
 /* =========================================================
    ONLINE: one browser hosts and runs the game. The friend's browser joins with a room code,
@@ -7054,7 +7252,7 @@ function dlgOwner(){
   if(Dlg.on&&Dlg.opts){ const s=Dlg.spk||''; if(s==='chili'||s==='chilie') return ownerOf('chili'); if(s==='sc'||s==='scf') return ownerOf('sc'); }
   return pOwnerN();
 }
-function seatOverlay(){ return OV&&(OV===CharSel||OV===Darts||OV===BJ); }
+function seatOverlay(){ return OV&&(OV===CharSel||OV===Darts||OV===BJ||OV===Dice||OV===Slide); }
 function feed(S){ for(const k of ACT){ Keys[k]=!!S.k[k]; if(S.p[k]) Pressed[k]=true; } }
 function coopRoute(){
   COOP.ctl={};

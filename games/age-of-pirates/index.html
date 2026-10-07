@@ -153,9 +153,9 @@ body.port #pad .acts .btn.a{font-size:12px}
       <b>M</b><span>Sound on or off</span>
     </div>
     <h3>Two or three players</h3>
-    <p>Turn it on under Options on the title screen. Player 1 and Player 2 are Chili and Shadow Cloak. Player 1: WASD, F attack and talk, G roll, R skill. Player 2: arrows, Enter, right Shift, right Ctrl. Player 3 is Cadet Jory, the healer, who fights and plays the minigames but never talks: IJKL, U attack, O roll, Y Mending Light, N eat. Controllers take the last seats. Walk up to someone and press attack to talk as yourself; only you can move that conversation on. Hold swap (Q, backslash or B) to jump back beside the lead.</p>
+    <p>Set how many players under Options on the title screen. When the story starts, everyone picks a character with their own keys: Chili, Shadow Cloak, and with three players Cadet Jory, the healer who fights and plays the minigames but never talks. No doubles. Player 1: WASD, F attack and talk, G roll, R skill. Player 2: arrows, Enter, right Shift, right Ctrl. Player 3: IJKL, U attack, O roll, Y skill, N eat. Controllers take the last seats. Walk up to someone and press attack to talk as yourself; only you can move that conversation on. Hold swap (Q, backslash or B) to jump back beside the lead.</p>
     <h3>Online</h3>
-    <p>Choose Online on the title screen. One player hosts and gets a five-letter code; the friend chooses Join and types it in. The host's game runs on their computer and the friend sees it live as Player 2, on a computer or a phone. Hosting needs a keyboard or controller.</p>
+    <p>Choose Online on the title screen. The host picks two or three players and gets a five-letter code; friends choose Join and type it in. Once everyone is in, each player picks their character. The host's game runs on their computer and friends see it live, on a computer or a phone. Online games keep their own save, separate from your offline one. Hosting needs a keyboard or controller.</p>
     <h3>At the Salt &amp; Sun</h3>
     <p>Darts, blackjack, dice and the mug slide, against any friend you have made. Darts: arrows aim, hold X to steady your breath, Z to throw.</p>
     <p>Ship, Captain &amp; Crew: Z rolls. Find a 6, then a 5, then a 4. The last two dice are your cargo; X keeps them, Z rolls them again. Three rolls a turn.</p>
@@ -3614,7 +3614,8 @@ async function sammyTalk(){
     await afterTavernInfo();
     return;
   }
-  const c=await ask('sammy','Anything else, love?',['"Tell me about the Aetherian Valtis."','"Who is Tarel?"','"How\'s business?"']);
+  const c=await ask('sammy','Anything else, love?',['"Tell me about the Aetherian Valtis."','"Who is Tarel?"','"How\'s business?"','"Fancy a game?"']);
+  if(c===3){ const gm=await ask('sammy','Pick your poison, sunshine.',['Darts','Blackjack','Ship, Captain & Crew','Mug Slide','Maybe later']); if(gm>=0&&gm<4) await playMinigame(['darts','cards','dice','slide'][gm]); return; }
   if(c===0) await say('sammy','Gold coin. Old curse. Hides your name from death itself. You saw it and lived, sunshine. Don\'t go telling people that in here.');
   else if(c===1) await say('sammy','Tarel? Pirate Lord. Shipbreaker from the Solaria port districts. Wood does what he says. Keeps the peace in here, which is why the furniture is still furniture.');
   else await say('sammy','Booming. Scared people drink. Scared rich people drink the good stuff.');
@@ -6678,7 +6679,7 @@ async function barFightEnd(){
   old.name=()=>mgPost()?'The Salt & Sun':'The Lantern & Anchor';
   old.sub=()=>mgPost()?'Tavern, port of Alterah':'Inn, port of Alterah';
   old.ents=function(){
-    if(!mgPost()){ const L=oldEnts(); if(F('a1_arrive')) L.push(dartboardProp(18,1),cardTableProp(6,7),diceProp(13,4),slideProp(3,2)); return L; }
+    if(!mgPost()){ const L=oldEnts(); if(F('a1_arrive')) L.push(dartboardProp(14,1),cardTableProp(6,7),diceProp(13,4),slideProp(3,2)); return L; }
     const L=[
       npc('sammy','sammy',8,1,{dir:0,solid:true}),
       counterTalk('sammyc',8,2,sammyNewTalk),
@@ -6686,7 +6687,7 @@ async function barFightEnd(){
       npc('pa','pir1',2,5,{dir:3,bark:['To Sammy!','Another round!','She waters nothing. NOTHING.']}),
       npc('pb','pir4',4,5,{dir:2,talk:async()=>{ await say('pirate','Lost the ship. Lost the bay. Didn\'t lose my seat at the Salt & Sun. Priorities.'); }}),
       npc('pd','pir3',16,4,{dir:2,bark:['Same name, new walls.','The darts are crooked here too.']}),
-      dartboardProp(18,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2),
+      dartboardProp(14,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2),
     ];
     if(MG_CHARS.ramel.friend()) L.push(npc('ramel','ramel',12,3,{dir:1,solid:true,talk:async()=>{ await say('ramel','Darts? You and me. Loser buys. And I\'m not losing to a flower twice.'); await playMinigame('darts'); }}));
     if(MG_CHARS.lysandra.friend()) L.push(npc('lys','lysandra',13,5,{dir:2,solid:true,talk:async()=>{ await say('lysandra','Cards, darling? I deal. I don\'t cheat. Much.'); await playMinigame('cards'); }}));
@@ -6704,12 +6705,11 @@ async function sammyNewTalk(){
     await say('sammy','You think I ran out of Pirate Bay empty-handed? I ran with the till, the good rum, and the sign. Well. Half the sign.');
     await say('sammy','Old Wick was tired. I made him an offer, he retired with a smile, and now he drinks here for free. Forever. That was the deal.');
     await say('sammy.smile','And I love it. Don\'t tell anyone. They\'ll think I\'ve gone soft.');
-    await say('sammy','Darts on the wall, cards on the far table. House rules: nobody fights under this roof.');
+    await say('sammy','Darts on the wall, cards and dice on the tables, and the mug slide is my bar. House rules: nobody fights under this roof.');
     return; }
-  const c=await ask('sammy',['What\'ll it be, sunshine?','Back again! I knew you\'d miss me.','Busy night. Best kind.'][Math.floor(Math.random()*3)],['A game of darts','A hand of cards','How is the new place?','Nothing, thanks']);
-  if(c===0) await playMinigame('darts');
-  else if(c===1) await playMinigame('cards');
-  else if(c===2){ await say('sammy','Roof doesn\'t leak, the regulars pay, and nobody has tried to set it on fire yet.'); await say('sammy.smile','I\'d call that a good year.'); }
+  const c=await ask('sammy',['What\'ll it be, sunshine?','Back again! I knew you\'d miss me.','Busy night. Best kind.'][Math.floor(Math.random()*3)],['A game of darts','A hand of cards','Ship, Captain & Crew','Mug Slide','How is the new place?','Nothing, thanks']);
+  if(c>=0&&c<4) await playMinigame(['darts','cards','dice','slide'][c]);
+  else if(c===4){ await say('sammy','Roof doesn\'t leak, the regulars pay, and nobody has tried to set it on fire yet.'); await say('sammy.smile','I\'d call that a good year.'); }
 }
 async function wickRetiredTalk(){
   if(!F('wick_retired')){ setF('wick_retired');
@@ -6723,7 +6723,7 @@ async function wickRetiredTalk(){
 {
   const pt=ROOMS.pt, _e=pt.ents;
   if(!('noDeath' in pt)) Object.defineProperty(pt,'noDeath',{get(){ return !!(R&&R.def===pt&&R.brawl&&!R.fightOver); },configurable:true});
-  pt.ents=function(){ const L=_e(); if(F('c3_sammy')&&!F('c8_decim')) L.push(dartboardProp(18,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2)); return L; };
+  pt.ents=function(){ const L=_e(); if(F('c3_sammy')&&!F('c8_decim')) L.push(dartboardProp(14,1), cardTableProp(6,7), diceProp(13,4), slideProp(3,2)); return L; };
 }
 
 /* =========================================================
@@ -6919,6 +6919,39 @@ function diceProp(x,y){ return {t:'prop',k:'dice',id:'dice',x,y,w:14,h:8,solid:f
 function slideProp(x,y){ return {t:'prop',k:'slide',id:'slide',x,y,w:14,h:8,solid:false,fn:async()=>{ if(await barFight()) return; await playMinigame('slide'); },
   draw(){ drawMug(this.x,this.y-6,0.45,0); }}; }
 
+/* ---------------- finding the games ----------------
+   each table game gets a name tag when someone walks near it, and a little sparkle so it can be spotted across the room */
+const MG_TAG={darts:'Darts',cards:'Blackjack',dice:'Ship, Captain & Crew',slide:'Mug Slide'};
+function mgTags(){
+  if(MODE!=='play'||!R||OV||Dlg.on||CUT>0) return;
+  const games=R.ents.filter(e=>e.t==='prop'&&MG_TAG[e.k]&&!e.dead); if(!games.length) return;
+  if(!F('mg_hint')&&canControl()&&R.t>1.2){ setF('mg_hint'); toast('Tavern games! Walk up to the dartboard, the cards, the dice cup or the mug on the bar and press attack. Or ask the barkeep.',5); }
+  const bodies=[P]; if(typeof COOP!=='undefined'&&COOP.on) for(const id of ['partner','jory']){ const a=ent(id); if(a&&!a.dead) bodies.push(a); }
+  for(const e of games){
+    let d=1e9; for(const b of bodies) d=Math.min(d,Math.hypot(b.x-e.x,b.y-e.y));
+    const x=e.x*WS, top=VY+(e.y-22)*WS;
+    if(d<64){
+      const a=clamp((64-d)/18,0,1); setFont(13,'600 ',DISP); const name=MG_TAG[e.k], tw=g.measureText(name).width, bw=tw+20;
+      const bx=clamp(x-bw/2,6,W-bw-6), by=e.y<40?VY+(e.y+5)*WS:clamp(top-58,VY+4,H-30);
+      g.globalAlpha=a; g.fillStyle='rgba(12,10,26,.9)'; g.fillRect(bx,by,bw,22); g.strokeStyle=UI.gold; g.lineWidth=1; g.strokeRect(bx+0.5,by+0.5,bw-1,21);
+      drawText(name,bx+bw/2,by+16,UI.gold,13,'center',false,'600 ',DISP); g.globalAlpha=1;
+    } else {
+      const ph=(NOW*0.55+e.x*0.013)%1, r=ph<0.25?Math.sin(ph/0.25*Math.PI)*5:0;
+      if(r>0.3) star(x+10,top-6,r,UI.gold,NOW*2,4);
+    }
+  }
+}
+{ const _dw=drawWorld; drawWorld=function(){ _dw.apply(this,arguments); try{ mgTags(); }catch(e){} }; }
+/* Wick at the Lantern & Anchor runs the games too, once you have met him */
+{ const _wt=wickTalk;
+  wickTalk=async function(){
+    if(!F('wick_info')){ await _wt(); await say('wick','And if you\'re staying: darts on the wall, cards and dice on the tables. Slide a mug to the end of my bar without losing it and I\'ll be impressed.'); return; }
+    const c=await ask('wick',['Room, drink, or a game?','Back again, Frontier.','Quiet night. Fancy a game?'][Math.floor(Math.random()*3)],['A game of darts','A hand of cards','Ship, Captain & Crew','Mug Slide','Just talk','Nothing, thanks']);
+    if(c>=0&&c<4) await playMinigame(['darts','cards','dice','slide'][c]);
+    else if(c===4) await _wt();
+  };
+}
+
 /* =========================================================
    ONLINE: one browser hosts and runs the game. The friend's browser joins with a room code,
    watches the host's screen as live video, and sends its keys back as Player 2.
@@ -6939,10 +6972,16 @@ function netErr(e){
 }
 
 /* ---------------- hosting ---------------- */
+/* the online game keeps its own save, apart from the offline one */
+{ const map=k=>(NET.role==='host'&&(k===SAVE_KEY||k===DECIM_KEY))?k+'.online':k;
+  try{ const SP=Storage.prototype, gi=SP.getItem, si=SP.setItem, ri=SP.removeItem;
+    SP.getItem=function(k){ return gi.call(this,map(k)); }; SP.setItem=function(k,v){ return si.call(this,map(k),v); }; SP.removeItem=function(k){ return ri.call(this,map(k)); };
+  }catch(e){} }
+function netSwapSave(){ try{ G=loadGame()||newG(); }catch(e){} }
 function netHost(){
   if(!netOK()){ NET.state='err'; NET.msg='Online play is not available in this browser.'; return; }
   netStop(true);
-  NET.role='host'; NET.code=netCode(); NET.state='opening'; NET.msg='';
+  const was=NET.role; NET.role='host'; NET.code=netCode(); NET.state='opening'; NET.msg=''; if(was!=='host'&&MODE==='title') netSwapSave();
   try{ SND.unlock(); }catch(e){}
   const p=NET.peer=netPeer(netId(NET.code));
   p.on('open',()=>{ if(NET.peer!==p) return; p._rc=0; if(!NET.live) NET.state='waiting'; });
@@ -6955,7 +6994,7 @@ function netHost(){
   p.on('disconnected',()=>{ if(NET.peer!==p||p.destroyed) return; const n=p._rc=(p._rc||0)+1; if(!NET.live) NET.state='retry';
     setTimeout(()=>{ try{ if(NET.peer===p&&!p.destroyed&&p.disconnected) p.reconnect(); }catch(e){} },Math.min(10000,1000*n)); });
   p.on('connection',c=>{
-    const max=(OPT.coop||0)>=3?[2,3]:[2];
+    const max=(NET.want||2)>=3?[2,3]:[2];
     const slot=max.find(n=>!NET.slots[n]);
     if(!slot){ c.on('open',()=>{ try{ c.send({t:'full'}); }catch(e){} setTimeout(()=>c.close(),600); }); return; }
     const S=NET.slots[slot]={conn:c,call:null,hb:null};
@@ -6963,7 +7002,7 @@ function netHost(){
       NET.live=true; NET.state='live';
       if(!OPT.coop){ OPT.coop=1; NET.setCoop=true; }
       try{ c.send({t:'slot',n:slot}); }catch(e){}
-      SND.sfx('ok'); toast('Player '+slot+' has joined! They are '+(slot===3?'Cadet Jory':(COOP.p1==='chili'?'Shadow Cloak':'Chili'))+'.',3);
+      SND.sfx('ok'); setTimeout(()=>{ coopFill(); toast('Player '+slot+' has joined!'+(MODE==='play'?' They are '+coopName(COOP.seatChar[slot]||'sc')+'.':' Everyone picks a character when the story starts.'),3.4); },60);
       netStream(slot);
       clearInterval(S.hb); S.hb=setInterval(()=>{ try{ if(c.open) c.send({t:'hb'}); }catch(e){} },2000);
     });
@@ -7042,7 +7081,9 @@ function netStop(keepMsg){
   try{ if(NET.call) NET.call.close(); }catch(e){}
   try{ if(NET.conn) NET.conn.close(); }catch(e){}
   try{ if(NET.peer) NET.peer.destroy(); }catch(e){}
+  const wasHost=NET.role==='host';
   NET.peer=NET.conn=NET.call=null; NET.live=false; NET.role=null; NET.leaveAsk=false; NET.needTap=false;
+  if(wasHost&&MODE==='title') netSwapSave();
   if(NET.video){ try{ NET.video.pause(); NET.video.srcObject=null; }catch(e){} }
   if(NET.setCoop){ OPT.coop=0; NET.setCoop=false; }
   for(const n of [2,3]) for(const k in COOP.K[n].k) COOP.K[n].k[k]=false;
@@ -7125,7 +7166,7 @@ const NetBox={el:null,
 /* ---------------- the title: Online → Host / Join ---------------- */
 { const _items=Title.items.bind(Title);
   Title.items=function(){ const L=_items(); const i=L.findIndex(x=>x.label&&(x.label==='Options'||x.label.startsWith('Screen effects')));
-    const sub=NET.role==='host'?(NET.live?'Hosting '+NET.code+'. Player 2 is here.':'Hosting '+NET.code+'. Waiting for Player 2.'):'Play together over the internet. Host, or join a friend.';
+    const sub=NET.role==='host'?'Hosting '+NET.code+'. '+(netGuests()+1)+' of '+(NET.want||2)+' players here.':'Play together over the internet. Host, or join a friend.';
     L.splice(i<0?L.length:i,0,{label:'Online',sub,fn:()=>{ this.mode=NET.role==='host'?'nethost':'net'; this.nsel=0; }});
     return L; }; }
 { const _up=Title.update.bind(Title);
@@ -7137,12 +7178,22 @@ const NetBox={el:null,
       if(Ptr.tap){ Ptr.tap=false; for(let i=0;i<2;i++) if(inRect(130,262+i*52-26,380,46)){ if(this.nsel===i) Pressed.a=true; else this.nsel=i; } }
       if(hit('b')||hit('menu')){ this.mode='main'; SND.sfx('move'); NET.msg=''; return; }
       if(hit('a')){ SND.sfx('ok'); NET.msg='';
-        if((this.nsel||0)===0){ if(COARSE){ NET.msg='Host from a computer with a keyboard or controller. Phones can join.'; return; } netHost(); this.mode='nethost'; }
+        if((this.nsel||0)===0){ if(COARSE){ NET.msg='Host from a computer with a keyboard or controller. Phones can join.'; return; } this.mode='netcount'; this.csel=0; }
         else { this.mode='netjoin'; NetBox.open(); } }
+      return;
+    }
+    if(this.mode==='netcount'){
+      this.t+=dt;
+      if(hit('up')||hit('down')){ this.csel=1-(this.csel||0); SND.sfx('move'); }
+      if(Ptr.tap){ Ptr.tap=false; for(let i=0;i<2;i++) if(inRect(130,262+i*52-26,380,46)){ if(this.csel===i) Pressed.a=true; else this.csel=i; } }
+      if(hit('b')||hit('menu')){ this.mode='net'; SND.sfx('move'); return; }
+      if(hit('a')){ SND.sfx('ok'); NET.want=(this.csel||0)?3:2; netHost(); this.mode='nethost'; }
       return;
     }
     if(this.mode==='nethost'){
       this.t+=dt;
+      if(netGuests()<(NET.want||2)-1&&hit('a')){ SND.sfx('deny'); NET.wait=1.6; return; }
+      if(NET.wait>0) NET.wait-=dt;
       if(hit('a')){ SND.sfx('ok'); this.mode='main'; this.sel=0; const L=this.items(); if(L[0]&&!L[0].disabled) L[0].fn(); return; }
       if(hit('b')||hit('menu')){ if(NET.live){ this.mode='main'; SND.sfx('move'); return; } netStop(); this.mode='net'; SND.sfx('move'); return; }
       return;
@@ -7151,7 +7202,7 @@ const NetBox={el:null,
   };
   const _dr=Title.draw.bind(Title);
   Title.draw=function(){
-    if(this.mode!=='net'&&this.mode!=='nethost'&&this.mode!=='netjoin'){ _dr(); if(this.mode==='main'&&NET.role==='host'){ g.fillStyle='rgba(8,8,22,.8)'; g.fillRect(8,8,200,22); capsText('Hosting  '+NET.code+(NET.live?'  ·  2 players':''),16,23,NET.live?'#9af0b0':UI.gold,9,'left',2); } return; }
+    if(this.mode!=='net'&&this.mode!=='nethost'&&this.mode!=='netjoin'&&this.mode!=='netcount'){ _dr(); if(this.mode==='main'&&NET.role==='host'){ g.fillStyle='rgba(8,8,22,.8)'; g.fillRect(8,8,200,22); capsText('Hosting  '+NET.code+'  ·  '+(netGuests()+1)+' of '+(NET.want||2)+' players',16,23,NET.live?'#9af0b0':UI.gold,9,'left',2); } return; }
     const it=this.items, m=this.msg, md=this.mode; this.items=()=>[]; this.msg=' '; this.mode='main'; _dr(); this.mode=md; this.items=it; this.msg=m;
     frame(110,218,420,200);
     if(md==='nethost'){
@@ -7161,9 +7212,19 @@ const NetBox={el:null,
       if(NET.state==='opening') drawText('Opening a room...',W/2,322,C.parch,20,'center',true,'italic ');
       else if(NET.state==='retry'&&!NET.live) { goldText(NET.code,W/2,330,46,'center'); drawText('Reconnecting to the matchmaking server...',W/2,362,'#ffb070',15,'center',true,'italic '); drawText('X to stop hosting',W/2,400,C.dim,12,'center',true,'italic '); return; }
       else goldText(NET.code,W/2,330,46,'center');
-      drawText(NET.live?(netGuests()>=2?'Players 2 and 3 are here!':(OPT.coop||0)>=3?'Player 2 is here. Room for Player 3 (Jory).':'Player 2 is here!'):'Waiting for Player 2'+((OPT.coop||0)>=3?' and 3':'')+'.'.repeat(1+Math.floor(NOW*2)%3),W/2,362,NET.live?'#9af0b0':C.parch,16,'center',true,'italic ');
-      drawText(NET.live?'Press Z (or Space / Enter) to start the story together':'Z to start the story now (they can join any time)  ·  X to stop hosting',W/2,400,NET.live?C.pale:C.dim,NET.live?14:12,'center',true,'italic ');
-      drawText('You are Player 1. Use either set of keys. Player 2 plays from their own computer or phone.',W/2,H-22,C.dim,13,'center',true,'italic ');
+      const want=NET.want||2, have=netGuests()+1, full=have>=want;
+      drawText(full?'Everyone is here! '+have+' of '+want+' players.':have+' of '+want+' players here. Waiting'+'.'.repeat(1+Math.floor(NOW*2)%3),W/2,362,full?'#9af0b0':C.parch,16,'center',true,'italic ');
+      drawText(full?'Press Z (or Space / Enter) to choose characters':NET.wait>0?'Wait for everyone to join first.':'X to stop hosting',W/2,400,full?C.pale:NET.wait>0?'#ffb070':C.dim,full?14:13,'center',true,'italic ');
+      drawText('You are Player 1. Friends play from their own computer or phone. This game has its own online save.',W/2,H-22,C.dim,13,'center',true,'italic ');
+      return;
+    }
+    if(md==='netcount'){
+      capsText('How many players?',W/2,244,UI.gold,11,'center',3);
+      [['Two players','You and one friend: Chili and Shadow Cloak.'],['Three players','You and two friends. Cadet Jory joins as the healer.']].forEach(([a,b],i)=>{ const y=280+i*52, sel=i===(this.csel||0);
+        if(sel){ g.fillStyle='rgba(226,174,74,.10)'; g.fillRect(130,y-26,380,46); g.strokeStyle=UI.line; g.strokeRect(130.5,y-25.5,379,45); }
+        drawText(a,150,y-4,sel?C.pale:C.parch,18,'left',true,'600 ',DISP); drawText(b,150,y+14,C.gray,13,'left',true,'italic '); });
+      drawText('Everyone picks their character once they have all joined.',W/2,398,C.dim,13,'center',true,'italic ');
+      drawText('Up / Down to choose  ·  Z to host  ·  X to go back',W/2,H-22,C.dim,13,'center',true,'italic ');
       return;
     }
     capsText('Online',W/2,244,UI.gold,11,'center',3);
@@ -7172,7 +7233,7 @@ const NetBox={el:null,
       if(sel){ g.fillStyle='rgba(226,174,74,.10)'; g.fillRect(130,y-26,380,46); g.strokeStyle=UI.line; g.strokeRect(130.5,y-25.5,379,45); }
       drawText(a,150,y-4,sel?C.pale:C.parch,18,'left',true,'600 ',DISP); drawText(b,150,y+14,C.gray,13,'left',true,'italic '); });
     if(NET.msg){ let y=398; for(const s of wrapText(NET.msg,400,14,'italic ')){ drawText(s,W/2,y,'#ff8a70',14,'center',true,'italic '); y+=16; } }
-    drawText('The host runs the game. The friend sees it live and plays Player 2.',W/2,H-22,C.dim,13,'center',true,'italic ');
+    drawText('The host runs the game and picks two or three players. Online games keep their own save.',W/2,H-22,C.dim,13,'center',true,'italic ');
   };
 }
 
@@ -7187,12 +7248,21 @@ const COARSE=!!(window.matchMedia&&matchMedia('(pointer: coarse)').matches)&&!(w
 const COOP={K:[null,{k:{},p:{}},{k:{},p:{}},{k:{},p:{}}],pDance:0,hp:{},down:{},rev:{},inBody:null,nPads:0,gprev:[],regroup:{},
   get on(){ if(NET.role==='guest') return false; if(NET.role==='host'&&NET.live) return true; return !COARSE&&!!OPT.coop; },
   get n(){ if(NET.role==='host'&&NET.live) return NET.slots&&NET.slots[3]?3:2; return (OPT.coop||0)>=3?3:2; },
-  get p1(){ return (OPT.coop===2||OPT.coop===4)?'sc':'chili'; }};
+  seatChar:{1:'chili',2:'sc',3:'jory'}, picked:false,
+  get p1(){ return COOP.seatChar[1]==='jory'?(COOP.seatChar[2]==='sc'?'chili':'sc'):COOP.seatChar[1]; }};
+if(OPT.coop===2) OPT.coop=1; if(OPT.coop===4) OPT.coop=3;
 Object.defineProperty(COOP,'K1',{get(){ return COOP.K[1]; }});
 Object.defineProperty(COOP,'K2',{get(){ return COOP.K[2]; }});
 Object.defineProperty(COOP,'K3',{get(){ return COOP.K[3]; }});
 const heroBase=h=>{ h=h||''; return h==='jory'?'jory':h.startsWith('sc')?'sc':'chili'; };
-function ownerOf(h){ const b=heroBase(h); return b==='jory'?3:b===COOP.p1?1:2; }
+function ownerOf(h){ const b=heroBase(h); for(const n of [1,2,3]) if(COOP.seatChar[n]===b) return n; return 1; }
+/* every seat in the game holds a different character; anyone left over (after someone joins or leaves) takes what is free */
+function coopFill(){
+  const n=COOP.n, need=n>=3?['chili','sc','jory']:['chili','sc'], used=new Set();
+  for(let i=1;i<=n;i++){ const c=COOP.seatChar[i]; if(need.includes(c)&&!used.has(c)) used.add(c); else COOP.seatChar[i]=null; }
+  for(let i=1;i<=n;i++) if(!COOP.seatChar[i]){ const c=need.find(x=>!used.has(x)); COOP.seatChar[i]=c; used.add(c); }
+  for(let i=n+1;i<=3;i++) COOP.seatChar[i]=null;
+}
 function pOwnerN(){ return ownerOf(P.hero); }
 function pOwner(){ return COOP.K[pOwnerN()]; }
 if(!CHARS.jory) CHARS.jory={skin:'#7a4a30',hair:'#14100c',style:'short',eyes:'#2a1a10',top:'#e8e0d0',bottom:'#2a2a34',belt:'#5a3a1a',cape:'#2f5a3a',beard:'#14100c'};
@@ -7254,9 +7324,11 @@ function dlgOwner(){
 }
 function seatOverlay(){ return OV&&(OV===CharSel||OV===Darts||OV===BJ||OV===Dice||OV===Slide); }
 function feed(S){ for(const k of ACT){ Keys[k]=!!S.k[k]; if(S.p[k]) Pressed[k]=true; } }
+/* menus and shared screens: on one keyboard anyone can press, but online only the host's own keys drive them */
+function feedMerged(){ if(NET.role==='host'){ feed(COOP.K[1]); return; } for(const k of ACT){ Keys[k]=!!(COOP.K[1].k[k]||COOP.K[2].k[k]||COOP.K[3].k[k]); if(COOP.K[1].p[k]||COOP.K[2].p[k]||COOP.K[3].p[k]) Pressed[k]=true; } }
 function coopRoute(){
-  COOP.ctl={};
-  if(MODE!=='play'||!R){ for(const k of ACT){ Keys[k]=!!(COOP.K[1].k[k]||COOP.K[2].k[k]||COOP.K[3].k[k]); if(COOP.K[1].p[k]||COOP.K[2].p[k]||COOP.K[3].p[k]) Pressed[k]=true; } return; }
+  COOP.ctl={}; coopFill();
+  if(MODE!=='play'||!R){ feedMerged(); return; }
   if(seatOverlay()){ for(const k of ACT){ Keys[k]=false; } return; }
   if(canControl()){
     const own=pOwnerN(), still=COOP.pDance>0, S=COOP.K[own];
@@ -7264,11 +7336,11 @@ function coopRoute(){
     if(S.p.e) Pressed.e=true;
     Keys.d=false;
     const a=ent('partner'); if(a) COOP.ctl.partner=COOP.K[ownerOf(a.hk)];
-    COOP.ctl.jory=COOP.K[3];
+    COOP.ctl.jory=COOP.K[ownerOf('jory')];
     return;
   }
   if(Dlg.on){ feed(COOP.K[dlgOwner()]); return; }
-  if(OV&&!(typeof Parley!=='undefined'&&OV===Parley)){ for(const k of ACT){ Keys[k]=!!(COOP.K[1].k[k]||COOP.K[2].k[k]||COOP.K[3].k[k]); if(COOP.K[1].p[k]||COOP.K[2].p[k]||COOP.K[3].p[k]) Pressed[k]=true; } return; }
+  if(OV&&!(typeof Parley!=='undefined'&&OV===Parley)){ feedMerged(); return; }
   feed(COOP.K[pOwnerN()]);
 }
 { const _u=update;
@@ -7408,7 +7480,7 @@ function coopKeepParty(dt){
     const stuckIn=!rectFree(box[0],box[1],box[2],box[3],a), outside=a.x<2||a.x>RW*TS-2||a.y<4||a.y>RH*TS;
     if(stuckIn||outside){ const [x,y]=freeSpotNear(P.x,P.y,a); a.x=x; a.y=y; a.kx=a.ky=0; }
     /* hold swap to regroup beside the lead */
-    const S=a.id==='jory'?COOP.K[3]:COOP.K[ownerOf(a.hk)];
+    const S=COOP.K[ownerOf(a.id==='jory'?'jory':a.hk)];
     if(S&&S.k.d){ COOP.regroup[a.id]=(COOP.regroup[a.id]||0)+dt; if(COOP.regroup[a.id]>0.7){ COOP.regroup[a.id]=0; const [x,y]=freeSpotNear(P.x,P.y,a); a.x=x; a.y=y; puff(x,y-8,'#e8e0d0',8,30,0.4); SND.sfx('veil'); } }
     else COOP.regroup[a.id]=0;
   }
@@ -7419,7 +7491,7 @@ function coopPost(dt){
   if(MODE!=='play'||!R) return;
   coopKeepParty(dt);
   /* while someone chats with a townsperson, everyone else can still walk about */
-  if(Dlg.on&&CUT===0&&!OV&&!Card.on&&!Cine.on){ for(const a of coopBodies()) if(bodyActive(a)) coopAlly(a,dt,a.id==='jory'?COOP.K[3]:COOP.K[ownerOf(a.hk)],true); }
+  if(Dlg.on&&CUT===0&&!OV&&!Card.on&&!Cine.on){ for(const a of coopBodies()) if(bodyActive(a)) coopAlly(a,dt,COOP.K[ownerOf(a.id==='jory'?'jory':a.hk)],true); }
   if(COOP.pDance>0&&!frozenWorld()){ COOP.pDance-=dt; P.dir=Math.floor(NOW*4)%4; P.moving=false; if(Math.random()<dt*3) mote(P.x+(Math.random()-.5)*12,P.y-18,Math.random()<.5?'#b88af0':'#ffffff',(Math.random()-.5)*10,-14,1,1);
     if(COOP.pDance<=0){ COOP.pDance=0; bark({x:P.x,y:P.y,id:'_p'},'...I can move again!',1.4); } }
   if(R.mends){ for(const m of R.mends) m.t+=dt; R.mends=R.mends.filter(m=>m.t<0.6); }
@@ -7533,7 +7605,7 @@ function coopRevive(dt){
   for(const a of coopBodies()){
     if(!COOP.down[a.id]){ COOP.rev[a.id]=0; continue; }
     /* any standing teammate beside them, holding their own attack button */
-    const helpers=[[P,COOP.K[pOwnerN()],P.hero]].concat(coopBodies().filter(b=>b!==a&&bodyActive(b)).map(b=>[b,COOP.K[b.id==='jory'?3:ownerOf(b.hk)],b.hk]));
+    const helpers=[[P,COOP.K[pOwnerN()],P.hero]].concat(coopBodies().filter(b=>b!==a&&bodyActive(b)).map(b=>[b,COOP.K[ownerOf(b.id==='jory'?'jory':b.hk)],b.hk]));
     let rate=0;
     for(const [h,S,hk] of helpers){ if(Math.hypot(h.x-a.x,h.y-a.y)<22&&S&&S.k.a) rate=Math.max(rate,hk==='jory'?2:1); }
     if(!rate){ COOP.rev[a.id]=Math.max(0,(COOP.rev[a.id]||0)-dt); continue; }
@@ -7559,7 +7631,7 @@ const PCOL=[null,'#ff8ab8','#7ac8ff','#9af0b0'];
     if(MODE!=='play'||CUT>0) return;
     const tag=(x,y,n)=>{ const col=PCOL[n]; g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(x-6,y-9,12,8); g.fillStyle=col; g.fillRect(x-5,y-8,10,6); g.fillStyle='#120f20'; setFont(7,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),x,y-3); g.textAlign='left'; g.fillStyle=col; g.beginPath(); g.moveTo(x-2,y-1); g.lineTo(x+2,y-1); g.lineTo(x,y+1); g.fill(); };
     if(P.vis) tag(P.x,P.y-24,pOwnerN());
-    for(const a of coopBodies()){ if(!a.vis||a.down) continue; tag(a.x,a.y-24,a.id==='jory'?3:ownerOf(a.hk));
+    for(const a of coopBodies()){ if(!a.vis||a.down) continue; tag(a.x,a.y-24,ownerOf(a.id==='jory'?'jory':a.hk));
       if(a.en!=null&&a.en<99){ g.fillStyle='rgba(0,0,0,.5)'; g.fillRect(a.x-7,a.y+2,14,2); g.fillStyle=a.id==='jory'?'#9af0b0':'#8ad0ff'; g.fillRect(a.x-7,a.y+2,14*a.en/100,2); } }
   };
 }
@@ -7584,17 +7656,17 @@ const PCOL=[null,'#ff8ab8','#7ac8ff','#9af0b0'];
     _hud();
     if(!COOP.on||!R) return;
     const gr=g.createLinearGradient(0,8,0,VY-10); gr.addColorStop(0,'rgba(20,17,40,1)'); gr.addColorStop(1,'rgba(12,11,26,1)');
-    g.fillStyle=gr; g.fillRect(10,8,240,VY-18);
+    g.fillStyle=gr; g.fillRect(10,8,176,VY-18);
     const three=COOP.n>=3, hearts=mhp()/2, sz=three?11:13, step=three?12:15;
-    const bases=[COOP.p1,COOP.p1==='sc'?'chili':'sc'].concat(three?['jory']:[]);
-    bases.forEach((base,i)=>{
-      const n=i+1, y=three?18+i*16:(i?48:26);
+    coopFill(); const seats=three?[1,2,3]:[1,2];
+    seats.forEach((n,i)=>{
+      const base=COOP.seatChar[n], y=three?18+i*16:(i?48:26);
       let hp=null, down=false, away=false;
       if(heroBase(P.hero)===base) hp=P.hp;
       else { const a=base==='jory'?ent('jory'):ent('partner'); if(a&&(base==='jory'||duo())){ hp=bodyHp(a); down=!!COOP.down[a.id]; } else away=true; }
       g.fillStyle=PCOL[n]; g.fillRect(16,y-8,11,11); g.fillStyle='#120f20'; setFont(9,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),21.5,y+1); g.textAlign='left';
       flameIcon(38,y-2,three?11:13,base==='jory'?'#9af0b0':base==='sc'?'#e2ae4a':'#ff8ab8');
-      if(away){ drawText(coopName(base)+(base==='jory'?' is waiting':' is elsewhere'),50,y+3,C.dim,11,'left',true,'italic '); return; }
+      if(away){ drawText(coopName(base)+(base==='jory'?' waiting':' away'),50,y+3,C.dim,11,'left',true,'italic '); return; }
       for(let k=0;k<hearts;k++){ const part=clamp(((hp||0)-k*2)/2,0,1); g.globalAlpha=down?0.35:1; heartShape(56+k*step,y-2,sz,base==='jory'?'#6fd88a':base==='sc'?'#e45a4a':'#ff6aa8',part); g.globalAlpha=1; }
       if(down) capsText('Down',56+hearts*step+6,y+2,'#ff8a70',9,'left',2);
     });
@@ -7613,7 +7685,7 @@ const PCOL=[null,'#ff8ab8','#7ac8ff','#9af0b0'];
 { const _lr=loadRoom; loadRoom=function(...a){ COOP.pDance=0; return _lr(...a); }; }
 
 /* ---------------- the title: Options holds screen effects and players ---------------- */
-const PLAYER_OPTS=['Players: One','Players: Two (P1 is Chili)','Players: Two (P1 is Shadow Cloak)','Players: Three (P1 is Chili)','Players: Three (P1 is Shadow Cloak)'];
+const PLAYER_OPTS=['Players: One','Players: Two','Players: Two','Players: Three','Players: Three'];
 { const _items=Title.items.bind(Title);
   Title.items=function(){ const L=_items(); const i=L.findIndex(x=>x.label&&x.label.startsWith('Screen effects')); if(i<0) return L;
     const pl=COARSE?'':'  ·  '+['One player','Two players','Two players','Three players','Three players'][OPT.coop||0];
@@ -7621,7 +7693,7 @@ const PLAYER_OPTS=['Players: One','Players: Two (P1 is Chili)','Players: Two (P1
     return L; };
   Title.optItems=function(){ const L=[{label:'Screen effects: '+(OPT.calm?'Calm':'Full'),sub:OPT.calm?'Flashes and shakes are softened.':'Full flashes and screen shake.',fn:()=>{ OPT.calm=OPT.calm?0:1; saveOpts(); }}];
     const c=OPT.coop||0;
-    if(!COARSE) L.push({label:PLAYER_OPTS[c],sub:c===0?'Two or three players can share the keyboard, or plug in pads.':c<3?'P1: WASD, F attack, G roll, R skill.  P2: arrows, Enter, right Shift, right Ctrl.':'P3 is Cadet Jory, the healer: IJKL, U attack, O roll, Y Mending Light. Pads take the last seats.',fn:()=>{ OPT.coop=((OPT.coop||0)+1)%5; saveOpts(); }});
+    if(!COARSE) L.push({label:PLAYER_OPTS[c],sub:c===0?'Two or three players can share the keyboard, or plug in pads.':(c<3?'P1: WASD, F attack, G roll, R skill.  P2: arrows, Enter, right Shift, right Ctrl.':'P3: IJKL, U attack, O roll, Y skill. Pads take the last seats.')+' Everyone picks their character when the story starts.',fn:()=>{ const c=OPT.coop||0; OPT.coop=c===0?1:c<3?3:0; saveOpts(); }});
     return L; };
   const _up=Title.update.bind(Title);
   Title.update=function(dt){
@@ -7761,6 +7833,65 @@ function coopPortalPress(){
     if(coopDecim()&&!COOP.inBody&&heroBase(P.hero)==='chili') return (R.def.onDeath?run(R.def.onDeath):gameOver());
     return _pd2();
   };
+}
+
+/* =========================================================
+   CHOOSING CHARACTERS: once everyone is in, each player picks with their own keys.
+   Two players share Chili and Shadow Cloak; a third brings Cadet Jory. No doubles.
+   ========================================================= */
+const PartySel={seats:[],cur:{},lock:{},t:0,doneT:0,
+  chars(){ return COOP.n>=3?['chili','sc','jory']:['chili','sc']; },
+  open(){ coopFill(); const L=this.chars(); this.seats=COOP.n>=3?[1,2,3]:[1,2]; this.cur={}; this.lock={}; this.t=0; this.doneT=0;
+    this.seats.forEach((n,i)=>{ this.cur[n]=Math.max(0,L.indexOf(COOP.seatChar[n])); if(this.cur[n]<0) this.cur[n]=i; });
+    Title.mode='party'; SND.sfx('page'); },
+  taken(c,bySeat){ return this.seats.some(n=>n!==bySeat&&this.lock[n]===c); },
+  update(dt){
+    this.t+=dt; const L=this.chars();
+    if(this.seats.length!==(COOP.n>=3?3:2)||!COOP.on){ if(!COOP.on){ Title.mode='choose'; return; } this.open(); return; }
+    if(NET.role==='host'?hit('menu'):(hit('menu'))){ Title.mode='choose'; SND.sfx('move'); return; }
+    for(const n of this.seats){ const s=n-1;
+      if(!this.lock[n]){
+        if(mgHit(s,'left')){ this.cur[n]=(this.cur[n]+L.length-1)%L.length; SND.sfx('move'); }
+        if(mgHit(s,'right')){ this.cur[n]=(this.cur[n]+1)%L.length; SND.sfx('move'); }
+        if(mgHit(s,'a')){ const c=L[this.cur[n]]; if(this.taken(c,n)){ SND.sfx('deny'); } else { this.lock[n]=c; SND.sfx('ok'); } }
+      } else if(mgHit(s,'b')){ this.lock[n]=null; SND.sfx('move'); }
+    }
+    if(this.seats.every(n=>this.lock[n])){ this.doneT+=dt; if(this.doneT>0.9){ for(const n of this.seats) COOP.seatChar[n]=this.lock[n]; COOP.picked=true; Title.mode='choose'; SND.sfx('heart'); run(()=>beginGame()); } }
+    else this.doneT=0;
+  },
+  draw(){
+    g.fillStyle='rgba(8,7,18,.9)'; g.fillRect(0,0,W,H);
+    drawText('Choose your characters',W/2,80,C.pale,26,'center',true,'700 ',DISP);
+    const L=this.chars(), cw=150, gap=24, x0=(W-L.length*cw-(L.length-1)*gap)/2;
+    L.forEach((c,i)=>{
+      const x=x0+i*(cw+gap), y=110, mc=MG_CHARS[c], owner=this.seats.find(n=>this.lock[n]===c);
+      frame(x,y,cw,250);
+      if(owner){ g.fillStyle=rgba(PCOL[owner],0.14); g.fillRect(x+4,y+4,cw-8,242); g.strokeStyle=PCOL[owner]; g.lineWidth=2; g.strokeRect(x+3,y+3,cw-6,244); g.lineWidth=1; }
+      archFrame(mgPort(c,owner?'smile':'n'),x+15,y+16,cw-30,150,rgba(mc.col,0.3));
+      drawText(mc.name,x+cw/2,y+190,owner?C.pale:C.parch,17,'center',true,'700 ',DISP);
+      drawText(c==='jory'?'The healer':mc.title,x+cw/2,y+208,C.gray,12,'center',true,'italic ');
+      if(owner) capsText('Player '+owner,x+cw/2,y+234,PCOL[owner],10,'center',2.5);
+      /* cursors of players still choosing */
+      const here=this.seats.filter(n=>!this.lock[n]&&this.cur[n]===i);
+      here.forEach((n,k)=>{ const tx=x+cw/2+(k-(here.length-1)/2)*30, ty=y-8+Math.sin(NOW*5+n)*2;
+        g.fillStyle=PCOL[n]; g.fillRect(tx-11,ty-10,22,16); g.fillStyle='#120f20'; setFont(11,'700 ',DISP); g.textAlign='center'; g.fillText(String(n),tx,ty+2); g.textAlign='left';
+        g.fillStyle=PCOL[n]; g.beginPath(); g.moveTo(tx-5,ty+6); g.lineTo(tx+5,ty+6); g.lineTo(tx,ty+11); g.fill(); });
+    });
+    const waiting=this.seats.filter(n=>!this.lock[n]);
+    const msg=waiting.length?('Waiting for '+waiting.map(n=>'Player '+n).join(', ').replace(/, ([^,]*)$/,' and $1')):'Everyone is ready!';
+    drawText(msg,W/2,392,waiting.length?C.parch:UI.gold,16,'center',true,'600 ',DISP);
+    drawText('Each player: Left / Right to choose  ·  Attack to pick  ·  Roll to change your mind',W/2,H-40,C.dim,13,'center',true,'italic ');
+    drawText(NET.role==='host'&&NET.live?'Friends online pick with their own keys.':'P1: A / D and F  ·  P2: arrows and Enter  ·  P3: J / L and U',W/2,H-20,C.dim,12,'center',true,'italic ');
+  }
+};
+{ const _bg=beginGame;
+  beginGame=async function(){
+    if(COOP.on&&!COOP.picked&&MODE==='title'){ PartySel.open(); return; }
+    COOP.picked=false; return _bg.apply(this,arguments);
+  };
+  const _up=Title.update.bind(Title), _dr=Title.draw.bind(Title);
+  Title.update=function(dt){ if(this.mode==='party'){ this.t+=dt; PartySel.update(dt); return; } return _up(dt); };
+  Title.draw=function(){ if(this.mode==='party'){ const it=this.items, m=this.msg; this.items=()=>[]; this.msg=' '; this.mode='main'; try{ _dr(); }finally{ this.mode='party'; this.items=it; this.msg=m; } PartySel.draw(); return; } return _dr(); };
 }
 
 boot();

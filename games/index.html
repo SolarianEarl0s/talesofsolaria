@@ -173,23 +173,6 @@ kbd{font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.
 .rv-fine{margin:0;font-size:.85rem;font-style:italic;color:var(--dim);line-height:1.45}
 @media (max-width:860px){ .reviews{grid-template-columns:minmax(0,1fr)} }
 
-/* TEST BUILDS: temporary, passcode-locked. Card content is encrypted until unlocked. */
-.tb{padding-block:20px 10px;scroll-margin-top:90px}
-.tb-box{max-width:760px;margin:0 auto;border:1px dashed color-mix(in srgb,var(--violet) 55%,transparent);padding:34px 30px;display:grid;gap:16px;background:rgba(162,155,254,.03)}
-.tb-box > .eyebrow{color:var(--violet)}
-.tb-box h2{font-family:var(--display);font-weight:700;font-size:var(--step-2);line-height:1.1;margin:0;color:var(--pale)}
-.tb-box > p.lead{margin:0;max-width:60ch;color:var(--ink);opacity:.9}
-.tb-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.tb-form[hidden]{display:none}
-.tb-form input{flex:1 1 220px;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:rgba(7,7,15,.7);border:1px solid rgba(162,155,254,.45);border-radius:2px;padding:10px 12px;letter-spacing:.05em}
-.tb-form input:focus{outline:none;border-color:var(--pale)}
-.tb-form button{cursor:pointer;font-family:var(--display);font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;padding:12px 18px;border-radius:2px;background:linear-gradient(180deg,var(--pale),var(--gold-deep));color:#1a1006;border:1px solid #fff0c2}
-.tb-form button[disabled]{opacity:.6;cursor:default}
-.tb-msg{margin:0;min-height:1.3em;font-size:1rem;color:#ff9a80}
-.tb-card{display:grid;gap:16px;border-top:1px solid var(--line);padding-top:22px}
-.tb-card h3{font-family:var(--display);font-weight:700;font-size:var(--step-2);line-height:1.1;margin:0;color:var(--pale)}
-.tb-card p.blurb{margin:0;max-width:62ch}
-@media (max-width:600px){ .tb-box{padding:26px 18px} }
 
 /* FOOTER */
 footer{border-top:1px solid var(--line);margin-top:60px}
@@ -251,7 +234,6 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
       <a class="hide-sm" href="#two-flames">Act II</a>
       <a class="hide-sm" href="#age-of-pirates">Act II·V</a>
       <a class="hide-sm" href="#pirate-captain">Pirate Captain</a>
-      <a class="hide-sm" href="#test-builds">Test Builds</a>
       <a href="/">The Saga</a>
     </div>
   </div>
@@ -516,20 +498,6 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
 
   </div>
 
-  <!-- TEMPORARY: passcode-locked test builds (not part of the saga) -->
-  <section class="wrap tb" id="test-builds" aria-labelledby="t-tb">
-    <div class="tb-box">
-      <p class="eyebrow">Temporary &middot; Private testing</p>
-      <h2 id="t-tb">Test Builds</h2>
-      <p class="lead">Early builds that are being play-tested privately. If you were given a passcode, enter it here.</p>
-      <form class="tb-form" id="tb-form" autocomplete="off">
-        <input id="tb-pass" type="password" aria-label="Passcode" placeholder="Passcode" autocapitalize="off" spellcheck="false" required>
-        <button type="submit" id="tb-go">Unlock</button>
-      </form>
-      <p class="tb-msg" id="tb-msg" role="status"></p>
-      <div id="tb-out"></div>
-    </div>
-  </section>
 </main>
 
 <footer>
@@ -606,34 +574,6 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
     .catch(()=>{});
 })();
 
-/* Test builds: the card is AES-GCM encrypted with the passcode, so nothing is readable until it is unlocked. */
-(()=>{
-  const TB_CARD={"s":"6BDg42/i2CoUo8sBt4t0sg==","v":"U+eLOmXdwYe+gdH1","i":250000,"c":"lol3fXiiK7PzGEEZu8wzZFjpcVY5qSBwSVngyNVoQEnw/IdVcIEp2Fmg1H866lZmY/gDP6RM0FDlxqre9cYfXoNiBlccAm8ntAWCSnCej+JJJa36j5S4PTwymcwWBnjVexPBqGwY7rBEOPVyCK1uHHfgoO50mqX7ojm2dt8OZYXE4QcGX58YyCaK4+RHzHeimU9gzXIE5yWEzrR9GZ4Ih5T+D38o/KcDlktTqSJsQDRchezxZFY05LVNi8RAhBeXBfQiLfHgINE3wbCZ+wbIXE/imwM/bNmWYtCeFKfntpyeCQeYZxFECcJ7LrL862nvugnikS2DV6lgno5BY7hEBNggoo2VXIoOOGQhXrQ+/kReVIC03GFpjx9lkxnTJi6oflnx7MmrTvWgrYedmiCoBilfTI3KEZe8S+sqytxifrFqFkV7ZT+JVoNPkPOuzr/v+J2ceTg+8CUXkXgynuI+6ZFFyo1CuI7ePJFmmZrRloUXE/4JSEYrZRS/jqCHHht0b7kBhiYXVYKZtcmv8hNI0zpC2SqqO0dX1phZvvUxQ5SwOhrau3KyejkouKK9n8w+9PY9/XRWbErm0yYVATZ8anXTQTOk1y0zEAgnVNqtwNJoOpQHZP6wfifoFXplIy0qzsureoptCAyQrnMbyeRrSzsjn7F4w9t2ePoZ2kzM8CEKPsmoJ8lVz6H0xGLJdp2Du5klAmMuAEEkbDxROnhm6k0p0y1oJ37m65FFJPmGCN8NiseETGK0tbwbQert3HDS6F3O88Do2B9ibfIzbKmouUPk3AoJEZvS4xWG7Kp5GElbp14+gQkR1JSqLK+pNf/F+9XZS3jsQSQ3k9HC7tU0hpPH2wVx21zWxVeisQehzfyJL+ldmjdpPar4Pc/M1uVC2pzjORajh04yrd8L3OUvQ9ocXEFA6ZBz/fEd4VO5yr/isDwOC+OUnuoOL3bAcrnPhJ4Pycr7EYvQ8E3qTcISSHXtLd/qemkDql/XGZ1To7R54AFrlV0FRkoHzizuZzn0qc2ucIPeIiDBlQEXJeIgWtb2t5ILbMOT/UOqNffX4/VOdclNPgWkwYv3X8rR9QR+u1uOqVQKFlhT+8NiWqWqpi+E6LONQc5Yrb4Wmm+iEP3x7HZw3Ayqm5qd8uT9wG6BJUV0mXtGc9cAVIoxAn3mH3KZ3zTWBmV0NCWA3JL1jj0h+sLbNDpkxW1Zm/zHprQe8rthAFMa8Hx0SS1ldYoRTaHd4CLMRZJ1N5YuRjPKiuK/Lrqn3rRsHB8sa3DGx7wDfZwbqGhFdGrZwgQLTEA7sadRlbNGBVb+P+Yn8Cfsv2T+sxteC7mH2FMrPUochx71STs/B7Kc9qgxBVl0gxOoMvgMXYX9XNBeZFsn1xq9eH+4HXINq4ePbfyIRv8CK5jlW8WHcJJ4Y/jKvJafHWSkmRcsh/xX6wSgxlN8wOqYP62Vnqz9kclaKpqfxCGRielkJwo5U+9NnJaGXIQKJKhgn8htWhzxqTJyyeMiM6DGpeaVHuKd+7rQgEJNJJPw11wIvfbBQn8K5yJ7PYBzN10ql1KgpSkriImtbAixL1kCpQ49LlgXRhdf0qugM8ln7MpJHHvI5wJKW5bHpqrrAMvC5McRJmKp54T3HvYdNjbO8kRsQkO2bL7iW5eHiX/HvxVOlVcXdXiKLeHzQR5QIeePRHf8k+BgUzlc0imY/IGajzXwoAVJjNLnY8i9yfvpOoYPlC8u3AUUe1JVzXfVWGJ9EdU5ReWdMp7dHuB64tL++5O0OSdObwnhkXerNGaq0TmFjp/n6BEHiilYAA6Wx4nsjhjJir+ROUWdfoNCU19NLAeZKI1veU5prwW9ctCJoEH3h/XiwHO3BIyxObC5g6JFWuqzGVGtxCJ9U5gi8OSEeHk773HOd7ZD+A7BZSUvM+ySPKZBcFWQAPH/xvjuliNI62VveHEvSsoN5L5Eeck="};
-  const f=document.getElementById('tb-form'); if(!f||!TB_CARD||!window.crypto||!crypto.subtle) return;
-  const inp=document.getElementById('tb-pass'), btn=document.getElementById('tb-go'), msg=document.getElementById('tb-msg'), out=document.getElementById('tb-out');
-  const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-  const norm=s=>s.trim().toLowerCase();
-  async function open(pass){
-    const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
-    const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(TB_CARD.s),iterations:TB_CARD.i,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
-    return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(TB_CARD.v)},key,b64(TB_CARD.c)));
-  }
-  async function run(pass,quiet){
-    btn.disabled=true; if(!quiet) msg.textContent='';
-    try{
-      out.innerHTML=await open(pass);
-      f.hidden=true; msg.textContent='';
-      try{ sessionStorage.setItem('tos.testpass',pass); }catch(e){}
-    }catch(e){
-      if(!quiet) msg.textContent='That passcode did not work. Check it and try again.';
-      try{ if(quiet) sessionStorage.removeItem('tos.testpass'); }catch(e){}
-    }
-    btn.disabled=false;
-  }
-  f.addEventListener('submit',e=>{ e.preventDefault(); run(norm(inp.value),false); });
-  let saved=null; try{ saved=sessionStorage.getItem('tos.testpass'); }catch(e){}
-  if(saved) run(saved,true);
-})();
 </script>
 </body>
 </html>

@@ -12,7 +12,7 @@
    1. Its own saves and options. The game was built on The Age of Pirates, which lives on the same site,
       so every "ageofpirates.*" storage key is kept under "piratecaptain.*" instead. The two never touch.
    2. A short log of recent errors, attached to bug reports. */
-window.PC_BUILD='Pirate Captain beta 1 (17 Oct 2026)';
+window.PC_BUILD='Pirate Captain beta 2 (17 Oct 2026)';
 (function(){
   try{
     var SP=Storage.prototype, gi=SP.getItem, si=SP.setItem, ri=SP.removeItem;
@@ -13911,6 +13911,21 @@ body.touch #bugBtn{display:none}
   const b1=document.getElementById('bugBtn'), b2=document.getElementById('bugBtnT');
   if(b1) b1.addEventListener('click',openBug);
   if(b2) b2.addEventListener('click',openBug);
+})();
+</script>
+<style>
+/* phones: holding a control never opens the phone's own long-press menu, copy bubble or text selection */
+#pad,#pad *,#game{-webkit-touch-callout:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-tap-highlight-color:transparent}
+</style>
+<script>
+(()=>{
+  const inSheet=t=>!!(t&&t.closest&&t.closest('.sheet,#savebox,#netbox'));
+  /* Android: the long-press menu */
+  document.addEventListener('contextmenu',e=>{ if(!inSheet(e.target)) e.preventDefault(); },true);
+  document.addEventListener('selectstart',e=>{ if(!inSheet(e.target)) e.preventDefault(); },true);
+  /* iPhone: the long-press bubble and magnifier, on the arrows and the action and menu buttons */
+  const pad=document.getElementById('pad');
+  if(pad) pad.querySelectorAll('.dpad,.acts,.tr').forEach(el=>el.addEventListener('touchstart',e=>{ if(e.cancelable) e.preventDefault(); },{passive:false}));
 })();
 </script>
 </body></html>

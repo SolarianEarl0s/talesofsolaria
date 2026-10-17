@@ -25,6 +25,7 @@
   --emerald:#6fd88a;
   --rose:#ff8ab8;
   --crimson:#ff7a5c;
+  --violet:#a29bfe;
   --display:"Cinzel",Georgia,"Times New Roman",serif;
   --body:"EB Garamond",Georgia,"Times New Roman",serif;
   --step--1:.9rem; --step-0:1.1rem; --step-1:1.3rem; --step-2:1.75rem; --step-3:clamp(2rem,5vw,2.9rem); --step-4:clamp(2.6rem,8vw,4.6rem);
@@ -172,6 +173,24 @@ kbd{font-family:var(--display);font-weight:600;font-size:.66rem;letter-spacing:.
 .rv-fine{margin:0;font-size:.85rem;font-style:italic;color:var(--dim);line-height:1.45}
 @media (max-width:860px){ .reviews{grid-template-columns:minmax(0,1fr)} }
 
+/* TEST BUILDS: temporary, passcode-locked. Card content is encrypted until unlocked. */
+.tb{padding-block:20px 10px;scroll-margin-top:90px}
+.tb-box{max-width:760px;margin:0 auto;border:1px dashed color-mix(in srgb,var(--violet) 55%,transparent);padding:34px 30px;display:grid;gap:16px;background:rgba(162,155,254,.03)}
+.tb-box > .eyebrow{color:var(--violet)}
+.tb-box h2{font-family:var(--display);font-weight:700;font-size:var(--step-2);line-height:1.1;margin:0;color:var(--pale)}
+.tb-box > p.lead{margin:0;max-width:60ch;color:var(--ink);opacity:.9}
+.tb-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tb-form[hidden]{display:none}
+.tb-form input{flex:1 1 220px;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:rgba(7,7,15,.7);border:1px solid rgba(162,155,254,.45);border-radius:2px;padding:10px 12px;letter-spacing:.05em}
+.tb-form input:focus{outline:none;border-color:var(--pale)}
+.tb-form button{cursor:pointer;font-family:var(--display);font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;padding:12px 18px;border-radius:2px;background:linear-gradient(180deg,var(--pale),var(--gold-deep));color:#1a1006;border:1px solid #fff0c2}
+.tb-form button[disabled]{opacity:.6;cursor:default}
+.tb-msg{margin:0;min-height:1.3em;font-size:1rem;color:#ff9a80}
+.tb-card{display:grid;gap:16px;border-top:1px solid var(--line);padding-top:22px}
+.tb-card h3{font-family:var(--display);font-weight:700;font-size:var(--step-2);line-height:1.1;margin:0;color:var(--pale)}
+.tb-card p.blurb{margin:0;max-width:62ch}
+@media (max-width:600px){ .tb-box{padding:26px 18px} }
+
 /* FOOTER */
 footer{border-top:1px solid var(--line);margin-top:60px}
 footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;text-align:center}
@@ -232,6 +251,7 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
       <a class="hide-sm" href="#two-flames">Act II</a>
       <a class="hide-sm" href="#age-of-pirates">Act II·V</a>
       <a class="hide-sm" href="#pirate-captain">Pirate Captain</a>
+      <a class="hide-sm" href="#test-builds">Test Builds</a>
       <a href="/">The Saga</a>
     </div>
   </div>
@@ -495,6 +515,21 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
     </article>
 
   </div>
+
+  <!-- TEMPORARY: passcode-locked test builds (not part of the saga) -->
+  <section class="wrap tb" id="test-builds" aria-labelledby="t-tb">
+    <div class="tb-box">
+      <p class="eyebrow">Temporary &middot; Private testing</p>
+      <h2 id="t-tb">Test Builds</h2>
+      <p class="lead">Early builds that are being play-tested privately. If you were given a passcode, enter it here.</p>
+      <form class="tb-form" id="tb-form" autocomplete="off">
+        <input id="tb-pass" type="password" aria-label="Passcode" placeholder="Passcode" autocapitalize="off" spellcheck="false" required>
+        <button type="submit" id="tb-go">Unlock</button>
+      </form>
+      <p class="tb-msg" id="tb-msg" role="status"></p>
+      <div id="tb-out"></div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -569,6 +604,35 @@ footer .wrap{padding-block:44px 56px;display:grid;gap:22px;justify-items:center;
     .then(r=>{ if(!r.ok) throw 0; return r.json(); })
     .then(rows=>{ all=Array.isArray(rows)?rows:[]; boxes.forEach(b=>{ b.hidden=false; setup(b); render(b); }); })
     .catch(()=>{});
+})();
+
+/* Test builds: the card is AES-GCM encrypted with the passcode, so nothing is readable until it is unlocked. */
+(()=>{
+  const TB_CARD={"s":"G2jWGyj1audWihj7GRcdCQ==","v":"w2jT1w8i69tQcVPJ","i":250000,"c":"iLN/g81CMEn37XbRvKqwa9EUxnhjdjr+JnFLeNxWjeluOg3bpGJISTypYeKeBMvipZrMS55ds5dtqhMy8RqidIAzeYoX7yVc5I8sd7HBd6pg8o3wO9tq5mJCFtT02mkY5zPmYqpNCeejaXxh2m9T2dCXF1zohA8cQGxpXsXkS6vG/KLVoFlBPYtdAth0ZuAoYXCTfMdGBS4laMbMUzrWjblgdbBt2XuZ0e2OIl96SVuWOO2T9JY5HPlWF6oNBGgQHlbRQnLcZK2qrB2Q5+JPiwOxu8C77P+79MAHDfZw8L8+XmW3S8VuiRTMJw3lX8/OJA3SDkPoMPmWcTDuI6n3NuKVqCHt86D8s1J1OZm+P7rdZ1DlwUcs1WDhlLrv8RAwjezZr+Ol9SsVOLv4WCTNZcIpE1WHui/5ritabzvomRE+AGPqldMfyhOL3wJDdUONgGseV0RYoFEUFY5M023LwRCBjtpZwJMv2TWu9C29q7Q2gBMzDAHuL88GJf2nv3z4U9iPenVSBkzyGtZzp6zKEhuWaEVBv91HFKTN7xpRT76vZ0Os4BryX4i8qeU5PhsoDH08HTGpLKW/CPTAU5gkAdKLpBTk2ln/YnWUjqVjO8ICgF8LxpRqwFWwfceMWVOjuC9FfgVfQ1p6lddNc7xDTj8R3WPkg1wvGoiYOJDUjD71oaWset9k8SR2m0dqU1TOzuk4lhmmZGIPvzuCjzm7zBruZXKac/zAUgNUu0u6J/xSuPudi7+vEHecDiePZWr5lhUsxxz2qD8BtWKDTL8GZFjRiLpTJyPY5TJKJypmWo9EW2XT5Wz0pJqUu3E57pUQuFOpNGARr3WlAzGNqUO93VfVPP+F3Rw1B7IG6lHK0I6HcCcQYiAeF0lqn3OJcy/1u6dBvpT2N8gSW/5zJGeFCZ3gATRgRoCWLXuhsSGkysu/oX+giz7mKGejucW1Z8DvkaIt0bEiryfSqe0sxaKlafT8xRSyAHtcPyP0ABv3c1seAc0lK9Q0rZ8h4d0pSGPzindv1IG48A/KR2vnbpjO3ZIJIZiOKUVbPsmiSmojkh84O/vXMaoCBzvluECrndKYXhF7N9cuYPvlZGJg2TCg7F5CP0UF6Rwmku7BNUv/M6+IE6Rud8cj9YM9FkQlaSneVPYJ8D88NjdtkbqzWCGbAqyHfkry4WS/v84aBChJefVldMJ5B0KlVypIj3iztGupiS2aGGtmE3Kjmh/HEE3WLn1Qv5VcHxnecNQUOrzZ326PAO8XLgVLyxde05O8JqCx8pq0AQy+OPrICY0Jj/5h3yzaYd4MIQYYrEUml6jUoO/YKtpIljhCTFeloRWecQy1hFR0I1+7vF6uTyVanqxuVmw9AdRN/lolmcFB0xSghVdgY7zuieVQo39VZngDsfpqZlKLnsDc9R6jntRe4PYdt1gDWmqWcPvH66FwWYR6KkOYWGXVRTSWEjVna6MnZD07rTBxhOYmMO6R3C2R1bssUyd/wmoleBqkK86vivL/VJjKh9PUsvx7fIT/y3rKVq3zmYXbBl+jOaQE4T9L8WLk1B3vhyCl4NSsGQXNw51MoyE4GxX7qV5Nj0CrutFsSmokPB99kJj+8AUn9slc6Q=="};
+  const f=document.getElementById('tb-form'); if(!f||!TB_CARD||!window.crypto||!crypto.subtle) return;
+  const inp=document.getElementById('tb-pass'), btn=document.getElementById('tb-go'), msg=document.getElementById('tb-msg'), out=document.getElementById('tb-out');
+  const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+  const norm=s=>s.trim().toLowerCase();
+  async function open(pass){
+    const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(TB_CARD.s),iterations:TB_CARD.i,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+    return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(TB_CARD.v)},key,b64(TB_CARD.c)));
+  }
+  async function run(pass,quiet){
+    btn.disabled=true; if(!quiet) msg.textContent='';
+    try{
+      out.innerHTML=await open(pass);
+      f.hidden=true; msg.textContent='';
+      try{ sessionStorage.setItem('tos.testpass',pass); }catch(e){}
+    }catch(e){
+      if(!quiet) msg.textContent='That passcode did not work. Check it and try again.';
+      try{ if(quiet) sessionStorage.removeItem('tos.testpass'); }catch(e){}
+    }
+    btn.disabled=false;
+  }
+  f.addEventListener('submit',e=>{ e.preventDefault(); run(norm(inp.value),false); });
+  let saved=null; try{ saved=sessionStorage.getItem('tos.testpass'); }catch(e){}
+  if(saved) run(saved,true);
 })();
 </script>
 </body>
